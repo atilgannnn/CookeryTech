@@ -4,6 +4,7 @@ import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.request.RegisterRequest;
+import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ConflictException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
@@ -69,5 +70,20 @@ public class UserService {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessage.USER_NOT_FOUND_EXCEPTION, email)));
         return user;
+    }
+
+    public User getById(Long id){
+        User user = userRepository.findUserById(id).orElseThrow(()->new
+                ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+        return user;
+    }
+
+    //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
+    public void removeUserById(Long id) {
+        User user = getById(id);
+        if (user.isBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        userRepository.deleteById(id);
     }
 }

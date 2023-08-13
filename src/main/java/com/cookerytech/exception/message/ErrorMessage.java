@@ -10,4 +10,6 @@ public class ErrorMessage {
     public final static String EMAIL_ALREADY_EXIST_MESSAGE = "Email: %s already exist";
 
     public final static String PRINCIPAL_FOUND_MESSAGE = "User not found";
+    public static final String RESOURCE_NOT_FOUND_EXCEPTION ="Resource with id %s not found" ;
+    public static final String NOT_PERMITTED_METHOD_MESSAGE ="You don't have any permission to change this data";
 }
