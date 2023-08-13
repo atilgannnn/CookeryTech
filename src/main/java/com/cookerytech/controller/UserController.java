@@ -2,12 +2,16 @@ package com.cookerytech.controller;
 
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
+import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -27,5 +31,23 @@ public class UserController {
         response.setMessage(ResponseMessage.USER_DELETE_RESPONSE_MESSAGE);
         response.setSuccess(true);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<Page<UserResponse>> getAllUsersByPage(
+
+            @RequestParam(required = false, value = "q", defaultValue = "") String q,
+            @RequestParam(required = false, value = "page", defaultValue = "0") int page,
+            @RequestParam(required = false,value = "size", defaultValue = "20") int size,
+            @RequestParam(required = false,value = "sort", defaultValue = "createAt") String prop,
+            @RequestParam(required = false,value = "type", defaultValue = "DESC") Sort.Direction direction) {
+
+        Pageable pageable= PageRequest.of(page, size, Sort.by(direction,prop));
+
+        String qLower = q.toLowerCase();
+
+        Page<UserResponse> usersWithPage = userService.getUserPage(qLower, pageable);
+        return  ResponseEntity.ok(usersWithPage);
     }
 }
