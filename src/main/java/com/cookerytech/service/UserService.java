@@ -4,12 +4,15 @@ import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.request.RegisterRequest;
+import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ConflictException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -85,5 +88,16 @@ public class UserService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
         userRepository.deleteById(id);
+    }
+
+    public Page<UserResponse> getUserPage(String qLower, Pageable pageable) {
+
+        Page<UserResponse> usersWithPage = null;
+        if (!qLower.isEmpty()) {
+            usersWithPage = userRepository.getAllUserWithQAdmin(qLower, pageable);
+        } else {
+            usersWithPage = userRepository.findAllWithPage(pageable);
+        }
+        return usersWithPage;
     }
 }
