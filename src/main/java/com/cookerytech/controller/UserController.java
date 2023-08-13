@@ -33,6 +33,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<Page<UserResponse>> getAllUsersByPage(
