@@ -12,4 +12,6 @@ public class ErrorMessage {
     public final static String PRINCIPAL_FOUND_MESSAGE = "User not found";
     public static final String RESOURCE_NOT_FOUND_EXCEPTION ="Resource with id %s not found" ;
     public static final String NOT_PERMITTED_METHOD_MESSAGE ="You don't have any permission to change this data";
+
+    public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your password are not matched";
 }

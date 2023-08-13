@@ -4,12 +4,14 @@ import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.request.RegisterRequest;
+import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ConflictException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.UserRepository;
+import com.cookerytech.security.SecurityUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,7 +86,7 @@ public class UserService {
     //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
     public void removeUserById(Long id) {
         User user = getById(id);
-        if (user.isBuiltIn()){
+        if (user.getBuiltIn()){
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
         userRepository.deleteById(id);
@@ -99,5 +101,32 @@ public class UserService {
             usersWithPage = userRepository.findAllWithPage(pageable);
         }
         return usersWithPage;
+    }
+
+    public User getCurrentUser(){
+        String email = SecurityUtils.getCurrentUserLogin().orElseThrow(
+                ()-> new ResourceNotFoundException(ErrorMessage.PRINCIPAL_FOUND_MESSAGE));
+        User user = getUserByEmail(email);
+        return user;
+    }
+
+    public void updatePassword(UserUpdateRequest userUpdateRequest) {
+
+        User user = getCurrentUser();
+
+        if(user.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        if(!passwordEncoder.matches(userUpdateRequest.getOldPassword(), user.getPassword())){
+            throw new BadRequestException(ErrorMessage.PASSWORD_NOT_MATCHED_MESSAGE);
+        }
+
+        String hashedPassword = passwordEncoder.encode(userUpdateRequest.getNewPassword());
+
+        user.setPassword(hashedPassword);
+
+        userRepository.save(user);
+
     }
 }

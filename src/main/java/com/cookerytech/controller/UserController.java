@@ -1,5 +1,6 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
 import com.cookerytech.dto.response.UserResponse;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -50,5 +53,19 @@ public class UserController {
 
         Page<UserResponse> usersWithPage = userService.getUserPage(qLower, pageable);
         return  ResponseEntity.ok(usersWithPage);
+    }
+
+    @PatchMapping("/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PRODUCT_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<CTResponse> updatePassword(
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest){
+
+        userService.updatePassword(userUpdateRequest);
+
+        CTResponse response = new CTResponse();
+        response.setMessage(ResponseMessage.PASSWORD_CHANGED_RESPONSE_MESSAGE);
+        response.setSuccess(true);
+
+        return ResponseEntity.ok(response);
     }
 }

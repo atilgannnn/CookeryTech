@@ -70,7 +70,7 @@ public class User {
     private LocalDateTime updateAt;
 
     @Column(nullable = false)
-    private boolean builtIn=false;
+    private Boolean builtIn=false;
 
     @ManyToMany //LAZY
     @JoinTable(name = "t_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
