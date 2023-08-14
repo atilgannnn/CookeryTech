@@ -130,4 +130,8 @@ public class UserService {
         User user = getUserByEmail(email);
         return user;
     }
+
+    public UserResponse getUserResponseById(Long id) {
+        return new UserResponse(getById(id));
+    }
 }
