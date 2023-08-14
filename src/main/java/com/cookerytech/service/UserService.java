@@ -103,12 +103,6 @@ public class UserService {
         return usersWithPage;
     }
 
-    public User getCurrentUser(){
-        String email = SecurityUtils.getCurrentUserLogin().orElseThrow(
-                ()-> new ResourceNotFoundException(ErrorMessage.PRINCIPAL_FOUND_MESSAGE));
-        User user = getUserByEmail(email);
-        return user;
-    }
 
     public void updatePassword(UserUpdateRequest userUpdateRequest) {
 
@@ -128,5 +122,12 @@ public class UserService {
 
         userRepository.save(user);
 
+    }
+
+    public User getCurrentUser(){
+        String email = SecurityUtils.getCurrentUserLogin().orElseThrow(
+                ()-> new ResourceNotFoundException(ErrorMessage.PRINCIPAL_FOUND_MESSAGE));
+        User user = getUserByEmail(email);
+        return user;
     }
 }
