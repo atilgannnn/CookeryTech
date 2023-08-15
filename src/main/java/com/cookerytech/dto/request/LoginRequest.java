@@ -14,9 +14,15 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class LoginRequest {
 
+    // This is my change//
+    // This is my change//
+    // This is my change//
     @Email(message = "Please provide a valid email")
     private String email;
 
+    //This is my change//
+    //This is my change//
+    //This is my change//
     @NotBlank(message = "Please provide a password")
     private String password;
 }
