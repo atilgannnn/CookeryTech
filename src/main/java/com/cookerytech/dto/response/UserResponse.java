@@ -46,7 +46,7 @@ public class UserResponse {
 
     private LocalDateTime updateAt;
 
-    private boolean builtIn=false;
+    private Boolean builtIn=false;
 
     private Set<String> roles;
 
@@ -85,7 +85,7 @@ public class UserResponse {
         this.email = user.getEmail();
         this.city = user.getCity();
         this.country = user.getCountry();
-        this.builtIn = user.isBuiltIn();
+        this.builtIn = user.getBuiltIn();
         this.status = user.getStatus();
         this.taxNo = user.getTaxNo();
         this.updateAt = user.getUpdateAt();
