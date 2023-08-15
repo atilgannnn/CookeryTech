@@ -4,6 +4,7 @@ import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.request.RegisterRequest;
+import com.cookerytech.dto.request.UserDeleteRequest;
 import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.exception.BadRequestException;
@@ -86,10 +87,28 @@ public class UserService {
     //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
     public void removeUserById(Long id) {
         User user = getById(id);
+        User currentUser = getCurrentUser();
+
         if (user.getBuiltIn()){
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
-        userRepository.deleteById(id);
+
+        if(currentUser.getRoles().contains("ROLE_SALES_SPECIALIST") && user.getRoles().contains("ROLE_CUSTOMER")){
+            userRepository.deleteById(id);
+        }
+
+        if(currentUser.getRoles().contains("ROLE_SALES_MANAGER") &&
+                (user.getRoles().contains("ROLE_CUSTOMER") || user.getRoles().contains("ROLE_SALES_SPECIALIST")))
+        {
+            userRepository.deleteById(id);
+        }
+
+        if(currentUser.getRoles().contains("ROLE_ADMIN") )
+        {
+            userRepository.deleteById(id);
+        }
+
+
     }
 
     public Page<UserResponse> getUserPage(String qLower, Pageable pageable) {
@@ -129,5 +148,12 @@ public class UserService {
                 ()-> new ResourceNotFoundException(ErrorMessage.PRINCIPAL_FOUND_MESSAGE));
         User user = getUserByEmail(email);
         return user;
+    }
+
+    public void removeUserByAuth(UserDeleteRequest userDeleteRequest) {
+        User user = getCurrentUser();
+        if(user.getPassword().equals(userDeleteRequest.getPassword())){
+            userRepository.deleteById(user.getId());
+        }
     }
 }

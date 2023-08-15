@@ -1,5 +1,6 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.dto.request.UserDeleteRequest;
 import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
@@ -27,9 +28,19 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{id}/auth")
-    public ResponseEntity<CTResponse> deleteUser(@PathVariable Long id){
+    @DeleteMapping("/{id}/auth")    //Page 76
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<CTResponse> deleteByUserWithId(@PathVariable Long id){
         userService.removeUserById(id);
+        CTResponse response = new CTResponse();
+        response.setMessage(ResponseMessage.USER_DELETE_RESPONSE_MESSAGE);
+        response.setSuccess(true);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/auth")     //Page 72
+    public ResponseEntity<CTResponse> deleteByUserWithAuth(@Valid @RequestBody UserDeleteRequest userDeleteRequest){
+        userService.removeUserByAuth(userDeleteRequest);
         CTResponse response = new CTResponse();
         response.setMessage(ResponseMessage.USER_DELETE_RESPONSE_MESSAGE);
         response.setSuccess(true);
