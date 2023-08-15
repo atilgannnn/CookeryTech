@@ -54,7 +54,7 @@ public class RegisterRequest {
     private LocalDate birthDate;
 
     @Size(max=150)
-    @NotBlank(message="Please provide your taxno")
+    @NotBlank(message="Please provide your tax number")
     private String taxNo;
 
 
