@@ -79,4 +79,12 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+    //deneme...
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    @GetMapping("/{id}/admin")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id){
+        UserResponse userResponse = userService.getUserResponseById(id);
+       return ResponseEntity.ok(userResponse);
+    }
 }

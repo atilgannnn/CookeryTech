@@ -150,10 +150,16 @@ public class UserService {
         return user;
     }
 
+
     public void removeUserByAuth(UserDeleteRequest userDeleteRequest) {
         User user = getCurrentUser();
         if(user.getPassword().equals(userDeleteRequest.getPassword())){
             userRepository.deleteById(user.getId());
         }
+    }
+
+    public UserResponse getUserResponseById(Long id) {
+        return new UserResponse(getById(id));
+
     }
 }
