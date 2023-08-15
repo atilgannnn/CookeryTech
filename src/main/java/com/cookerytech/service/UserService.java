@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -121,7 +122,34 @@ public class UserService {
         }
         return usersWithPage;
     }
+    public void createPasswordResetToken(String email) {
+        User user =  getUserByEmail(email);
 
+//        // Şifre sıfırlama tokenı oluştur
+//        String tokenValue = generateToken();
+//        PasswordResetToken token = new PasswordResetToken();
+//        token.setUser(user);
+//        token.setToken(tokenValue);
+//
+//        passwordResetTokenRepository.save(token);
+    }
+
+    public void resetPassword(String email, String password) {
+
+        User user =  getUserByEmail(email);
+        user.setPassword(password);
+        userRepository.save(user);
+
+        // Ayrıca, sıfırlama tokenını veritabanından silmelisiniz?
+        userRepository.deleteByEmail(user);
+    }
+
+    private String generateToken() {
+        return UUID.randomUUID().toString(); // Rastgele UUID oluşturma
+//        generateToken() metodu, java.util.UUID.randomUUID().toString()
+//        ile rastgele bir UUID oluşturur ve bu UUID'yi string olarak döndürür.
+//        Bu UUID, benzersizliği garanti eden bir dize olarak şifre sıfırlama tokenı olarak kullanılabilir.
+    }
 
     public void updatePassword(UserUpdateRequest userUpdateRequest) {
 
