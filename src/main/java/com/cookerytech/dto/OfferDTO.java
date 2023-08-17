@@ -1,5 +1,6 @@
 package com.cookerytech.dto;
 
+import com.cookerytech.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class OfferDTO {
     private Double subTotal;
     private Double discount;
     private Double grandTotal;
-    private Long User;
+    private User user;
     private Long Currency;
     private LocalDateTime deliveryAt;
     private LocalDateTime createAt;
