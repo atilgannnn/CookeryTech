@@ -1,8 +1,10 @@
 package com.cookerytech.controller;
 
 
+import com.cookerytech.dto.request.ForgotPasswordRequest;
 import com.cookerytech.dto.request.LoginRequest;
 import com.cookerytech.dto.request.RegisterRequest;
+import com.cookerytech.dto.request.ResetPasswordRequest;
 import com.cookerytech.dto.response.*;
 import com.cookerytech.security.jwt.*;
 import com.cookerytech.service.*;
@@ -61,5 +63,18 @@ public class UserJwtController {
 
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
 
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        // Şifre sıfırlama isteği işlemleri
+        userService.createPasswordResetToken(forgotPasswordRequest.getEmail());
+        return ResponseEntity.ok("Password reset request received.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        // Şifre sıfırlama işlemleri
+        userService.resetPassword(resetPasswordRequest.getEmail(), resetPasswordRequest.getPassword());
+        return ResponseEntity.ok("Password reset successfully.");
     }
 }

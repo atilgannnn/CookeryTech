@@ -5,4 +5,5 @@ public class ResponseMessage {
     public static final String USER_DELETE_RESPONSE_MESSAGE ="User Successfully Deleted" ;
 
     public final static String PASSWORD_CHANGED_RESPONSE_MESSAGE = "Password Updated Successfully Changed";
+    public static final String BRAND_SAVED_RESPONSE_MESSAGE = "Brand Successfully Saved";
 }

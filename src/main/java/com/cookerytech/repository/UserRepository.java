@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT new com.cookerytech.dto.response.UserResponse(user)  FROM User user where  lower(user.firstName) like %?1% OR lower(user.lastName) like %?1% OR lower(user.email) like %?1% or user.phone like %?1%")
     Page<UserResponse> getAllUserWithQAdmin(String q, Pageable pageable);
+
+    void deleteByEmail(User user);
 }

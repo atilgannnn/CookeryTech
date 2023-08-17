@@ -37,13 +37,13 @@ public class Offer {
 
     private Double grandTotal;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_id")
-    private Long userId;
+    private User user;
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "currency_id")
-    private Long currencyId;
+//    @OneToOne(orphanRemoval = true)
+//    @JoinColumn(name = "currency_id")
+//    private Long currency;
 
     private LocalDateTime deliveryAt;
 
