@@ -8,4 +8,12 @@ import org.mapstruct.Mapper;
 public interface OfferMapper {
 
     public OfferDTO offerToOfferDTO(Offer offer);
+  
+    OfferResponse offerToOfferResponse(Offer offer);
+
+    List<OfferResponse> offersToOfferResponses(List<Offer> offerList);
+
+    @Mapping(target="id", ignore = true)
+    Offer offerResponseToOffer(OfferResponse offerResponse);
+
 }
