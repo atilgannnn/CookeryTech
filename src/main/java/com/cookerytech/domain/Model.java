@@ -48,16 +48,17 @@ public class Model {
     @Column(nullable = false)
     private Boolean builtIn=false;
 
-    @Column(nullable = false)
-    private Integer currencyId;  //fk
+    @OneToOne
+    @JoinColumn(name = "currency_id",referencedColumnName = "id")
+    private Currency currency;  //fk
 
-    @Column(nullable = false)
-    private  Integer productId;  //fk
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private  Product product;  //fk
 
     @Column(nullable = false)
     private LocalDateTime createAt;
-
-    //@Column(nullable = true)
+    
     private LocalDateTime updateAt;
 
 }
