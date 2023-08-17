@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -15,17 +18,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BrandDTO {
 
+
     private Long id;
+
 
     private String name;
 
-    private Double profitRate=0.0;
 
-    private Boolean isActive=true;
+    private Double profitRate;
+
+
+    private Boolean isActive;
+
 
     private Boolean builtIn;
 
+
     private LocalDateTime createAt;
 
+
     private LocalDateTime updateAt;
+
 }

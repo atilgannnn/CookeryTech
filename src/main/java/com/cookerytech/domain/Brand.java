@@ -35,7 +35,7 @@ public class Brand {
     @Column(nullable = false)
     private Boolean builtIn=false;
 
-    @Column(nullable = false)
+
     private LocalDateTime createAt;
 
     //@Column(nullable = false)
