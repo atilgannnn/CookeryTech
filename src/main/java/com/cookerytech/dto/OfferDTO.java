@@ -25,4 +25,6 @@ public class OfferDTO {
     private LocalDateTime deliveryAt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
+
 }
