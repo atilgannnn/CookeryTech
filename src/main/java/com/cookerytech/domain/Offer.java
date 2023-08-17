@@ -39,11 +39,11 @@ public class Offer {
 
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_id")
-    private Long User;
+    private User user;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "currency_id")
-    private Long Currency;
+//    @OneToOne(orphanRemoval = true)
+//    @JoinColumn(name = "currency_id")
+//    private Long currency;
 
     private LocalDateTime deliveryAt;
 
