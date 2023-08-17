@@ -2,18 +2,18 @@ package com.cookerytech.repository;
 
 import com.cookerytech.domain.Offer;
 
-import com.cookerytech.dto.OfferDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import com.cookerytech.dto.response.OfferResponse;
+
+import java.util.List;
 
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
   
-      List<Offer> findAllByUserId();
+      List<Offer> findAllByUserId(Long id);
 
     @Query("SELECT o FROM Offer o where  lower(o.id) like %?1% " +
                                                      " OR lower(o.code) like %?1% " +

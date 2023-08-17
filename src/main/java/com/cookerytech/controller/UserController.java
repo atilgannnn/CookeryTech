@@ -86,8 +86,5 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id){
         UserResponse userResponse = userService.getUserResponseById(id);
        return ResponseEntity.ok(userResponse);
-       //selam
-        //naber
-        //iyi yim
     }
 }
