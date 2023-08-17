@@ -14,4 +14,5 @@ public class ErrorMessage {
     public static final String NOT_PERMITTED_METHOD_MESSAGE ="You don't have any permission to change this data";
 
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your password are not matched";
+    public static final String NO_DATA_IN_DB_TABLE_MESSAGE ="Resource with id %s not found" ;
 }
