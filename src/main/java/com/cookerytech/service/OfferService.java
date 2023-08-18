@@ -9,13 +9,15 @@ import com.cookerytech.repository.OfferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.cookerytech.dto.response.OfferResponse;
+
+import java.util.List;
 
 @Service
 public class OfferService {
 
     private final OfferRepository offerRepository;
     private final OfferMapper offerMapper;
-
 
     public OfferService(OfferRepository offerRepository, OfferMapper offerMapper) {
         this.offerRepository = offerRepository;
@@ -37,4 +39,9 @@ public class OfferService {
         }
         return offers.map(offerMapper::offerToOfferDTO);
     }
+  
+      public List<OfferResponse> getOffersByUserId(Long id) {
+       return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
+    }
+  
 }
