@@ -56,9 +56,10 @@ public class BrandService {
       brand.setBuiltIn(brandRequest.getBuiltIn());
       brand.setCreateAt(brand.getCreateAt());
       brand.setUpdateAt(now);
-      brandRepository.save(brand);
+        Brand updatedBrand= brandRepository.save(brand);
 
-      return  brandMapper.brandToBrandDTO(brand);
+
+      return  brandMapper.brandToBrandDTO(updatedBrand);
     }
 
     public BrandDTO deleteBrandById(Long id) {
