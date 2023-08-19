@@ -2,9 +2,11 @@ package com.cookerytech.service;
 
 import com.cookerytech.domain.Model;
 import com.cookerytech.dto.request.ModelUpdateRequest;
+import com.cookerytech.dto.response.ModelResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
+import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.repository.ModelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 public class ModelService {
 
     private final ModelRepository modelRepository;
+    private final ModelMapper modelMapper;
 
     private Model getModelById(Long id){
        return modelRepository.findById(id).
@@ -46,4 +49,18 @@ public class ModelService {
     }
 
 
+    public ModelResponse deleteModelById(Long id) {
+        Model model = getModelById(id);
+        if (model.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        // ??  If the model has any related records in offer_items table,
+        //  it can not be deleted and endpoint returns an error otherwise returns the model that just deleted
+
+        // ?? – If any model is deleted, related records in model_property_values,, cart_items should be deleted.
+
+        modelRepository.delete(model);
+        return modelMapper.modelToModelResponse(model);
+
+    }
 }
