@@ -4,14 +4,12 @@ import com.cookerytech.domain.Model;
 import com.cookerytech.dto.request.ModelUpdateRequest;
 import com.cookerytech.dto.response.ModelResponse;
 import com.cookerytech.exception.BadRequestException;
-import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.repository.ModelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Service
@@ -42,9 +40,12 @@ public class ModelService {
         model.setBuyingPrice(modelUpdateRequest.getBuyingPrice());
         model.setTaxRate(modelUpdateRequest.getTaxRate());
         model.setIsActive(modelUpdateRequest.getIsActive());
-        model.setCurrencyId(modelUpdateRequest.getCurrencyId());
-        model.setProductId(modelUpdateRequest.getProductId());
         model.setUpdateAt(LocalDateTime.now());
+
+//        !!! Currency ve Product Currency ve Product Servicleri yazıldıktan sonra setlenecek
+//        model.setCurrencyId(modelUpdateRequest.getCurrencyId());
+//        model.setProductId(modelUpdateRequest.getProductId());
+
 
     }
 
