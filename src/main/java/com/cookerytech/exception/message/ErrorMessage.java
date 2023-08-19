@@ -15,4 +15,6 @@ public class ErrorMessage {
 
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your password are not matched";
     public static final String NO_DATA_IN_DB_TABLE_MESSAGE ="Resource with id %s not found" ;
+
+    public final  static  String MODEL_NOT_FOUND_EXCEPTION="Model: with id %s not found";
 }
