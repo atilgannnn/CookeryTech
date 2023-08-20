@@ -19,7 +19,7 @@ public class OfferResponse {
 
     private Long userId;
 
-    private Long currencyId;
+    private String currencyCode;
 
     private LocalDateTime deliveryAt;
 

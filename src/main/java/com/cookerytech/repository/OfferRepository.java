@@ -32,7 +32,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Query("SELECT o FROM Offer o")
     Page<Offer> findAllOffersWithPage(Pageable pageable);
 
-    @EntityGraph(attributePaths = "offer")
-    @Query("SELECT oi FROM offerItems oi LEFT JOIN FETCH oi.offer WHERE oi.offer=: offerId ")
-    Optional<Offer> findByOfferId(@Param("offerId") Long id);
+//    @EntityGraph(attributePaths = "offer")
+//    @Query("SELECT oi FROM offerItems oi JOIN FETCH oi.offer WHERE oi.offer=: offerId ")
+//    Optional<Offer> findByOfferId(@Param("offerId") Long id);
 }
