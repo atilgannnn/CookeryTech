@@ -60,15 +60,15 @@ public class OfferService {
        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
     }
 
-    public Offer getById(Long id){
-        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
-        return offer;
-    }
-    public OfferDTO getOfferDTO(Long id) {
-        Offer offer = getById(id);
-        return offerMapper.offerToOfferDTO(offer);
-    }
+//    public Offer getById(Long id){
+//        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
+//                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+//        return offer;
+//    }
+//    public OfferDTO getOfferDTO(Long id) {
+//        Offer offer = getById(id);
+//        return offerMapper.offerToOfferDTO(offer);
+//    }
 
 
 }

@@ -21,8 +21,8 @@ public class OfferDTO {
     private Double subTotal;
     private Double discount;
     private Double grandTotal;
-    private User user;
-    private Currency Currency;
+    private Long userId;
+    private Long currencyId;
     private LocalDateTime deliveryAt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;

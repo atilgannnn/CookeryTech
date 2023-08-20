@@ -8,6 +8,7 @@ import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelPropertyKeyMapper;
 import com.cookerytech.repository.ModelPropertyKeyRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +19,7 @@ public class ModelPropertyKeyService {
     private final ProductService productService;
     private final ModelPropertyKeyMapper modelPropertyKeyMapper;
 
-    public ModelPropertyKeyService(ModelPropertyKeyRepository modelPropertyKeyRepository, ProductService productService, ModelPropertyKeyMapper modelPropertyKeyMapper) {
+    public ModelPropertyKeyService(ModelPropertyKeyRepository modelPropertyKeyRepository, @Lazy ProductService productService, ModelPropertyKeyMapper modelPropertyKeyMapper) {
         this.modelPropertyKeyRepository = modelPropertyKeyRepository;
         this.productService = productService;
         this.modelPropertyKeyMapper = modelPropertyKeyMapper;
