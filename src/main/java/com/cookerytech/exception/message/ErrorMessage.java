@@ -15,4 +15,6 @@ public class ErrorMessage {
 
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your password are not matched";
     public static final String NO_DATA_IN_DB_TABLE_MESSAGE ="Resource with id %s not found" ;
+
+    public static final String CAN_NOT_UPDATE ="This data can not update";
 }
