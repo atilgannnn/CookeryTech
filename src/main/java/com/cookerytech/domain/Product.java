@@ -57,7 +57,6 @@ public class Product {
     @JoinTable(name = "t_product_brand", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "brand_id"))
     private Set<Brand> brands= new HashSet<>();
 
-
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;

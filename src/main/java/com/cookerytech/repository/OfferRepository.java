@@ -1,7 +1,7 @@
 package com.cookerytech.repository;
 
 import com.cookerytech.domain.Offer;
-
+import com.cookerytech.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -10,12 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
-  
+
+
+    Optional<Offer> findByIdAndUser(Long id, User user);
+
+
       List<Offer> findAllByUserId(Long id);
 
     @Query("SELECT o FROM Offer o where  lower(o.id) like %?1% " +

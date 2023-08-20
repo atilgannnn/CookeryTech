@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Offer;
+import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.dto.request.OfferCreate;
@@ -28,6 +29,17 @@ public class OfferService {
         this.offerMapper = offerMapper;
     }
 
+    public OfferDTO findByIdAndUser(Long id, User user) {
+
+        Offer offer = offerRepository.findByIdAndUser(id,user).orElseThrow(
+                ()-> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+        );
+
+        return offerMapper.offerToOfferDTO(offer);
+
+
+    }
+
     public Page<OfferDTO> getAllOffers(String qLower, String date1, String date2, String statusLower, Pageable pageable) {
 
         Page<Offer> offers = null;
@@ -43,7 +55,7 @@ public class OfferService {
         }
         return offers.map(offerMapper::offerToOfferDTO);
     }
-  
+
       public List<OfferResponse> getOffersByUserId(Long id) {
        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
     }

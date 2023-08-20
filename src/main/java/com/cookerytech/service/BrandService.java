@@ -9,6 +9,8 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.BrandMapper;
 import com.cookerytech.dto.request.BrandSaveRequest;
 import com.cookerytech.repository.BrandRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,7 +29,7 @@ public class BrandService {
         this.brandMapper = brandMapper;
     }
 
-    public void saveBrand(BrandSaveRequest brandSaveRequest) {
+    public BrandDTO saveBrand(BrandSaveRequest brandSaveRequest) {
 
         // Mapper Islemi -> brandSaveRequest to Brand
         Brand brand = brandMapper.brandSaveRequestToBrand(brandSaveRequest);
@@ -35,7 +37,9 @@ public class BrandService {
         // Olusturulma zamanini setledik.
         brand.setCreateAt(LocalDateTime.now());
 
-        brandRepository.save(brand);
+        Brand updateBrand = brandRepository.save(brand);
+
+        return brandMapper.brandToBrandDTO(updateBrand);
 
 
 
@@ -56,9 +60,10 @@ public class BrandService {
       brand.setBuiltIn(brandRequest.getBuiltIn());
       brand.setCreateAt(brand.getCreateAt());
       brand.setUpdateAt(now);
-      brandRepository.save(brand);
+        Brand updatedBrand= brandRepository.save(brand);
 
-      return  brandMapper.brandToBrandDTO(brand);
+
+      return  brandMapper.brandToBrandDTO(updatedBrand);
     }
 
     public BrandDTO deleteBrandById(Long id) {
@@ -83,4 +88,41 @@ public class BrandService {
     }
 
 
+//    public Page<BrandDTO> getBrandDTOPage(Pageable pageable, Boolean active) {
+//
+//        Page<Brand> brandPage = null;
+//
+//        if(!active) {
+//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+//        }else{
+//            brandPage = brandRepository.getActiveBrands(pageable);
+//        }
+//
+//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+//
+//    }public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
+//
+//        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
+//
+//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+//
+//    }
+//
+//    public BrandDTO getBrandDTOById(Boolean active, Long id) {
+//
+//        Brand brand = getBrand(id);
+//
+//        if(!active){
+//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+//        }
+//        return brandMapper.brandToBrandDTO(brand);
+//
+//    }
+//
+//    public BrandDTO getBrandDTOById(Long id) {
+//
+//        Brand brand = getBrand(id);
+//
+//        return brandMapper.brandToBrandDTO(brand);
+//    }
 }

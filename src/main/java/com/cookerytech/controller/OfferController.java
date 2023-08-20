@@ -1,16 +1,24 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.domain.User;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.service.OfferService;
+import com.cookerytech.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.cookerytech.dto.response.OfferResponse;
+import org.springframework.web.bind.annotation.PathVariable;
 import com.cookerytech.service.OfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +31,18 @@ public class OfferController {
 
     private final OfferService offerService;
 
-    public OfferController(OfferService offerService) {
+    private final UserService userService;
+
+    public OfferController(OfferService offerService, UserService userService) {
         this.offerService = offerService;
+        this.userService = userService;
+    }
+
+    @GetMapping("/{id}/auth")
+    public ResponseEntity<OfferDTO> getUserOfferById(@PathVariable Long id) {
+        User user = userService.getCurrentUser();
+        OfferDTO offerDTO =offerService.findByIdAndUser(id,user);
+        return ResponseEntity.ok(offerDTO);
     }
 
     @GetMapping("/auth")
