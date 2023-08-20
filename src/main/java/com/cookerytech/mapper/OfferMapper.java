@@ -12,7 +12,10 @@ import java.util.List;
 public interface OfferMapper {
 
     //@Mapping(source="user", target="userId", qualifiedByName = "getUserId")
-    OfferDTO offerToOfferDTO(Offer offer);
+   // OfferDTO offerToOfferDTO(Offer offer);
+
+    @Mapping(target = "currency", ignore = true)
+    public OfferDTO offerToOfferDTO(Offer offer);
 
     OfferResponse offerToOfferResponse(Offer offer);
 

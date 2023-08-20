@@ -39,7 +39,7 @@ public class OfferItem {
     private  Double subTotal;
 
     @Column(nullable = false)
-    private  Double discount;
+    private  Double discount=10.0;
 
     @OneToOne
     @JoinColumn(name = "product_id")

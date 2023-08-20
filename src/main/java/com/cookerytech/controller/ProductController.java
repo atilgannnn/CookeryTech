@@ -1,10 +1,13 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.dto.ModelPropertyKeyDTO;
+import com.cookerytech.dto.request.ModelPropertyRequest;
+import com.cookerytech.service.ProductService;
+
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
-import com.cookerytech.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +23,18 @@ public class ProductController {
 
     public ProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    @PostMapping("/properties")         //Sayfa 33 -> A08
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ModelPropertyKeyDTO makeModelProperty(@Valid @RequestBody ModelPropertyRequest createModelPropertyRequest){
+            return productService.makeProductProperty(createModelPropertyRequest);
+    }
+
+    @PutMapping("/properties/{id}")    //Sayfa 34 -> A09
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ModelPropertyKeyDTO updateModelProperty(@RequestParam("id") Long id, @Valid @RequestBody ModelPropertyRequest modelPropertyRequest){
+        return productService.updateModelProperty(id,modelPropertyRequest);
     }
 
 
@@ -44,6 +59,7 @@ public class ProductController {
         return ResponseEntity.ok(updateProductDTO);
 
     }
+
 
 
 }

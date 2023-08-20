@@ -2,25 +2,27 @@ package com.cookerytech.service;
 
 import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.User;
+import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class OfferService {
 
     private final OfferRepository offerRepository;
-
     private final OfferMapper offerMapper;
-
 
     public OfferService(OfferRepository offerRepository, OfferMapper offerMapper) {
         this.offerRepository = offerRepository;
@@ -57,5 +59,16 @@ public class OfferService {
       public List<OfferResponse> getOffersByUserId(Long id) {
        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
     }
+
+    public Offer getById(Long id){
+        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+        return offer;
+    }
+    public OfferDTO getOfferDTO(Long id) {
+        Offer offer = getById(id);
+        return offerMapper.offerToOfferDTO(offer);
+    }
+
 
 }

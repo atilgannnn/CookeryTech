@@ -1,0 +1,23 @@
+package com.cookerytech.dto.request;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ModelPropertyRequest {
+
+    @NotBlank(message = "Please provide a property")
+    private String name;
+
+    private Integer seq;
+
+    private Long productId;
+}

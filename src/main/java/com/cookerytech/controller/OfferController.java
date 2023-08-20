@@ -2,6 +2,7 @@ package com.cookerytech.controller;
 
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.service.OfferService;
 import com.cookerytech.service.UserService;
 import org.springframework.data.domain.Page;
@@ -14,8 +15,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import com.cookerytech.dto.response.OfferResponse;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.cookerytech.service.OfferService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -62,6 +68,15 @@ public class OfferController {
         List<OfferResponse> offers = offerService.getOffersByUserId(id);
         return ResponseEntity.ok(offers);
     }
+
+    @GetMapping("/{id}/admin")          //Page-58->E02
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
+    public ResponseEntity<OfferDTO> getOfferById(@PathVariable Long id){
+        OfferDTO offerDTO = offerService.getOfferDTO(id);
+        return ResponseEntity.ok(offerDTO);
+    }
+
+
 
 
 }

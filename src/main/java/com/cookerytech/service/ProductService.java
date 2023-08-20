@@ -1,29 +1,48 @@
 package com.cookerytech.service;
 
-import com.cookerytech.domain.Brand;
 import com.cookerytech.domain.Product;
-import com.cookerytech.dto.BrandDTO;
+import com.cookerytech.dto.ModelPropertyKeyDTO;
+import com.cookerytech.dto.request.ModelPropertyRequest;
+import com.cookerytech.exception.ResourceNotFoundException;
+import com.cookerytech.exception.message.ErrorMessage;
+import com.cookerytech.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.exception.BadRequestException;
-import com.cookerytech.exception.ResourceNotFoundException;
-import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ProductMapper;
-import com.cookerytech.repository.ProductRepository;
-import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
-import java.util.Set;
+
+
 
 @Service
 public class ProductService {
 
-    private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final ModelPropertyKeyService modelPropertyKeyService;
+    private final ProductMapper productMapper;
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository) {
-        this.productMapper = productMapper;
+    public ProductService(ProductMapper productMapper,ProductRepository productRepository, ModelPropertyKeyService modelPropertyKeyService) {
         this.productRepository = productRepository;
+        this.modelPropertyKeyService = modelPropertyKeyService;
+        this.productMapper = productMapper;
+    }
+
+    public Product getById(Long id){
+       Product product = productRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+       return product;
+    }
+
+    public ModelPropertyKeyDTO makeProductProperty(ModelPropertyRequest createModelPropertyRequest) {
+        getById(createModelPropertyRequest.getProductId());
+        return modelPropertyKeyService.makeModelPropertyKey(createModelPropertyRequest);
+    }
+
+    public ModelPropertyKeyDTO updateModelProperty(Long id, ModelPropertyRequest modelPropertyRequest) {
+        return modelPropertyKeyService.updateModelPropertyKey(id, modelPropertyRequest);
     }
 
 
@@ -79,4 +98,5 @@ public class ProductService {
         );
         return product;
     }
+
 }

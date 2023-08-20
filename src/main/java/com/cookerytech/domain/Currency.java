@@ -21,7 +21,7 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 10 )
+    @Column(nullable = false,length = 10)
     private  String code;
 
     @Column(length = 3)

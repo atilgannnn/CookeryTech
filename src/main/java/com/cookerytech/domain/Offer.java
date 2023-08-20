@@ -42,7 +42,7 @@ public class Offer {
     private User user;
 
     @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "currency_id")
+    @JoinColumn(name = "currency_id", referencedColumnName = "code")
     private Currency currency;
 
     private LocalDateTime deliveryAt;

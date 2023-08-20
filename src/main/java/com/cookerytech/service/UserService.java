@@ -86,7 +86,7 @@ public class UserService {
     }
 
     //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
-    public void removeUserById(Long id) {
+    public User removeUserById(Long id) {
         User user = getById(id);
         User currentUser = getCurrentUser();
 
@@ -94,22 +94,22 @@ public class UserService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-        if(currentUser.getRoles().contains("ROLE_SALES_SPECIALIST") && user.getRoles().contains("ROLE_CUSTOMER")){
+        if(currentUser.getRoles().equals(RoleType.ROLE_SALES_SPECIALIST) && user.getRoles().equals(RoleType.ROLE_CUSTOMER)){
             userRepository.deleteById(id);
         }
 
-        if(currentUser.getRoles().contains("ROLE_SALES_MANAGER") &&
-                (user.getRoles().contains("ROLE_CUSTOMER") || user.getRoles().contains("ROLE_SALES_SPECIALIST")))
+        if(currentUser.getRoles().equals(RoleType.ROLE_SALES_MANAGER) &&
+                (user.getRoles().equals(RoleType.ROLE_CUSTOMER) || user.getRoles().equals(RoleType.ROLE_SALES_SPECIALIST)))
         {
             userRepository.deleteById(id);
         }
 
-        if(currentUser.getRoles().contains("ROLE_ADMIN") )
+        if(currentUser.getRoles().equals(RoleType.ROLE_ADMIN) )
         {
             userRepository.deleteById(id);
         }
 
-
+        return user;
     }
 
     public Page<UserResponse> getUserPage(String qLower, Pageable pageable) {
