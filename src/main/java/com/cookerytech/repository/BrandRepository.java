@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
-    @Query("select * from Brand")
-    Page<Brand> getActiveBrands(Pageable pageable);//TODO - İki methodun da aynı Query'yi kullanması doğru mu?
+//    @Query("select * from Brand")
+//    Page<Brand> getActiveBrands(Pageable pageable);//TODO - İki methodun da aynı Query'yi kullanması doğru mu?
 }

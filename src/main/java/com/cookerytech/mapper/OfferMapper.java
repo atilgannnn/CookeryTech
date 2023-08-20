@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OfferMapper {
 
-    @Mapping(source="user", target="userId", qualifiedByName = "getUserId")
+    //@Mapping(source="user", target="userId", qualifiedByName = "getUserId")
     OfferDTO offerToOfferDTO(Offer offer);
 
     OfferResponse offerToOfferResponse(Offer offer);
