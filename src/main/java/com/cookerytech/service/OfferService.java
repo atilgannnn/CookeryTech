@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Offer;
+import com.cookerytech.domain.User;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
@@ -17,11 +18,24 @@ import java.util.List;
 public class OfferService {
 
     private final OfferRepository offerRepository;
+
     private final OfferMapper offerMapper;
+
 
     public OfferService(OfferRepository offerRepository, OfferMapper offerMapper) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
+    }
+
+    public OfferDTO findByIdAndUser(Long id, User user) {
+
+        Offer offer = offerRepository.findByIdAndUser(id,user).orElseThrow(
+                ()-> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+        );
+
+        return offerMapper.offerToOfferDTO(offer);
+
+
     }
 
     public Page<OfferDTO> getAllOffers(String qLower, String date1, String date2, String statusLower, Pageable pageable) {
@@ -39,9 +53,9 @@ public class OfferService {
         }
         return offers.map(offerMapper::offerToOfferDTO);
     }
-  
+
       public List<OfferResponse> getOffersByUserId(Long id) {
        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
     }
-  
+
 }
