@@ -106,5 +106,7 @@ public class BrandController {
 //
 //    }
 
+    // miraç test 20.08.2023
+
 
 }
