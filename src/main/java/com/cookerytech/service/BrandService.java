@@ -29,7 +29,7 @@ public class BrandService {
         this.brandMapper = brandMapper;
     }
 
-    public void saveBrand(BrandSaveRequest brandSaveRequest) {
+    public BrandDTO saveBrand(BrandSaveRequest brandSaveRequest) {
 
         // Mapper Islemi -> brandSaveRequest to Brand
         Brand brand = brandMapper.brandSaveRequestToBrand(brandSaveRequest);
@@ -37,7 +37,9 @@ public class BrandService {
         // Olusturulma zamanini setledik.
         brand.setCreateAt(LocalDateTime.now());
 
-        brandRepository.save(brand);
+        Brand updateBrand = brandRepository.save(brand);
+
+        return brandMapper.brandToBrandDTO(updateBrand);
 
 
 
@@ -86,41 +88,41 @@ public class BrandService {
     }
 
 
-    public Page<BrandDTO> getBrandDTOPage(Pageable pageable, Boolean active) {
-
-        Page<Brand> brandPage = null;
-
-        if(!active) {
-            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
-        }else{
-            brandPage = brandRepository.getActiveBrands(pageable);
-        }
-
-        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
-
-    }public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
-
-        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
-
-        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
-
-    }
-
-    public BrandDTO getBrandDTOById(Boolean active, Long id) {
-
-        Brand brand = getBrand(id);
-
-        if(!active){
-            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
-        }
-        return brandMapper.brandToBrandDTO(brand);
-
-    }
-
-    public BrandDTO getBrandDTOById(Long id) {
-
-        Brand brand = getBrand(id);
-
-        return brandMapper.brandToBrandDTO(brand);
-    }
+//    public Page<BrandDTO> getBrandDTOPage(Pageable pageable, Boolean active) {
+//
+//        Page<Brand> brandPage = null;
+//
+//        if(!active) {
+//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+//        }else{
+//            brandPage = brandRepository.getActiveBrands(pageable);
+//        }
+//
+//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+//
+//    }public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
+//
+//        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
+//
+//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+//
+//    }
+//
+//    public BrandDTO getBrandDTOById(Boolean active, Long id) {
+//
+//        Brand brand = getBrand(id);
+//
+//        if(!active){
+//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+//        }
+//        return brandMapper.brandToBrandDTO(brand);
+//
+//    }
+//
+//    public BrandDTO getBrandDTOById(Long id) {
+//
+//        Brand brand = getBrand(id);
+//
+//        return brandMapper.brandToBrandDTO(brand);
+//    }
 }
