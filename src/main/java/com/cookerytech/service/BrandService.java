@@ -9,6 +9,8 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.BrandMapper;
 import com.cookerytech.dto.request.BrandSaveRequest;
 import com.cookerytech.repository.BrandRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,4 +86,41 @@ public class BrandService {
     }
 
 
+    public Page<BrandDTO> getBrandDTOPage(Pageable pageable, Boolean active) {
+
+        Page<Brand> brandPage = null;
+
+        if(!active) {
+            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+        }else{
+            brandPage = brandRepository.getActiveBrands(pageable);
+        }
+
+        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+
+    }public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
+
+        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
+
+        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+
+    }
+
+    public BrandDTO getBrandDTOById(Boolean active, Long id) {
+
+        Brand brand = getBrand(id);
+
+        if(!active){
+            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
+        }
+        return brandMapper.brandToBrandDTO(brand);
+
+    }
+
+    public BrandDTO getBrandDTOById(Long id) {
+
+        Brand brand = getBrand(id);
+
+        return brandMapper.brandToBrandDTO(brand);
+    }
 }

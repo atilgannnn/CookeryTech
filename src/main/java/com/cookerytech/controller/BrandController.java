@@ -8,6 +8,10 @@ import com.cookerytech.dto.request.BrandSaveRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
 import com.cookerytech.service.BrandService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +59,52 @@ public class BrandController {
         return  ResponseEntity.ok(deletedBrandDTO);
     }
 
+    @GetMapping("/auth")
+    @PreAuthorize("hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<Page<BrandDTO>> getBrandsForPM(@RequestParam (value = "isActive", defaultValue = "false") Boolean active,
+                                                    @RequestParam (value = "page", defaultValue = "0") int page,
+                                                    @RequestParam (value = "size", defaultValue = "20") int size,
+                                                    @RequestParam (value = "sort", defaultValue = "name") String prop,
+                                                    @RequestParam (value = "type", defaultValue = "ASC") Sort.Direction direction){
+
+        Pageable pageable = PageRequest.of(page, size,Sort.by(direction,prop));
+
+        Page<BrandDTO> brandDTOPage = brandService.getBrandDTOPage(pageable,active);
+
+        return ResponseEntity.ok(brandDTOPage);
+    }
+
+    @GetMapping("/auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<BrandDTO>> getBrandsForAD(@RequestParam (value = "page", defaultValue = "0") int page,
+                                                    @RequestParam (value = "size", defaultValue = "20") int size,
+                                                    @RequestParam (value = "sort", defaultValue = "name") String prop,
+                                                    @RequestParam (value = "type", defaultValue = "ASC") Sort.Direction direction){
+
+        Pageable pageable = PageRequest.of(page, size,Sort.by(direction,prop));
+
+        Page<BrandDTO> brandDTOPage = brandService.getBrandDTOPage(pageable);
+
+        return ResponseEntity.ok(brandDTOPage);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<BrandDTO> getBrandDTOByIdForPM(@RequestParam (value = "isActive", defaultValue = "false") Boolean active, Long id){
+
+        BrandDTO getBrandDTOById = brandService.getBrandDTOById(active,id);
+
+        return ResponseEntity.ok(getBrandDTOById);
+
+    } @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<BrandDTO> getBrandDTOByIdForAD(@PathVariable Long id){
+
+        BrandDTO getBrandDTOById = brandService.getBrandDTOById(id);
+
+        return ResponseEntity.ok(getBrandDTOById);
+
+    }
 
 
 }
