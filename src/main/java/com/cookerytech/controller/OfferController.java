@@ -33,11 +33,10 @@ public class OfferController {
     }
 
     @GetMapping("/{id}/auth")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<OfferDTO> getUserOfferById(@PathVariable Long id) {
         User user = userService.getCurrentUser();
-        OfferDTO reservationDTO =offerService.findByIdAndUser(id,user);
-        return ResponseEntity.ok(reservationDTO);
+        OfferDTO offerDTO =offerService.findByIdAndUser(id,user);
+        return ResponseEntity.ok(offerDTO);
     }
 
     @GetMapping("/auth")
