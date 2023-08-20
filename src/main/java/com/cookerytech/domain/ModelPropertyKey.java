@@ -31,9 +31,9 @@ public class ModelPropertyKey {
     @JoinColumn(name = "product_id", nullable = false)
     private Product productId;
 
-    @Column(nullable = false)
-    private LocalDateTime createAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updateAt;
+//    @Column(nullable = false)
+//    private LocalDateTime createAt;
+//
+//    @Column(nullable = false)
+//    private LocalDateTime updateAt;
 }

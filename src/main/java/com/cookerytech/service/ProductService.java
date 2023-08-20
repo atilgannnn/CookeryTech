@@ -1,30 +1,20 @@
 package com.cookerytech.service;
 
-<<<<<<< HEAD
-import com.cookerytech.domain.ModelPropertyKey;
 import com.cookerytech.domain.Product;
 import com.cookerytech.dto.ModelPropertyKeyDTO;
 import com.cookerytech.dto.request.ModelPropertyRequest;
-import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.ProductRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.cookerytech.domain.Brand;
-import com.cookerytech.domain.Product;
-import com.cookerytech.dto.BrandDTO;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.exception.BadRequestException;
-import com.cookerytech.exception.ResourceNotFoundException;
-import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ProductMapper;
-import com.cookerytech.repository.ProductRepository;
-import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
-import java.util.Set;
+
 
 
 @Service
