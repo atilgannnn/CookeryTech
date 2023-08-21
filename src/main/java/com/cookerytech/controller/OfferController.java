@@ -68,12 +68,12 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-//    @GetMapping("/{id}/admin")          //Page-58->E02
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
-//    public ResponseEntity<OfferDTO> getOfferById(@PathVariable Long id){
-//        OfferDTO offerDTO = offerService.getOfferDTO(id);
-//        return ResponseEntity.ok(offerDTO);
-//    }
+    @GetMapping("/{id}/admin")          //Page-58->E02
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
+    public OfferDTO getOfferById(@PathVariable Long id){
+        OfferDTO offerDTO = offerService.getOfferDTO(id);
+        return offerDTO;
+    }
 
 
 
