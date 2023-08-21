@@ -1,6 +1,8 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Brand;
+import com.cookerytech.domain.Role;
+import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.BrandDTO;
 import com.cookerytech.dto.request.BrandRequest;
 import com.cookerytech.exception.BadRequestException;
@@ -14,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class BrandService {
@@ -21,12 +25,18 @@ public class BrandService {
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
 
+    private final UserService userService;
+
+    private final RoleService roleService;
 
 
 
-    public BrandService(BrandRepository brandRepository, BrandMapper brandMapper) {
+
+    public BrandService(BrandRepository brandRepository, BrandMapper brandMapper, UserService userService, RoleService roleService) {
         this.brandRepository = brandRepository;
         this.brandMapper = brandMapper;
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
     public BrandDTO saveBrand(BrandSaveRequest brandSaveRequest) {
@@ -88,41 +98,46 @@ public class BrandService {
     }
 
 
-//    public Page<BrandDTO> getBrandDTOPage(Pageable pageable, Boolean active) {
-//
-//        Page<Brand> brandPage = null;
-//
-//        if(!active) {
-//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
-//        }else{
-//            brandPage = brandRepository.getActiveBrands(pageable);
-//        }
-//
-//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
-//
-//    }public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
-//
-//        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
-//
-//        return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
-//
-//    }
-//
-//    public BrandDTO getBrandDTOById(Boolean active, Long id) {
-//
-//        Brand brand = getBrand(id);
-//
-//        if(!active){
-//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE));
-//        }
-//        return brandMapper.brandToBrandDTO(brand);
-//
-//    }
-//
-//    public BrandDTO getBrandDTOById(Long id) {
-//
-//        Brand brand = getBrand(id);
-//
-//        return brandMapper.brandToBrandDTO(brand);
-//    }
+    public Page<BrandDTO> getBrandDTOPage(Pageable pageable) {
+
+        Page<Brand> brandPage = brandRepository.getActiveBrands(pageable);
+
+        Page<Brand> adminBrandPage = brandRepository.findAll(pageable);
+
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+
+        if (userRole.contains(RoleType.ROLE_PRODUCT_MANAGER)) {
+
+            return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+        }
+
+        return adminBrandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
+
+    }
+
+    public BrandDTO getBrandDTOById(Long id) {
+
+        Brand brand = getBrand(id);
+
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+        if(userRole.contains(RoleType.ROLE_PRODUCT_MANAGER)){
+            if(!brand.getIsActive()){
+            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE,id));
+        }
+            return brandMapper.brandToBrandDTO(brand);
+
+        }
+
+//        else{
+ //           return brandMapper.brandToBrandDTO(brand);
+
+ //       }
+        return brandMapper.brandToBrandDTO(brand);
+    }
+
+
+
+
 }
