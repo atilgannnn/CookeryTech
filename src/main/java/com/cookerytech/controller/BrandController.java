@@ -55,8 +55,8 @@ public class BrandController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<BrandDTO>  deleteBrand(@PathVariable Long id){
-      BrandDTO deletedBrandDTO =  brandService.deleteBrandById(id);
-        return  ResponseEntity.ok(deletedBrandDTO);
+      BrandDTO deletedBrand=  brandService.deleteBrandById(id);
+        return  ResponseEntity.ok(deletedBrand);
     }
 
     @GetMapping("/auth")

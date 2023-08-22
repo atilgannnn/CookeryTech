@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class OfferDTO {
 
     private Long id;
@@ -26,5 +26,6 @@ public class OfferDTO {
     private LocalDateTime deliveryAt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
 
 }

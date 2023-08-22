@@ -9,11 +9,13 @@ import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.ProductRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.mapper.ProductMapper;
+
 
 
 import java.time.LocalDateTime;
@@ -35,7 +37,7 @@ public class ProductService {
     private final UserService userService;
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, ModelService modelService, UserService userService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -58,59 +60,82 @@ public class ProductService {
         return productPropertyKeyService.updateProductPropertyKey(id, productPropertyRequest);
     }
 
-
-    public ProductDTO saveProduct(ProductSaveRequest productSaveRequest) {
-
-
-        String titleCumle = productSaveRequest.getTitle();
-        titleCumle.replaceAll("[^a-zA-ZğüşıöçĞÜŞİÖÇ\\s]", "-").toLowerCase(); // title -> Kahve Makinesi
-        // sluq  -> kahve-makinesi
-
-        Product product = productMapper.productSaveRequestToProduct(productSaveRequest);
-
-        product.setCreateAt(LocalDateTime.now());
-        product.setSlug(titleCumle);
-
-        Product createProduct = productRepository.save(product);
-
-        return productMapper.productToProductDTO(createProduct);
-
-    }
-
-    public ProductDTO updateProductId(Long id, ProductSaveRequest productSaveRequest) {
-
-        Product product = getProduct(id);
-
-        if(product.getBuiltIn()){
-            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-
-        product.setTitle(productSaveRequest.getTitle());
-        product.setShortDesc(productSaveRequest.getShortDesc());
-        product.setLongDesc(productSaveRequest.getLongDesc());
-        product.setSeq(productSaveRequest.getSeq());
-        product.setIsNew(productSaveRequest.getIsNew());
-        product.setIsFeatured(productSaveRequest.getIsFeatured());
-        product.setIsActive(productSaveRequest.getIsActive());
-        product.setSlug(product.getSlug());
-        product.setBrands(product.getBrands());
-        product.setCategory(product.getCategory());
-        product.setUpdateAt(now);
-
-        Product updateProduct = productRepository.save(product);
-
-        return productMapper.productToProductDTO(updateProduct);
-
-    }
+//    public ProductDTO deleteBrandById(Long id) {
+//     Product product = getProduct(id);
+//
+//     if(product.getBuiltIn()){
+//         throw  new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+//     }
+//
+//
+//     productRepository.delete(product);
+//
+//    }
 
     private Product getProduct(Long id){
-        Product product = productRepository.findById(id).orElseThrow(()->
-        new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
+       Product product=  productRepository.findById(id).orElseThrow(()->
+           new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );
         return product;
     }
+
+    public ProductDTO deleteProductById(Long id) {
+        Product product = getProduct(id);
+        if (product.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        //offer-item iliskisi varsa silinemez
+        //Herhangi bir ürün silinmişse model, model_property_keys,
+        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
+
+        //eksikleri tamamla!!!
+        productRepository.delete(product);
+
+        return  productMapper.productToproductDTO(product);
+    }
+
+    public List<ProductDTO> getProductsByCategory(Long categoryId) {
+
+        List<Product> products = productRepository.getProductsByCategory(categoryId);
+
+      return   productMapper.map(products);
+    }
+
+
+
+    public List<Product> getProductByBrandId(Long brandId) {
+
+        List<Product> productList = productRepository.findProductByBrandId(brandId);
+
+        return productList;
+    }
+//    public ProductDTO updateProductId(Long id, ProductSaveRequest productSaveRequest) {
+//
+//        Product product = getProduct(id);
+//
+//        if(product.getBuiltIn()){
+//            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+//        }
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        product.setTitle(productSaveRequest.getTitle());
+//        product.setShortDesc(productSaveRequest.getShortDesc());
+//        product.setLongDesc(productSaveRequest.getLongDesc());
+//        product.setSeq(productSaveRequest.getSeq());
+//        product.setIsNew(productSaveRequest.getIsNew());
+//        product.setIsFeatured(productSaveRequest.getIsFeatured());
+//        product.setIsActive(productSaveRequest.getIsActive());
+//        product.setSlug(product.getSlug());
+//        product.setBrands(product.getBrands());
+//        product.setCategory(product.getCategory());
+//        product.setUpdateAt(now);
+//
+//        Product updateProduct = productRepository.save(product);
+//
+//        return productMapper.productToProductDTO(updateProduct);
+//
+//    }
 
     public List<ModelDTO> getModelsByProductId(Long id) {
         List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(id);
@@ -124,4 +149,12 @@ public class ProductService {
         return adminModelDTOS;
 
     }
+
+    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
+        List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
+        return productPropertyKeyDTOS;
+
+    }
+
+
 }

@@ -28,7 +28,7 @@ public class ProductPropertyKey {
 
     @OneToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product productId;
+    private Product product;
 
 //    @Column(nullable = false)
 //    private LocalDateTime createAt;
