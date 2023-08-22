@@ -38,6 +38,10 @@ public class ProductController {
     }
 
 
+
+    //A10 Delete
+
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<CTResponse> createProduct(
