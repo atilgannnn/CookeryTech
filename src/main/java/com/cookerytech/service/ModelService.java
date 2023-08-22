@@ -27,6 +27,9 @@ public class ModelService {
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
+    private final ProductService productService;
+
+    private final CurrencyService currencyService;
 
     private Model getModelById(Long id){
        return modelRepository.findById(id).
@@ -49,11 +52,8 @@ public class ModelService {
         model.setTaxRate(modelUpdateRequest.getTaxRate());
         model.setIsActive(modelUpdateRequest.getIsActive());
         model.setUpdateAt(LocalDateTime.now());
-
-//        !!! Currency ve Product Currency ve Product Servicleri yazıldıktan sonra setlenecek
-//        model.setCurrencyId(modelUpdateRequest.getCurrencyId());
-//        model.setProductId(modelUpdateRequest.getProductId());
-
+        model.setProduct(productService.getById(modelUpdateRequest.getProductId()));
+        model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyCode()));
 
     }
 
@@ -66,7 +66,7 @@ public class ModelService {
         // ??  If the model has any related records in offer_items table,
         //  it can not be deleted and endpoint returns an error otherwise returns the model that just deleted
 
-        // ?? – If any model is deleted, related records in model_property_values,, cart_items should be deleted.
+        // ?? – If any model is deleted, related records in model_property_values, cart_items should be deleted.
 
         modelRepository.delete(model);
         return modelMapper.modelToModelResponse(model);

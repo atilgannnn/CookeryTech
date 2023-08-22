@@ -90,7 +90,7 @@ public class CurrencyService {
         }
         return currencyDTOPage;
     }
-    private Currency getCurrency(String code) {
+    public Currency getCurrency(String code) {
         return currencyRepository.findByCode(code).orElseGet(() -> {
             Currency newCurrency = new Currency();
             return newCurrency;
