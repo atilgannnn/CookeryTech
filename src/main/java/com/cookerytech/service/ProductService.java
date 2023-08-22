@@ -1,8 +1,8 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Product;
-import com.cookerytech.dto.ModelPropertyKeyDTO;
-import com.cookerytech.dto.request.ModelPropertyRequest;
+import com.cookerytech.dto.ProductPropertyKeyDTO;
+import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.ProductRepository;
@@ -21,12 +21,12 @@ import java.time.LocalDateTime;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ModelPropertyKeyService modelPropertyKeyService;
+    private final ProductPropertyKeyService productPropertyKeyService;
     private final ProductMapper productMapper;
 
-    public ProductService(ProductMapper productMapper,ProductRepository productRepository, ModelPropertyKeyService modelPropertyKeyService) {
+    public ProductService(ProductMapper productMapper,ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService) {
         this.productRepository = productRepository;
-        this.modelPropertyKeyService = modelPropertyKeyService;
+        this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
     }
 
@@ -36,13 +36,13 @@ public class ProductService {
        return product;
     }
 
-    public ModelPropertyKeyDTO makeProductProperty(ModelPropertyRequest createModelPropertyRequest) {
-        getById(createModelPropertyRequest.getProductId());
-        return modelPropertyKeyService.makeModelPropertyKey(createModelPropertyRequest);
+    public ProductPropertyKeyDTO makeProductProperty(ProductPropertyRequest createProductPropertyRequest) {
+        getById(createProductPropertyRequest.getProductId());
+        return productPropertyKeyService.makeProductPropertyKey(createProductPropertyRequest);
     }
 
-    public ModelPropertyKeyDTO updateModelProperty(Long id, ModelPropertyRequest modelPropertyRequest) {
-        return modelPropertyKeyService.updateModelPropertyKey(id, modelPropertyRequest);
+    public ProductPropertyKeyDTO updateProductProperty(Long id, ProductPropertyRequest productPropertyRequest) {
+        return productPropertyKeyService.updateProductPropertyKey(id, productPropertyRequest);
     }
 
 
