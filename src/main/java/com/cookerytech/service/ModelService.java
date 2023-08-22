@@ -1,16 +1,25 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Brand;
 import com.cookerytech.domain.Model;
+import com.cookerytech.dto.BrandDTO;
+import com.cookerytech.dto.ModelDTO;
+import com.cookerytech.dto.request.ModelCreatRequest;
 import com.cookerytech.dto.request.ModelUpdateRequest;
 import com.cookerytech.dto.response.ModelResponse;
 import com.cookerytech.exception.BadRequestException;
+import com.cookerytech.exception.ConflictException;
+import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.repository.ModelRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +45,6 @@ public class ModelService {
         model.setStockAmount(modelUpdateRequest.getStockAmount());
         model.setInBoxQuantity(modelUpdateRequest.getInBoxQuantity());
         model.setSeq(modelUpdateRequest.getSeq());
-        model.setImageId(modelUpdateRequest.getImageId());
         model.setBuyingPrice(modelUpdateRequest.getBuyingPrice());
         model.setTaxRate(modelUpdateRequest.getTaxRate());
         model.setIsActive(modelUpdateRequest.getIsActive());
@@ -64,4 +72,52 @@ public class ModelService {
         return modelMapper.modelToModelResponse(model);
 
     }
+
+    public ModelDTO creatModel(ModelCreatRequest modelCreatRequest) {
+        Boolean existsBySku= modelRepository.existsBySku(modelCreatRequest.getSku());
+
+        if(existsBySku) {
+            throw new ConflictException(ErrorMessage.SKU_ALREADY_EXİST);
+        }
+        LocalDateTime now = LocalDateTime.now();
+        //Gelen ImageId lerine göre Imagesler getirilecek
+        //Gelen currencyId ye göre currency getirilecek
+        //Gelen productId ye göre product getirilecek
+
+
+        Model model=new Model();
+        model.setTitle(modelCreatRequest.getTitle());
+        model.setSku(modelCreatRequest.getSku());
+        model.setStockAmount(modelCreatRequest.getStockAmount());
+        model.setInBoxQuantity(modelCreatRequest.getInBoxQuantity());
+        model.setSeq(model.getSeq());
+        //model.setImages(images);
+        model.setBuyingPrice(modelCreatRequest.getBuyingPrice());
+        model.setTaxRate(modelCreatRequest.getTaxRate());
+        model.setIsActive(modelCreatRequest.getIsActive());
+        //model.setCurrency(currency);
+        //model.setProduct(product);
+        model.setCreateAt(now);
+        Model savedModel= modelRepository.save(model);
+        return modelMapper.modelToModelDTO(savedModel);
+
+
+
+    }
+
+
+    public Page<ModelDTO> getModelDTOPage(Pageable pageable) {
+
+        Page<Model> modelPage = modelRepository.getActiveModels(pageable);
+
+        return modelPage.map(model -> modelMapper.modelToModelDTO(model));
+
+    }
+
+    public List<ModelDTO> getModelsByProductId(Long productId) {
+        List<Model> modelList= modelRepository.findAllByProductId(productId);
+        return  modelMapper.map(modelList);
+
+    }
+
 }

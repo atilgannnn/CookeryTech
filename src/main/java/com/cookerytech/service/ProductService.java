@@ -1,6 +1,9 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Product;
+import com.cookerytech.domain.Role;
+import com.cookerytech.domain.enums.RoleType;
+import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.exception.ResourceNotFoundException;
@@ -14,7 +17,10 @@ import com.cookerytech.mapper.ProductMapper;
 
 
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,10 +30,17 @@ public class ProductService {
     private final ProductPropertyKeyService productPropertyKeyService;
     private final ProductMapper productMapper;
 
-    public ProductService(ProductMapper productMapper,ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService) {
+    private final ModelService modelService;
+
+    private final UserService userService;
+
+
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, ModelService modelService, UserService userService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
+        this.modelService = modelService;
+        this.userService = userService;
     }
 
     public Product getById(Long id){
@@ -99,4 +112,16 @@ public class ProductService {
         return product;
     }
 
+    public List<ModelDTO> getModelsByProductId(Long id) {
+        List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(id);
+        List<ModelDTO> modelDTOS=new ArrayList<>();
+        modelDTOS=adminModelDTOS.stream().filter(model->model.getIsActive()).collect(Collectors.toList());
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+        if (!userRole.contains(RoleType.ROLE_ADMIN)) {
+            return modelDTOS;
+        }
+        return adminModelDTOS;
+
+    }
 }

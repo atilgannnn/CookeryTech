@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class Model {
     @Column(length = 150, nullable = false)  //DTO da @Size min 5 max 150
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String sku;
 
     @Column(nullable = false)
@@ -33,8 +34,9 @@ public class Model {
     @Column(nullable = false)
     private Integer seq=0;
 
-    @Column(nullable = false)
-    private Integer imageId;   //fk
+    //@OneToMany(orphanRemoval = true)
+    //@JoinColumn(name="model_id")
+    //private Set<Image> images;
 
     @Column(nullable = false)
     private Double buyingPrice;
