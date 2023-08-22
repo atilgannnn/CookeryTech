@@ -28,9 +28,9 @@ public class ModelUpdateRequest {
     @NotBlank
     private Boolean isActive;
     @NotBlank
-    private Integer currencyId;
+    private String currencyCode;
     @NotBlank
-    private  Integer productId;
+    private  Long productId;
 
     //private Boolean builtIn; // ?? Update edilebilecek mi?
 

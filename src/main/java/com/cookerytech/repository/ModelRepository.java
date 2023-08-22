@@ -14,12 +14,11 @@ import java.util.List;
 public interface ModelRepository extends JpaRepository<Model, Long> {
 
     @Query("SELECT m FROM Model m WHERE m.isActive = true")
-
     Page<Model> getActiveModels(Pageable pageable);
 
     Boolean existsBySku(String sku);
 
-    @Query("Select m from Model m join m.product pr  where pr.id=:productId")
+    @Query("Select m from Model m join m.product pr where pr.id=:productId")
     List<Model> findAllByProductId(@Param("productId") Long productId);
 
 }
