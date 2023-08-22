@@ -1,5 +1,6 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.ProductPropertyKey;
 import com.cookerytech.repository.ModelPropertyValueRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +15,7 @@ public class ModelPropertyValueService {
     }
 
 
-
+    public boolean existByProductPropertyKey(ProductPropertyKey productPropertyKey) {
+        return  modelPropertyValueRepository.existsByProductPropertyKey(productPropertyKey);
+    }
 }

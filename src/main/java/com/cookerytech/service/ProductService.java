@@ -45,6 +45,10 @@ public class ProductService {
         return productPropertyKeyService.updateProductPropertyKey(id, productPropertyRequest);
     }
 
+    public ProductPropertyKeyDTO deleteProductPropertyById(Long id) {
+        return productPropertyKeyService.deleteProductPropertyKey(id);
+    }
+
 
     public ProductDTO saveProduct(ProductSaveRequest productSaveRequest) {
 
@@ -98,5 +102,6 @@ public class ProductService {
         );
         return product;
     }
+
 
 }

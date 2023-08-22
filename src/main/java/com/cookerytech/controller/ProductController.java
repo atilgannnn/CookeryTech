@@ -39,7 +39,12 @@ public class ProductController {
 
 
 
-    //A10 Delete
+    @DeleteMapping("/{id}")  //A10 Delete
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<ProductPropertyKeyDTO> deleteProductProperty(@PathVariable Long id){
+       ProductPropertyKeyDTO deletedProductPropertyKey = productService.deleteProductPropertyById(id);
+       return ResponseEntity.ok(deletedProductPropertyKey);
+    }
 
 
     @PostMapping
