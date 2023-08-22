@@ -1,7 +1,7 @@
 package com.cookerytech.controller;
 
-import com.cookerytech.dto.ModelPropertyKeyDTO;
-import com.cookerytech.dto.request.ModelPropertyRequest;
+import com.cookerytech.dto.ProductPropertyKeyDTO;
+import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.service.ProductService;
 
 import com.cookerytech.dto.ProductDTO;
@@ -27,14 +27,14 @@ public class ProductController {
 
     @PostMapping("/properties")         //Sayfa 33 -> A08
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ModelPropertyKeyDTO makeModelProperty(@Valid @RequestBody ModelPropertyRequest createModelPropertyRequest){
-            return productService.makeProductProperty(createModelPropertyRequest);
+    public ProductPropertyKeyDTO makeProductProperty(@Valid @RequestBody ProductPropertyRequest createProductPropertyRequest){
+            return productService.makeProductProperty(createProductPropertyRequest);
     }
 
     @PutMapping("/properties/{id}")    //Sayfa 34 -> A09
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ModelPropertyKeyDTO updateModelProperty(@RequestParam("id") Long id, @Valid @RequestBody ModelPropertyRequest modelPropertyRequest){
-        return productService.updateModelProperty(id,modelPropertyRequest);
+    public ProductPropertyKeyDTO updateProductProperty(@RequestParam("id") Long id, @Valid @RequestBody ProductPropertyRequest productPropertyRequest){
+        return productService.updateProductProperty(id, productPropertyRequest);
     }
 
 

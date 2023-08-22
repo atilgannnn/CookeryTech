@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModelPropertyRequest {
+public class ProductPropertyRequest {
 
     @NotBlank(message = "Please provide a property")
     private String name;

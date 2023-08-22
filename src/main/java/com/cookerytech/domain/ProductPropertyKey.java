@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "t_modelPropertyKey")
-public class ModelPropertyKey {
+public class ProductPropertyKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
