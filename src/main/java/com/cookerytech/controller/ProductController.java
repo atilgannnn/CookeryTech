@@ -1,5 +1,6 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.service.ProductService;
@@ -8,12 +9,17 @@ import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -57,6 +63,18 @@ public class ProductController {
 
         ProductDTO updateProductDTO = productService.updateProductId(id,productSaveRequest);
         return ResponseEntity.ok(updateProductDTO);
+
+    }
+
+    @GetMapping("/{id}/models")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
+            " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<ModelDTO>> getModelsByProductId(@PathVariable Long id){
+        List<ModelDTO> modelDTOS= productService.getModelsByProductId(id);
+        return ResponseEntity.ok(modelDTOS);
+
+
+
 
     }
 

@@ -20,4 +20,5 @@ public class ErrorMessage {
     public static final String NO_ACTIVE_BRANDS_MESSAGE = "There are no active brands";
 
     public static final String CAN_NOT_UPDATE ="This data can not update";
+    public static final String SKU_ALREADY_EXİST = "Sku already exist";
 }
