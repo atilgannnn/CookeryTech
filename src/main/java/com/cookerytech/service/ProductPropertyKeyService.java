@@ -11,6 +11,8 @@ import com.cookerytech.repository.ProductPropertyKeyRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductPropertyKeyService {
 
@@ -32,7 +34,7 @@ public class ProductPropertyKeyService {
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
         productPropertyKey.setName(createProductPropertyRequest.getName());
-        productPropertyKey.setProductId(productService.getById(createProductPropertyRequest.getProductId()));
+        productPropertyKey.setProduct(productService.getById(createProductPropertyRequest.getProductId()));
         productPropertyKey.setBuiltIn(false);
 
        ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
@@ -55,5 +57,11 @@ public class ProductPropertyKeyService {
         productPropertyKey = productPropertyKeyMapper.productPropertyKeyRequestToProductPropertyKey(productPropertyRequest);
         productPropertyKeyRepository.save(productPropertyKey);
         return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
+    }
+
+    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long productId) {
+
+        List<ProductPropertyKey> productPropertyKeys = productPropertyKeyRepository.findAllByProductId(productId);
+      return   productPropertyKeyMapper.map(productPropertyKeys);
     }
 }

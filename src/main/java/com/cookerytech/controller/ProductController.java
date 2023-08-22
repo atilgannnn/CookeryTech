@@ -6,6 +6,7 @@ import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.service.ProductService;
 
 import com.cookerytech.dto.ProductDTO;
+import com.cookerytech.service.ProductService;
 import com.cookerytech.dto.request.ProductSaveRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
@@ -27,9 +28,11 @@ public class ProductController {
 
     private final ProductService productService;
 
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
 
     @PostMapping("/properties")         //Sayfa 33 -> A08
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
@@ -44,27 +47,33 @@ public class ProductController {
     }
 
 
-    @PostMapping
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<CTResponse> createProduct(
-            @Valid @RequestBody ProductSaveRequest productSaveRequest){
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id){
+        ProductDTO deletedProduct =  productService.deleteProductById(id);
+        return  ResponseEntity.ok(deletedProduct);
+    }
 
-        productService.saveProduct(productSaveRequest);
+//    @PutMapping("/{id}")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+//    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductSaveRequest productSaveRequest){
+//
+//        ProductDTO updateProductDTO = productService.updateProductId(id,productSaveRequest);
+//        return ResponseEntity.ok(updateProductDTO);
+//
+//    }
 
-        CTResponse response = new CTResponse(ResponseMessage.PRODUCT_SAVED_RESPONSE_MESSAGE, true);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @GetMapping("/{id}/properties")    //Sayfa 32 -> A07
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<List<ProductPropertyKeyDTO>> getPropertyKeyByProductId(@PathVariable Long id){
+
+        List<ProductPropertyKeyDTO> productPropertyKeyDTOS = productService.getPropertyKeyByProductId(id);
+
+        return  ResponseEntity.ok(productPropertyKeyDTOS);
 
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductSaveRequest productSaveRequest){
-
-        ProductDTO updateProductDTO = productService.updateProductId(id,productSaveRequest);
-        return ResponseEntity.ok(updateProductDTO);
-
-    }
 
     @GetMapping("/{id}/models")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +

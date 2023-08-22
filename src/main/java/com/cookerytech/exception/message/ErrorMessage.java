@@ -21,4 +21,5 @@ public class ErrorMessage {
 
     public static final String CAN_NOT_UPDATE ="This data can not update";
     public static final String SKU_ALREADY_EXİST = "Sku already exist";
+    public static final String BRAND_CAN_NOT_DELETED = "The Brand has related records in products table,";
 }
