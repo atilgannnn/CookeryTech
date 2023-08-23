@@ -5,6 +5,7 @@ import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.request.RegisterRequest;
 import com.cookerytech.dto.request.UserDeleteRequest;
+import com.cookerytech.dto.request.UserRequest;
 import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.exception.BadRequestException;
@@ -189,5 +190,40 @@ public class UserService {
     public UserResponse getUserResponseById(Long id) {
         return new UserResponse(getById(id));
 
+    }
+
+
+    public UserResponse updateUser(UserRequest userRequest) {
+
+
+
+        User user =getCurrentUser();
+      if(user.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+      }
+
+
+        boolean emailExist = userRepository.existsByEmail(userRequest.getEmail());// burada Db de varmı baklılcak
+        //Sneryo kontrolu
+        if(emailExist && !userRequest.getEmail().equals(user.getEmail())) {// buraya 3 senaryoda girme kontorlu
+            throw new ConflictException(
+                    String.format(ErrorMessage.EMAIL_ALREADY_EXIST_MESSAGE,userRequest.getEmail()));
+        }
+
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setEmail(userRequest.getEmail());
+        user.setPhone(userRequest.getPhone());
+        user.setAddress(userRequest.getAddress());
+        user.setCity(userRequest.getCity());
+        user.setCountry(userRequest.getCountry());
+        user.setBirthDate(userRequest.getBirthDate());
+        user.setTaxNo(userRequest.getTaxNo());
+        user.setStatus(userRequest.getStatus());
+        user.setUpdateAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        UserResponse userResponse = new UserResponse(user);
+        return userResponse;
     }
 }
