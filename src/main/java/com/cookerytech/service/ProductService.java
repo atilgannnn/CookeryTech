@@ -1,5 +1,7 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Brand;
+import com.cookerytech.domain.Category;
 import com.cookerytech.domain.Product;
 import com.cookerytech.domain.Role;
 import com.cookerytech.domain.enums.RoleType;
@@ -36,13 +38,19 @@ public class ProductService {
 
     private final UserService userService;
 
+    private final BrandService brandService;
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService) {
+    private final CategoryService categoryService;
+
+
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
         this.modelService = modelService;
         this.userService = userService;
+        this.brandService = brandService;
+        this.categoryService = categoryService;
     }
 
     public Product getById(Long id){
@@ -101,6 +109,69 @@ public class ProductService {
       return   productMapper.map(products);
     }
 
+    public ProductDTO saveProduct(ProductSaveRequest productSaveRequest) {
+
+
+        String titleCumle = productSaveRequest.getTitle();
+        titleCumle.replaceAll("[^a-zA-ZğüşıöçĞÜŞİÖÇ\\s]", "-").toLowerCase(); // title -> Kahve Makinesi
+        // sluq  -> kahve-makinesi
+
+        //Product product = productMapper.productSaveRequestToProduct(productSaveRequest);
+
+        Product product = new Product();
+
+        Set<Brand> brandSet =  productSaveRequest.getBrandsIds().stream().map(brandId->brandService.getBrand(brandId)).collect(Collectors.toSet());
+
+        Category category = categoryService.getCategory(productSaveRequest.getCategoryId());
+
+
+        product.setTitle(productSaveRequest.getTitle());
+        product.setShortDesc(productSaveRequest.getShortDesc());
+        product.setLongDesc(productSaveRequest.getLongDesc());
+        product.setSeq(productSaveRequest.getSeq());
+        product.setIsNew(productSaveRequest.getIsNew());
+        product.setIsFeatured(productSaveRequest.getIsFeatured());
+        product.setIsActive(productSaveRequest.getIsActive());
+        product.setBrands(brandSet);
+        product.setCategory(category);
+        product.setCreateAt(LocalDateTime.now());
+        product.setSlug(titleCumle);
+
+        Product createProduct = productRepository.save(product);
+
+        return productMapper.productToproductDTO(createProduct);
+
+    }
+
+    public ProductDTO updateProductId(Long id, ProductSaveRequest productSaveRequest) {
+
+        Product product = getProduct(id);
+
+        if(product.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        product.setTitle(productSaveRequest.getTitle());
+        product.setShortDesc(productSaveRequest.getShortDesc());
+        product.setLongDesc(productSaveRequest.getLongDesc());
+        product.setSeq(productSaveRequest.getSeq());
+        product.setIsNew(productSaveRequest.getIsNew());
+        product.setIsFeatured(productSaveRequest.getIsFeatured());
+        product.setIsActive(productSaveRequest.getIsActive());
+        product.setSlug(product.getSlug());
+        product.setBrands(product.getBrands());
+        product.setCategory(product.getCategory());
+        product.setUpdateAt(now);
+
+        Product updateProduct = productRepository.save(product);
+
+        return productMapper.productToproductDTO(updateProduct);
+
+    }
+
+
 
 
     public List<Product> getProductByBrandId(Long brandId) {
@@ -155,6 +226,4 @@ public class ProductService {
         return productPropertyKeyDTOS;
 
     }
-
-
 }

@@ -33,6 +33,23 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<CTResponse> createProduct(
+            @Valid @RequestBody ProductSaveRequest productSaveRequest){
+        productService.saveProduct(productSaveRequest);
+        CTResponse response = new CTResponse(ResponseMessage.PRODUCT_SAVED_RESPONSE_MESSAGE, true);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductSaveRequest productSaveRequest){
+
+        ProductDTO updateProductDTO = productService.updateProductId(id,productSaveRequest);
+        return ResponseEntity.ok(updateProductDTO);
+
+    }
 
     @PostMapping("/properties")         //Sayfa 33 -> A08
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
@@ -46,23 +63,12 @@ public class ProductController {
         return productService.updateProductProperty(id, productPropertyRequest);
     }
 
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id){
         ProductDTO deletedProduct =  productService.deleteProductById(id);
         return  ResponseEntity.ok(deletedProduct);
     }
-
-//    @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-//    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductSaveRequest productSaveRequest){
-//
-//        ProductDTO updateProductDTO = productService.updateProductId(id,productSaveRequest);
-//        return ResponseEntity.ok(updateProductDTO);
-//
-//    }
-
 
     @GetMapping("/{id}/properties")    //Sayfa 32 -> A07
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
@@ -74,7 +80,6 @@ public class ProductController {
 
     }
 
-
     @GetMapping("/{id}/models")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
             " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
@@ -82,11 +87,6 @@ public class ProductController {
         List<ModelDTO> modelDTOS= productService.getModelsByProductId(id);
         return ResponseEntity.ok(modelDTOS);
 
-
-
-
     }
-
-
 
 }

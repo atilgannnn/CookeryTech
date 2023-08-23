@@ -4,6 +4,7 @@ import com.cookerytech.domain.Brand;
 import com.cookerytech.domain.Category;
 import com.cookerytech.domain.Product;
 import com.cookerytech.dto.ProductDTO;
+import com.cookerytech.dto.request.ProductSaveRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -23,8 +24,6 @@ public interface ProductMapper {
     ProductDTO productToproductDTO(Product product);
 
     List<ProductDTO> map(List<Product> products);
-
-
     @Named("getCategoryId")
     public static Long getCategoryId(Category category) {
         return category.getId();
@@ -34,11 +33,14 @@ public interface ProductMapper {
     public static Set<Long> getBrandIds(Set<Brand> brands) {
         Set<Long> brandIds = new HashSet<>();
 
-       brandIds  = brands.stream().map(brand->(Long)brand.getId()).collect(Collectors.toSet());
+       brandIds  = brands.stream().map(brand->brand.getId()).collect(Collectors.toSet());
 
         return brandIds;
     }
 
-   // ProductDTO productToProductDTO(Product updateProduct);
+    //Product productSaveRequestToProduct(ProductSaveRequest productSaveRequest);
+
+    //ProductDTO productToProductDTO(Product updateProduct);
+
 }
 
