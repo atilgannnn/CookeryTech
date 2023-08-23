@@ -34,9 +34,9 @@ public class Model {
     @Column(nullable = false)
     private Integer seq=0;
 
-    //@OneToMany(orphanRemoval = true)
-    //@JoinColumn(name="model_id")
-    //private Set<Image> images;
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name="model_id")
+    private Set<Image> images;
 
     @Column(nullable = false)
     private Double buyingPrice;

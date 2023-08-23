@@ -12,6 +12,7 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.BrandMapper;
 import com.cookerytech.dto.request.BrandSaveRequest;
 import com.cookerytech.repository.BrandRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -99,7 +100,7 @@ public class BrandService {
 
 
     }
-    private Brand getBrand(Long id){
+    public Brand getBrand(Long id){
         Brand brand = brandRepository.findById(id).orElseThrow(()->
              new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );

@@ -1,7 +1,11 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Category;
 import com.cookerytech.dto.ProductDTO;
+import com.cookerytech.exception.ResourceNotFoundException;
+import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.CategoryRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,4 +28,11 @@ public class CategoryService {
         return productDTOList;
 
     }
+
+    public Category getCategory(Long id){
+
+        return categoryRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+
+    }
+
 }
