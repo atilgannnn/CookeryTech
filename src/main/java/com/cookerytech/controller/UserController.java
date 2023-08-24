@@ -2,6 +2,7 @@ package com.cookerytech.controller;
 
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.request.UserDeleteRequest;
+import com.cookerytech.dto.request.UserRequest;
 import com.cookerytech.dto.request.UserUpdateRequest;
 import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
@@ -62,6 +63,12 @@ public class UserController {
 
         Page<UserResponse> usersWithPage = userService.getUserPage(qLower, pageable);
         return  ResponseEntity.ok(usersWithPage);
+    }
+
+    @PutMapping("/users/auth")
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UserRequest userRequest){
+        UserResponse userResponse = userService.updateUser(userRequest);
+        return ResponseEntity.ok(userResponse);
     }
 
     @PatchMapping("/auth")
