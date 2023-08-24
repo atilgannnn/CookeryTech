@@ -1,10 +1,12 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Offer;
+import com.cookerytech.domain.OfferItem;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.dto.request.OfferCreate;
+import com.cookerytech.dto.response.OfferCreateResponse;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferMapper;
@@ -16,17 +18,23 @@ import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class OfferService {
 
     private final OfferRepository offerRepository;
     private final OfferMapper offerMapper;
+    private final UserService userService;
+    private final OfferItemService offerItemService;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper) {
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, OfferItemService offerItemService) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
+        this.userService = userService;
+        this.offerItemService = offerItemService;
     }
 
     public OfferDTO findByIdAndUser(Long id, User user) {
@@ -71,4 +79,47 @@ public class OfferService {
     }
 
 
+    //****************** offer create ********************************//
+    public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
+        User user = userService.getCurrentUser();
+        OfferCreateResponse offerCreateResponse = new OfferCreateResponse();
+        return offerCreateResponse;
+    }
+
+    //***** unique code generate  ********
+    public String codeGenerate(){
+
+        Random random = new Random();
+
+        List<String> codeNumeric = Arrays.asList("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","W","Y","Z","0","1","2","3","4","5","6","7","8","9");
+        StringBuilder uniqueCode = new StringBuilder();
+        for (int i=0; i<8; i++){
+            int randomNumber = random.nextInt(33-0+1)+0;
+            uniqueCode.append(codeNumeric.get(randomNumber));
+        }
+        String newCode = uniqueCode.toString();
+        return newCode;
+    }
+
+    //***** Create adilen code Database'de var mı? Kontrolü yapar     ********
+    public Boolean codeTest(String code){
+        return offerRepository.existsByCode(code);
+    }
+
+    //***** get offer items   ****************
+    public List<OfferItem> getOfferItems(Long offerId){
+        return offerItemService.getOfferItems(offerId);
+    }
+
+    //*****     grand_total calculate   *****
+    public Double grandTotalCalculate(Long offerId){
+        List<OfferItem> offerItems = getOfferItems(offerId);
+        Double grandTotal =0.0;
+        for (int i=0; i<offerItems.size(); i++){
+            grandTotal+=offerItems.get(i).getSubTotal()*(1- (offerItems.get(i).getDiscount()/100));
+        }
+        return grandTotal;
+    }
+
+    //  *****   stock amount decrease   ****
 }
