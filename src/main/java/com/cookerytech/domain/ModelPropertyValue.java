@@ -29,5 +29,5 @@ public class ModelPropertyValue {
 
     @OneToOne
     @JoinColumn(name = "modelPropertyKey")
-    private ModelPropertyKey modelPropertyKey;
+    private ProductPropertyKey productPropertyKey;
 }

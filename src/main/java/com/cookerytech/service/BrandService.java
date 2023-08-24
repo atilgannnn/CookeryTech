@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Brand;
+import com.cookerytech.domain.Product;
 import com.cookerytech.domain.Role;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.BrandDTO;
@@ -11,6 +12,7 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.BrandMapper;
 import com.cookerytech.dto.request.BrandSaveRequest;
 import com.cookerytech.repository.BrandRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
+    private final ProductService productService;
 
     private final UserService userService;
 
@@ -31,10 +34,11 @@ public class BrandService {
 
 
 
-
-    public BrandService(BrandRepository brandRepository, BrandMapper brandMapper, UserService userService, RoleService roleService) {
+    public BrandService(BrandRepository brandRepository, BrandMapper brandMapper, ProductService productService,
+                        UserService userService,RoleService roleService) {
         this.brandRepository = brandRepository;
         this.brandMapper = brandMapper;
+        this.productService = productService;
         this.userService = userService;
         this.roleService = roleService;
     }
@@ -84,13 +88,19 @@ public class BrandService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
+       List<Product> productList=productService.getProductByBrandId(id);
+
+        if(productList.size()>0){
+            throw new BadRequestException(ErrorMessage.BRAND_CAN_NOT_DELETED);
+        }
+
         brandRepository.delete(brand);
 
         return  brandMapper.brandToBrandDTO(brand);
 
 
     }
-    private Brand getBrand(Long id){
+    public Brand getBrand(Long id){
         Brand brand = brandRepository.findById(id).orElseThrow(()->
              new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );

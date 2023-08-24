@@ -1,6 +1,5 @@
 package com.cookerytech.dto;
 
-import com.cookerytech.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModelPropertyKeyDTO {
+public class ProductPropertyKeyDTO {
 
 
     private Long id;
