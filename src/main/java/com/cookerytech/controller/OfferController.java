@@ -29,7 +29,6 @@ import java.util.List;
 public class OfferController {
 
     private final OfferService offerService;
-
     private final UserService userService;
 
     public OfferController(OfferService offerService,@Lazy UserService userService) {
@@ -74,8 +73,5 @@ public class OfferController {
         OfferDTO offerDTO = offerService.getOfferDTO(id);
         return offerDTO;
     }
-
-
-
 
 }
