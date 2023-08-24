@@ -55,7 +55,7 @@ public class CurrencyService {
             for (Element element : currencies) {
                 String kod = element.attr("Kod");
                 if (kod.equals("USD")) {
-                    price = Double.valueOf(element.select("ForexBuying").text());
+                    price = Double.valueOf(element.select("ForexBuying").text());//
                     currencyUSD.setCode("USD");
                     currencyUSD.setSymbol("$");
                     currencyUSD.setUpdateAt(LocalDateTime.now());
@@ -90,7 +90,7 @@ public class CurrencyService {
         }
         return currencyDTOPage;
     }
-    private Currency getCurrency(String code) {
+    public Currency getCurrency(String code) {
         return currencyRepository.findByCode(code).orElseGet(() -> {
             Currency newCurrency = new Currency();
             return newCurrency;

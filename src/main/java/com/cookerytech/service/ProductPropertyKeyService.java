@@ -11,6 +11,8 @@ import com.cookerytech.repository.ProductPropertyKeyRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductPropertyKeyService {
 
@@ -19,13 +21,10 @@ public class ProductPropertyKeyService {
     private final ProductService productService;
     private final ProductPropertyKeyMapper productPropertyKeyMapper;
 
-    private final ModelPropertyValueService modelPropertyValueService;
-
-    public ProductPropertyKeyService(ProductPropertyKeyRepository productPropertyKeyRepository, @Lazy ProductService productService, ProductPropertyKeyMapper productPropertyKeyMapper, ModelPropertyValueService modelPropertyValueService) {
+    public ProductPropertyKeyService(ProductPropertyKeyRepository productPropertyKeyRepository, @Lazy ProductService productService, ProductPropertyKeyMapper productPropertyKeyMapper) {
         this.productPropertyKeyRepository = productPropertyKeyRepository;
         this.productService = productService;
         this.productPropertyKeyMapper = productPropertyKeyMapper;
-        this.modelPropertyValueService = modelPropertyValueService;
     }
 
 
@@ -60,27 +59,9 @@ public class ProductPropertyKeyService {
         return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
     }
 
-    public ProductPropertyKeyDTO deleteProductPropertyKey(Long id) {
+    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long productId) {
 
-        ProductPropertyKey productPropertyKey = getById(id);
-
-        //builtIn kontrolü
-        if(productPropertyKey.getBuiltIn()){
-            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
-        }
-
-        // İlişkili ModelPropertyValue var mı kontrolü
-        boolean exist = modelPropertyValueService.existByProductPropertyKey(productPropertyKey);
-        if(exist) {
-            throw  new BadRequestException(ErrorMessage.CANNOT_BE_DELETED_MESSAGE);
-        }
-
-
-        productPropertyKeyRepository.delete(productPropertyKey);
-
-        return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
-
-
-
+        List<ProductPropertyKey> productPropertyKeys = productPropertyKeyRepository.findAllByProductId(productId);
+      return   productPropertyKeyMapper.map(productPropertyKeys);
     }
 }

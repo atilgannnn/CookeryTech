@@ -47,7 +47,6 @@ public class Product {
     @Column(nullable = false)
     private Boolean isActive=true;  // false: Not published true: published (for users)
 
-  //  private Image imageId;
 
 
     @Column(nullable = false)

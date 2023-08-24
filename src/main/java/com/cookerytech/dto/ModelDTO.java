@@ -1,7 +1,7 @@
 package com.cookerytech.dto;
 
-import com.cookerytech.domain.Brand;
-import com.cookerytech.domain.Category;
+import com.cookerytech.domain.Currency;
+import com.cookerytech.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,14 +9,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ModelDTO {
 
 
     private Long id;
@@ -25,22 +23,25 @@ public class ProductDTO {
     private String title;
 
 
-    private String shortDesc;
+    private String sku;
 
 
-    private String longDesc;
+    private Integer stockAmount;
 
 
-    private String slug;
+    private Integer inBoxQuantity;
 
 
     private Integer seq;
 
 
-    private Boolean isNew;
+   //private Integer imageId;   //fk
 
 
-    private Boolean isFeatured;
+    private Double buyingPrice;
+
+
+    private Double taxRate;
 
 
     private Boolean isActive;
@@ -49,14 +50,14 @@ public class ProductDTO {
     private Boolean builtIn;
 
 
-    private Set<Long> brandIds = new HashSet<>();
+    private Long currencyId;  //fk
 
 
-    private Long categoryId;
+    private Long productId;  //fk
 
 
     private LocalDateTime createAt;
 
-
     private LocalDateTime updateAt;
+
 }

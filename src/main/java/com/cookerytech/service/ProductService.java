@@ -1,11 +1,17 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Brand;
+import com.cookerytech.domain.Category;
 import com.cookerytech.domain.Product;
+import com.cookerytech.domain.Role;
+import com.cookerytech.domain.enums.RoleType;
+import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.ProductRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
@@ -13,8 +19,12 @@ import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.mapper.ProductMapper;
 
 
-import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,10 +34,23 @@ public class ProductService {
     private final ProductPropertyKeyService productPropertyKeyService;
     private final ProductMapper productMapper;
 
-    public ProductService(ProductMapper productMapper,ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService) {
+    private final ModelService modelService;
+
+    private final UserService userService;
+
+    private final BrandService brandService;
+
+    private final CategoryService categoryService;
+
+
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
+        this.modelService = modelService;
+        this.userService = userService;
+        this.brandService = brandService;
+        this.categoryService = categoryService;
     }
 
     public Product getById(Long id){
@@ -45,10 +68,46 @@ public class ProductService {
         return productPropertyKeyService.updateProductPropertyKey(id, productPropertyRequest);
     }
 
-    public ProductPropertyKeyDTO deleteProductPropertyById(Long id) {
-        return productPropertyKeyService.deleteProductPropertyKey(id);
+//    public ProductDTO deleteBrandById(Long id) {
+//     Product product = getProduct(id);
+//
+//     if(product.getBuiltIn()){
+//         throw  new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+//     }
+//
+//
+//     productRepository.delete(product);
+//
+//    }
+
+    private Product getProduct(Long id){
+       Product product=  productRepository.findById(id).orElseThrow(()->
+           new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
+        );
+        return product;
     }
 
+    public ProductDTO deleteProductById(Long id) {
+        Product product = getProduct(id);
+        if (product.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        //offer-item iliskisi varsa silinemez
+        //Herhangi bir ürün silinmişse model, model_property_keys,
+        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
+
+        //eksikleri tamamla!!!
+        productRepository.delete(product);
+
+        return  productMapper.productToproductDTO(product);
+    }
+
+    public List<ProductDTO> getProductsByCategory(Long categoryId) {
+
+        List<Product> products = productRepository.getProductsByCategory(categoryId);
+
+      return   productMapper.map(products);
+    }
 
     public ProductDTO saveProduct(ProductSaveRequest productSaveRequest) {
 
@@ -57,14 +116,30 @@ public class ProductService {
         titleCumle.replaceAll("[^a-zA-ZğüşıöçĞÜŞİÖÇ\\s]", "-").toLowerCase(); // title -> Kahve Makinesi
         // sluq  -> kahve-makinesi
 
-        Product product = productMapper.productSaveRequestToProduct(productSaveRequest);
+        //Product product = productMapper.productSaveRequestToProduct(productSaveRequest);
 
+        Product product = new Product();
+
+        Set<Brand> brandSet =  productSaveRequest.getBrandsIds().stream().map(brandId->brandService.getBrand(brandId)).collect(Collectors.toSet());
+
+        Category category = categoryService.getCategory(productSaveRequest.getCategoryId());
+
+
+        product.setTitle(productSaveRequest.getTitle());
+        product.setShortDesc(productSaveRequest.getShortDesc());
+        product.setLongDesc(productSaveRequest.getLongDesc());
+        product.setSeq(productSaveRequest.getSeq());
+        product.setIsNew(productSaveRequest.getIsNew());
+        product.setIsFeatured(productSaveRequest.getIsFeatured());
+        product.setIsActive(productSaveRequest.getIsActive());
+        product.setBrands(brandSet);
+        product.setCategory(category);
         product.setCreateAt(LocalDateTime.now());
         product.setSlug(titleCumle);
 
         Product createProduct = productRepository.save(product);
 
-        return productMapper.productToProductDTO(createProduct);
+        return productMapper.productToproductDTO(createProduct);
 
     }
 
@@ -92,16 +167,63 @@ public class ProductService {
 
         Product updateProduct = productRepository.save(product);
 
-        return productMapper.productToProductDTO(updateProduct);
+        return productMapper.productToproductDTO(updateProduct);
 
     }
 
-    private Product getProduct(Long id){
-        Product product = productRepository.findById(id).orElseThrow(()->
-        new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
-        );
-        return product;
+
+
+
+    public List<Product> getProductByBrandId(Long brandId) {
+
+        List<Product> productList = productRepository.findProductByBrandId(brandId);
+
+        return productList;
+    }
+//    public ProductDTO updateProductId(Long id, ProductSaveRequest productSaveRequest) {
+//
+//        Product product = getProduct(id);
+//
+//        if(product.getBuiltIn()){
+//            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+//        }
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        product.setTitle(productSaveRequest.getTitle());
+//        product.setShortDesc(productSaveRequest.getShortDesc());
+//        product.setLongDesc(productSaveRequest.getLongDesc());
+//        product.setSeq(productSaveRequest.getSeq());
+//        product.setIsNew(productSaveRequest.getIsNew());
+//        product.setIsFeatured(productSaveRequest.getIsFeatured());
+//        product.setIsActive(productSaveRequest.getIsActive());
+//        product.setSlug(product.getSlug());
+//        product.setBrands(product.getBrands());
+//        product.setCategory(product.getCategory());
+//        product.setUpdateAt(now);
+//
+//        Product updateProduct = productRepository.save(product);
+//
+//        return productMapper.productToProductDTO(updateProduct);
+//
+//    }
+
+    public List<ModelDTO> getModelsByProductId(Long id) {
+        List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(id);
+        List<ModelDTO> modelDTOS=new ArrayList<>();
+        modelDTOS=adminModelDTOS.stream().filter(model->model.getIsActive()).collect(Collectors.toList());
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+        if (!userRole.contains(RoleType.ROLE_ADMIN)) {
+            return modelDTOS;
+        }
+        return adminModelDTOS;
+
     }
 
+    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
+        List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
+        return productPropertyKeyDTOS;
 
+    }
 }
