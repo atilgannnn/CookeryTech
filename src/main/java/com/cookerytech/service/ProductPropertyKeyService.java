@@ -34,7 +34,7 @@ public class ProductPropertyKeyService {
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
         productPropertyKey.setName(createProductPropertyRequest.getName());
-        productPropertyKey.setProduct(productService.getById(createProductPropertyRequest.getProductId()));
+        productPropertyKey.setProductId(productService.getById(createProductPropertyRequest.getProductId()));
         productPropertyKey.setBuiltIn(false);
 
        ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);

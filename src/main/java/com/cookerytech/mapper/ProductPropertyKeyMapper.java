@@ -14,14 +14,13 @@ import java.util.List;
 
 
 @Mapper(componentModel = "spring")
-@Component
 public interface ProductPropertyKeyMapper {
 
 
-   @Mapping(source="product", target="productId", qualifiedByName = "getProductId")
+   @Mapping(source="productId", target="productId", qualifiedByName = "getProductId")
    ProductPropertyKeyDTO productPropertyKeyToProductPropertyKeyDTO(ProductPropertyKey productPropertyKey);
 
-   @Mapping(source = "productId",target = "product", ignore = true)
+   @Mapping(source = "productId",target = "productId", ignore = true)
    ProductPropertyKey productPropertyKeyRequestToProductPropertyKey(ProductPropertyRequest productPropertyRequest);
 
    List<ProductPropertyKeyDTO> map(List<ProductPropertyKey> productPropertyKeys);
