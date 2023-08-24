@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Page<UserResponse> getAllUserWithQAdmin(String q, Pageable pageable);
 
     void deleteByEmail(User user);
+    @EntityGraph(attributePaths = "roles")
+    User save(User user);
 }

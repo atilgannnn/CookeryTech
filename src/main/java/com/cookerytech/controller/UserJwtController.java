@@ -1,6 +1,7 @@
 package com.cookerytech.controller;
 
 
+import com.cookerytech.dto.UserDTO;
 import com.cookerytech.dto.request.ForgotPasswordRequest;
 import com.cookerytech.dto.request.LoginRequest;
 import com.cookerytech.dto.request.RegisterRequest;
@@ -8,7 +9,6 @@ import com.cookerytech.dto.request.ResetPasswordRequest;
 import com.cookerytech.dto.response.*;
 import com.cookerytech.security.jwt.*;
 import com.cookerytech.service.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
@@ -20,26 +20,29 @@ import javax.validation.*;
 @RestController
 public class UserJwtController {
 
-    @Autowired
-    private JwtUtils jwtUtils;
 
-    @Autowired
-    private UserService userService;
+    private final JwtUtils jwtUtils;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;//ilk karsilayacak olan
+
+    private final UserService userService;
+
+
+    private final AuthenticationManager authenticationManager;//ilk karsilayacak olan
+
+    public UserJwtController(JwtUtils jwtUtils, UserService userService, AuthenticationManager authenticationManager) {
+        this.jwtUtils = jwtUtils;
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+    }
 
 
     @PostMapping("/register")
-    public ResponseEntity<CTResponse> registerUser(@Valid
+    public ResponseEntity<UserDTO> registerUser(@Valid
                                                    @RequestBody RegisterRequest registerRequest) {
-        userService.saveUser(registerRequest);
+        UserDTO userDTO=  userService.saveUser(registerRequest);
 
-        CTResponse response = new CTResponse();
-        response.setMessage(ResponseMessage.REGISTER_RESPONSE_MESSAGE);
-        response.setSuccess(true);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
 
