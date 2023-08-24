@@ -35,4 +35,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @EntityGraph(attributePaths = "offer")
     @Query("SELECT oi FROM OfferItem oi LEFT JOIN FETCH oi.offer WHERE oi.offer=: offerId ")
     Optional<Offer> findByOfferId(@Param("offerId") Long id);
+
+    Boolean existsByCode(String code);
 }

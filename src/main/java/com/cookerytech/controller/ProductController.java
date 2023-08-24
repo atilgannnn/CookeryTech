@@ -53,14 +53,16 @@ public class ProductController {
 
     @PostMapping("/properties")         //Sayfa 33 -> A08
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ProductPropertyKeyDTO makeProductProperty(@Valid @RequestBody ProductPropertyRequest createProductPropertyRequest){
-            return productService.makeProductProperty(createProductPropertyRequest);
+    public ResponseEntity<ProductPropertyKeyDTO> makeProductProperty(@Valid @RequestBody ProductPropertyRequest createProductPropertyRequest){
+            ProductPropertyKeyDTO productPropertyKeyDTO = productService.makeProductProperty(createProductPropertyRequest);
+            return ResponseEntity.ok(productPropertyKeyDTO);
     }
 
     @PutMapping("/properties/{id}")    //Sayfa 34 -> A09
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ProductPropertyKeyDTO updateProductProperty(@RequestParam("id") Long id, @Valid @RequestBody ProductPropertyRequest productPropertyRequest){
-        return productService.updateProductProperty(id, productPropertyRequest);
+    public ResponseEntity<ProductPropertyKeyDTO> updateProductProperty(@RequestParam("id") Long id, @Valid @RequestBody ProductPropertyRequest productPropertyRequest){
+        ProductPropertyKeyDTO productPropertyKeyDTO = productService.updateProductProperty(id, productPropertyRequest);
+        return ResponseEntity.ok(productPropertyKeyDTO);
     }
 
     @DeleteMapping("/{id}")
