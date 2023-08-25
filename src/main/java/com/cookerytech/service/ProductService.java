@@ -226,4 +226,10 @@ public class ProductService {
         return productPropertyKeyDTOS;
 
     }
+
+
+    public ProductPropertyKeyDTO deleteProductPropertyById(Long id) {  //A10
+        return productPropertyKeyService.deleteProductPropertyKey(id);
+    }
+    
 }

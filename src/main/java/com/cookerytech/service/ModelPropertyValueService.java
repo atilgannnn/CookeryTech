@@ -13,9 +13,9 @@ public class ModelPropertyValueService {
     public ModelPropertyValueService(ModelPropertyValueRepository modelPropertyValueRepository) {
         this.modelPropertyValueRepository = modelPropertyValueRepository;
     }
-
-
-    public boolean existByProductPropertyKey(ProductPropertyKey productPropertyKey) {
+    public boolean existByProductPropertyKey(ProductPropertyKey productPropertyKey) {  //A10
         return  modelPropertyValueRepository.existsByProductPropertyKey(productPropertyKey);
     }
+
+
 }
