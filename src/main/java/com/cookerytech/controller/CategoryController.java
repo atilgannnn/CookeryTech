@@ -1,14 +1,21 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.dto.BrandDTO;
+import com.cookerytech.dto.CategoryDTO;
 import com.cookerytech.dto.ProductDTO;
+import com.cookerytech.dto.request.BrandRequest;
+import com.cookerytech.dto.request.BrandSaveRequest;
+import com.cookerytech.dto.request.CategoryRequest;
+import com.cookerytech.dto.request.CategoryUpdateRequest;
+import com.cookerytech.dto.response.CTResponse;
+import com.cookerytech.dto.response.ResponseMessage;
 import com.cookerytech.service.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,6 +37,24 @@ public class CategoryController {
         List<ProductDTO>  productDTOList = categoryService.getProductsByCategory(categoryId);
 
         return ResponseEntity.ok(productDTOList);
+    }
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<CTResponse> createCategory(
+            @Valid @RequestBody CategoryRequest categoryRequest){
+
+        categoryService.saveCategory(categoryRequest);
+
+        CTResponse response = new CTResponse(ResponseMessage.CATEGORY_SAVED_RESPONSE_MESSAGE, true);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<CategoryDTO>  updateCategory(@PathVariable Long id, @RequestBody CategoryUpdateRequest categoryUpdateRequest){
+        CategoryDTO updatedCategoryDTO =  categoryService.updateCategoryWithId(id, categoryUpdateRequest);
+        return  ResponseEntity.ok(updatedCategoryDTO);
     }
 
 }
