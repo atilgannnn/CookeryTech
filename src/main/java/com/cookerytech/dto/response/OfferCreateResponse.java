@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -18,5 +20,5 @@ public class OfferCreateResponse {
     private Long id;
     private String code;
     private String status;
-    Set<OfferItem> items = new HashSet<>();
+    List<OfferItem> items = new ArrayList<>();
 }

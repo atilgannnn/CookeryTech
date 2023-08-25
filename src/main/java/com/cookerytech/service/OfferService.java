@@ -3,6 +3,7 @@ package com.cookerytech.service;
 import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.OfferItem;
 import com.cookerytech.domain.User;
+import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.dto.response.OfferCreateResponse;
@@ -12,9 +13,11 @@ import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -75,10 +78,42 @@ public class OfferService {
         return offerMapper.offerToOfferDTO(offer);
     }
 
+
     //****************** offer create ********************************//
     public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
         User user = userService.getCurrentUser();
-        OfferCreateResponse offerCreateResponse = new OfferCreateResponse();
+        OfferCreateResponse offerCreateResponse = new OfferCreateResponse();    //return edilecek
+        Offer newOffer = new Offer();                                           //DB'ye setlenecek
+        //OfferId'ye ihtiyaç duyulduğu için offer create edildi
+        newOffer.setDeliveryAt(offerCreate.getDeliveryDate());
+        offerRepository.save(newOffer);
+
+        Long offerId = newOffer.getId();
+
+        //code oluşturuldu ve DB'de varmı kontrolü yapıldı
+        Boolean isThereCode;
+        String code;
+        do{
+            code = codeGenerate();
+            isThereCode = codeTest(code);
+        }while (!isThereCode);
+
+        newOffer.setCode(code);
+        //grand total setlendi
+        newOffer.setGrandTotal(grandTotalCalculate(offerId));
+        //stock amount azalt
+        stockAmountDecrease(offerId);
+        newOffer.setStatus(OfferStatus.WAITING_FOR_APPROVAL);       //Burası AuthUser'a göre değişecek ise koda if eklenecek
+        newOffer.setUser(user);
+        newOffer.setCreateAt(LocalDateTime.now());
+        newOffer.setUpdateAt(LocalDateTime.now());
+
+        //response için gerekli işlemler
+        offerCreateResponse.setId(offerId);
+        offerCreateResponse.setCode(code);
+        offerCreateResponse.setStatus(newOffer.getStatus().name());
+        offerCreateResponse.setItems(getOfferItems(offerId));
+
         return offerCreateResponse;
     }
 
@@ -89,12 +124,12 @@ public class OfferService {
 
         List<String> codeNumeric = Arrays.asList("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","W","Y","Z","0","1","2","3","4","5","6","7","8","9");
         StringBuilder uniqueCode = new StringBuilder();
-         for (int i=0; i<8; i++){
+        for (int i=0; i<8; i++){
             int randomNumber = random.nextInt(33-0+1)+0;
             uniqueCode.append(codeNumeric.get(randomNumber));
-         }
-         String newCode = uniqueCode.toString();
-         return newCode;
+        }
+        String newCode = uniqueCode.toString();
+        return newCode;
     }
 
     //***** Create adilen code Database'de var mı? Kontrolü yapar     ********
@@ -119,6 +154,7 @@ public class OfferService {
 
     //  *****   stock amount decrease   ****
 
-
-
+    public List<Integer> stockAmountDecrease(Long offerId){
+        return offerItemService.stockAmountDecrease(offerId);
+    }
 }

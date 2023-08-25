@@ -21,10 +21,13 @@ public class ProductPropertyKeyService {
     private final ProductService productService;
     private final ProductPropertyKeyMapper productPropertyKeyMapper;
 
-    public ProductPropertyKeyService(ProductPropertyKeyRepository productPropertyKeyRepository, @Lazy ProductService productService, ProductPropertyKeyMapper productPropertyKeyMapper) {
+    private final ModelPropertyValueService modelPropertyValueService;
+
+    public ProductPropertyKeyService(ProductPropertyKeyRepository productPropertyKeyRepository, @Lazy ProductService productService, ProductPropertyKeyMapper productPropertyKeyMapper, ModelPropertyValueService modelPropertyValueService) {
         this.productPropertyKeyRepository = productPropertyKeyRepository;
         this.productService = productService;
         this.productPropertyKeyMapper = productPropertyKeyMapper;
+        this.modelPropertyValueService = modelPropertyValueService;
     }
 
 
@@ -59,9 +62,34 @@ public class ProductPropertyKeyService {
         return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
     }
 
-    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long productId) {
 
+
+    public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long productId) {
         List<ProductPropertyKey> productPropertyKeys = productPropertyKeyRepository.findAllByProductId(productId);
-      return   productPropertyKeyMapper.map(productPropertyKeys);
+        return   productPropertyKeyMapper.map(productPropertyKeys);
     }
+
+    public ProductPropertyKeyDTO deleteProductPropertyKey(Long id) {  //A10
+
+        ProductPropertyKey productPropertyKey = getById(id);
+
+        //builtIn kontrolü
+        if(productPropertyKey.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        // İlişkili ModelPropertyValue var mı kontrolü
+        boolean exist = modelPropertyValueService.existByProductPropertyKey(productPropertyKey);
+        if(exist) {
+            throw  new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
+        }
+
+
+        productPropertyKeyRepository.delete(productPropertyKey);
+
+        return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
+
+    }
+
+
 }
