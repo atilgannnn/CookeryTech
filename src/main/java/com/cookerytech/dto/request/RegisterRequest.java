@@ -58,7 +58,9 @@ public class RegisterRequest {
     private String taxNo;
 
 
-    @Size(min=4 , max=120, message="Please provide Correct Size of Password")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", //Password1!
+            message = "The password must contain at least one letter, one number and one special character")
+    @Size(min=8 , max=120, message="Password must be at least 8 characters")
     @NotBlank(message="Please provide your password")
     private String password;
 

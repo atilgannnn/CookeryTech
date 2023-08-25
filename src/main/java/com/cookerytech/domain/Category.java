@@ -25,7 +25,7 @@ public class Category {
 
     private String description;
 
-    // @Column(nullable = false) ??
+    @Column(nullable = false)
     private Boolean builtIn=false;
 
     @Column(nullable = false)

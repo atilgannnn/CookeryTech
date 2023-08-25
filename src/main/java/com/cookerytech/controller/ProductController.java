@@ -65,6 +65,14 @@ public class ProductController {
         return ResponseEntity.ok(productPropertyKeyDTO);
     }
 
+    @DeleteMapping("/{id}")  //A10
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<ProductPropertyKeyDTO> deleteProductProperty(@PathVariable Long id){
+        ProductPropertyKeyDTO deletedProductPropertyKey = productService.deleteProductPropertyById(id);
+        return ResponseEntity.ok(deletedProductPropertyKey);
+    }
+
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id){
@@ -90,5 +98,7 @@ public class ProductController {
         return ResponseEntity.ok(modelDTOS);
 
     }
+
+
 
 }
