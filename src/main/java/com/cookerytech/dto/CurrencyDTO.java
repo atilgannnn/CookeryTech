@@ -20,7 +20,9 @@ public class CurrencyDTO {
 
     private Double value;
 
-    private LocalDateTime updateAt;
+    private String symbol;
+
+  //  private LocalDateTime updateAt;
 
 
 }

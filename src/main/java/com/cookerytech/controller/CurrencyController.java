@@ -23,6 +23,21 @@ public class CurrencyController {
     @Autowired
     private CurrencyService currencyService;
 
+
+    @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
+    public ResponseEntity<Page<CurrencyDTO>> getCurrenciesPages(
+
+            @RequestParam(required = false, value = "page", defaultValue = "0") int page,
+            @RequestParam(required = false, value = "size", defaultValue = "10") int size,
+            @RequestParam(required = false, value = "sort", defaultValue = "id") String prop,
+            @RequestParam(required = false, value = "type", defaultValue = "DESC") Sort.Direction direction) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+        Page<CurrencyDTO> currencies = currencyService.getCurrenciesPages(pageable);
+        return ResponseEntity.ok(currencies);
+    }
+
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<Page<CurrencyDTO>> getCurrenciesPage(

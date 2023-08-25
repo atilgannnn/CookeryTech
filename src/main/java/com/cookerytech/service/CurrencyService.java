@@ -90,12 +90,28 @@ public class CurrencyService {
         }
         return currencyDTOPage;
     }
+
+    public Page<CurrencyDTO> getCurrenciesPages(Pageable pageable) {
+        Page<CurrencyDTO> currencyDTOPage = null;
+
+        try {
+
+            Page<Currency> currencyPage = currencyRepository.findAll(pageable);
+
+            currencyDTOPage = currencyMapper.currencyPageToCurrencyDTOPage(currencyPage);
+
+            return currencyDTOPage;
+
+        } catch (Exception e) {
+            System.out.println("Siteye ulaşılamadı, lütfen internet bağlantınızı kontrol edin (Döviz)");
+        }
+        return currencyDTOPage;
+    }
+
     public Currency getCurrency(String code) {
         return currencyRepository.findByCode(code).orElseGet(() -> {
             Currency newCurrency = new Currency();
             return newCurrency;
         });
     }
-
-
 }
