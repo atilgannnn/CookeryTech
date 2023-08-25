@@ -80,6 +80,7 @@ public class OfferService {
 
 
     //****************** offer create ********************************//
+    //TODO : mail atılacak customer ve SS ye
     public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
         User user = userService.getCurrentUser();
         OfferCreateResponse offerCreateResponse = new OfferCreateResponse();    //return edilecek
