@@ -65,7 +65,7 @@ public class ProductController {
         return ResponseEntity.ok(productPropertyKeyDTO);
     }
 
-    @DeleteMapping("/{id}")  //A10
+    @DeleteMapping("/properties/{id}")  //A10
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ProductPropertyKeyDTO> deleteProductProperty(@PathVariable Long id){
         ProductPropertyKeyDTO deletedProductPropertyKey = productService.deleteProductPropertyById(id);
