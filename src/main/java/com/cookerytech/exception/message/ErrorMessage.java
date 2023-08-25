@@ -24,5 +24,8 @@ public class ErrorMessage {
     public static final String BRAND_CAN_NOT_DELETED = "The Brand has related records in products table,";
 
     public final static String IMAGE_NOT_FOUND_MESSAGE = "ImageFile with id %s not found";
-    public static final String CATEGORY_ALREADY_EXIST_MESSAGE = "Category already exist";;
+
+    public  final  static  String CAN_NOT_BE_DELETED_MESSAGE = "Cannot be deleted.Has related records in other table";
+
+
 }
