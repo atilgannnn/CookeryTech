@@ -28,4 +28,6 @@ public class ErrorMessage {
     public  final  static  String CAN_NOT_BE_DELETED_MESSAGE = "Cannot be deleted.Has related records in other table";
 
 
+
+    public static final String CATEGORY_ALREADY_EXIST_MESSAGE = "Category already exist";
 }
