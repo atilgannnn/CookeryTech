@@ -82,7 +82,38 @@ public class OfferService {
     //****************** offer create ********************************//
     public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
         User user = userService.getCurrentUser();
-        OfferCreateResponse offerCreateResponse = new OfferCreateResponse();
+        OfferCreateResponse offerCreateResponse = new OfferCreateResponse();    //return edilecek
+        Offer newOffer = new Offer();                                           //DB'ye setlenecek
+        //OfferId'ye ihtiyaç duyulduğu için offer create edildi
+        newOffer.setDeliveryAt(offerCreate.getDeliveryDate());
+        offerRepository.save(newOffer);
+
+        Long offerId = newOffer.getId();
+
+        //code oluşturuldu ve DB'de varmı kontrolü yapıldı
+        Boolean isThereCode;
+        String code;
+        do{
+            code = codeGenerate();
+            isThereCode = codeTest(code);
+        }while (!isThereCode);
+
+        newOffer.setCode(code);
+        //grand total setlendi
+        newOffer.setGrandTotal(grandTotalCalculate(offerId));
+        //stock amount azalt
+        stockAmountDecrease(offerId);
+        newOffer.setStatus(OfferStatus.WAITING_FOR_APPROVAL);       //Burası AuthUser'a göre değişecek ise koda if eklenecek
+        newOffer.setUser(user);
+        newOffer.setCreateAt(LocalDateTime.now());
+        newOffer.setUpdateAt(LocalDateTime.now());
+
+        //response için gerekli işlemler
+        offerCreateResponse.setId(offerId);
+        offerCreateResponse.setCode(code);
+        offerCreateResponse.setStatus(newOffer.getStatus().name());
+        offerCreateResponse.setItems(getOfferItems(offerId));
+
         return offerCreateResponse;
     }
 
@@ -122,4 +153,8 @@ public class OfferService {
     }
 
     //  *****   stock amount decrease   ****
+
+    public List<Integer> stockAmountDecrease(Long offerId){
+        return offerItemService.stockAmountDecrease(offerId);
+    }
 }
