@@ -77,10 +77,14 @@ public class CategoryService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
+        String titleCumle = categoryUpdateRequest.getTitle();
+        titleCumle.replaceAll("[^a-zA-ZğüşıöçĞÜŞİÖÇ\\s]", "-").toLowerCase();
+
         LocalDateTime now = LocalDateTime.now();
 
         category.setTitle(categoryUpdateRequest.getTitle());
         category.setIsActive(categoryUpdateRequest.getIsActive());
+        category.setSlug(titleCumle);
         category.setUpdateAt(now);
 
         Category updateCategory = categoryRepository.save(category);
