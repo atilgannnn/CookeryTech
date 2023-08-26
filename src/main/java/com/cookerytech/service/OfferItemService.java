@@ -38,4 +38,9 @@ public class OfferItemService {
         }
         return salesAmount;
     }
+
+    public Boolean existsOfferItemsByProductId(Long productId) {
+       return offerItemRepository.existsByProductId(productId);
+
+    }
 }

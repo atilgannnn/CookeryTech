@@ -41,9 +41,10 @@ public class ProductService {
     private final BrandService brandService;
 
     private final CategoryService categoryService;
+    private final OfferItemService offerItemService;
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -51,6 +52,7 @@ public class ProductService {
         this.userService = userService;
         this.brandService = brandService;
         this.categoryService = categoryService;
+        this.offerItemService = offerItemService;
     }
 
     public Product getById(Long id){
@@ -93,11 +95,28 @@ public class ProductService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
         //offer-item iliskisi varsa silinemez
-        //Herhangi bir ürün silinmişse model, model_property_keys,
+       Boolean  existsOfferItemsByProductId =  offerItemService.existsOfferItemsByProductId(id);
+        if(existsOfferItemsByProductId){
+            throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
+        }
+
+
+        productRepository.delete(product);
+
+      List<Long> modelIds =  modelService.getModelIdsByProductId(id);
+
+      for (Long modelId : modelIds){
+          modelService.deleteModelById(modelId);
+      }
+
+        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
+      for (Long pPKey:pPKeyIds){
+          productPropertyKeyService.deleteProductPropertyKey(pPKey);
+      }
+
         // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
 
         //eksikleri tamamla!!!
-        productRepository.delete(product);
 
         return  productMapper.productToproductDTO(product);
     }
