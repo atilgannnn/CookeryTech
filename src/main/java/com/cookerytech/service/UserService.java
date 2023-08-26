@@ -97,8 +97,9 @@ public class UserService {
     }
 
     //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
-    public User removeUserById(Long id) {
+    public UserDTO removeUserById(Long id) {
         User user = getById(id);
+        UserDTO userDTO = userMapper.userToUserDTO(user);
         User currentUser = getCurrentUser();
 
         if (user.getBuiltIn()){
@@ -120,7 +121,7 @@ public class UserService {
             userRepository.deleteById(id);
         }
 
-        return user;
+        return userDTO;
     }
 
     public Page<UserResponse> getUserPage(String qLower, Pageable pageable) {
