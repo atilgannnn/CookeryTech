@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,4 +121,8 @@ public class ModelService {
 
     }
 
+    public List<Long> getModelIdsByProductId(Long productId) {
+        List<Model> modelList= modelRepository.findAllByProductId(productId);
+        return modelList.stream().map(model -> model.getId()).collect(Collectors.toList());
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductPropertyKeyService {
@@ -68,6 +69,13 @@ public class ProductPropertyKeyService {
         List<ProductPropertyKey> productPropertyKeys = productPropertyKeyRepository.findAllByProductId(productId);
         return   productPropertyKeyMapper.map(productPropertyKeys);
     }
+
+    public List<Long> getPropertyKeyIdByProductId(Long productId) {
+        List<ProductPropertyKey> productPropertyKeys = productPropertyKeyRepository.findAllByProductId(productId);
+        return productPropertyKeys.stream().map(ppkey->ppkey.getId()).collect(Collectors.toList());
+    }
+
+
 
     public ProductPropertyKeyDTO deleteProductPropertyKey(Long id) {  //A10
 
