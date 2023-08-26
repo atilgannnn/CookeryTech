@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_modelPropertyKey")
+@Table(name = "t_productPropertyKey")
 public class ProductPropertyKey {
 
     @Id
