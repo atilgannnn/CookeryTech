@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,11 +26,11 @@ public class Cart_Items {
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product productId;
 
     @ManyToOne
-    @JoinColumn(name = "model_id")
+    @JoinColumn(name = "model_id", referencedColumnName = "id")
     private Model modelId;
 
     @Column(nullable = false)

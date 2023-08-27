@@ -4,8 +4,8 @@ import com.cookerytech.dto.response.CartResponse;
 import com.cookerytech.service.CartService;
 import com.cookerytech.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,10 +25,12 @@ public class CartController {
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<List<CartResponse>> getAllUsersCart(@PathVariable("id") Long id){
-        List<CartResponse> carts = cartService.getOffersByUserId(id);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
+            " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<CartResponse>> getUsersCart(){
+        List<CartResponse> cart = cartService.getCart();
 
-        return ResponseEntity.ok(carts);
+        return ResponseEntity.ok(cart);
     }
 
 }
