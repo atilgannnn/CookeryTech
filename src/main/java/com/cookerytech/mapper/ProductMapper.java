@@ -5,6 +5,7 @@ import com.cookerytech.domain.Category;
 import com.cookerytech.domain.Product;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
+import com.cookerytech.dto.response.ProductResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -21,7 +22,7 @@ public interface ProductMapper {
 
     @Mapping(source="brands", target="brandIds", qualifiedByName = "getBrandIds")
     @Mapping(source="category", target="categoryId", qualifiedByName = "getCategoryId")
-    ProductDTO productToproductDTO(Product product);
+    ProductDTO productToProductDTO(Product product);
 
     List<ProductDTO> map(List<Product> products);
     @Named("getCategoryId")
@@ -37,6 +38,8 @@ public interface ProductMapper {
 
         return brandIds;
     }
+    List<ProductResponse> productToProductResponse(List<Product> productList);
+
 
     //Product productSaveRequestToProduct(ProductSaveRequest productSaveRequest);
 

@@ -8,10 +8,13 @@ import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
+import com.cookerytech.dto.response.ProductResponse;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.repository.ProductRepository;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
@@ -118,7 +121,7 @@ public class ProductService {
 
         //eksikleri tamamla!!!
 
-        return  productMapper.productToproductDTO(product);
+        return  productMapper.productToProductDTO(product);
     }
 
     public List<ProductDTO> getProductsByCategory(Long categoryId) {
@@ -158,7 +161,7 @@ public class ProductService {
 
         Product createProduct = productRepository.save(product);
 
-        return productMapper.productToproductDTO(createProduct);
+        return productMapper.productToProductDTO(createProduct);
 
     }
 
@@ -186,7 +189,7 @@ public class ProductService {
 
         Product updateProduct = productRepository.save(product);
 
-        return productMapper.productToproductDTO(updateProduct);
+        return productMapper.productToProductDTO(updateProduct);
 
     }
 
@@ -250,5 +253,36 @@ public class ProductService {
     public ProductPropertyKeyDTO deleteProductPropertyById(Long id) {  //A10
         return productPropertyKeyService.deleteProductPropertyKey(id);
     }
-    
+
+    public Page<ProductDTO> getProductDTOPage(String q, Pageable pageable) {
+
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+
+        if (!userRole.contains(RoleType.ROLE_ADMIN)) {
+            Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
+
+            return productPage.map(brand -> productMapper.productToProductDTO(brand));
+        }
+        Page<Product> adminProductPage = productRepository.findAll(pageable);
+
+        return adminProductPage.map(brand -> productMapper.productToProductDTO(brand));
+
+    }
+
+    public List<ProductResponse> getAllFeaturedProducts() {
+
+        List<Product> productList = productRepository.getAllFeaturedProducts();
+
+        return productMapper.productToProductResponse(productList);
+
+    }
+
+    public ProductDTO getProductById(Long id) {
+
+        Product product = getProduct(id);
+
+        return productMapper.productToProductDTO(product);
+
+    }
 }

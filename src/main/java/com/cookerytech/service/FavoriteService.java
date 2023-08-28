@@ -32,7 +32,7 @@ public class FavoriteService {
 
         List<FavoriteDTO> favoriteDTOS = favorites.stream().
                 map(favorite ->
-                        (new FavoriteDTO(favorite,productMapper.productToproductDTO(favorite.getProduct())))).
+                        (new FavoriteDTO(favorite,productMapper.productToProductDTO(favorite.getProduct())))).
                 collect(Collectors.toList());
 
         return favoriteDTOS;
