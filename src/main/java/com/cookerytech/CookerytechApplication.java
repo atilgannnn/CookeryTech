@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 @EnableScheduling
+
 public class CookerytechApplication {
 
 	public static void main(String[] args) {
