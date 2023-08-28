@@ -3,6 +3,7 @@ package com.cookerytech.controller;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
+import com.cookerytech.dto.response.ProductResponse;
 import com.cookerytech.service.ProductService;
 
 import com.cookerytech.dto.ProductDTO;
@@ -96,6 +97,40 @@ public class ProductController {
     public ResponseEntity<List<ModelDTO>> getModelsByProductId(@PathVariable Long id){
         List<ModelDTO> modelDTOS= productService.getModelsByProductId(id);
         return ResponseEntity.ok(modelDTOS);
+
+    }
+
+    @GetMapping("/auth")
+    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<Page<ProductDTO>> getProductsAsPages(@RequestParam(value = "q", defaultValue = "") String q,
+                                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                                               @RequestParam(value = "size", defaultValue = "20") int size,
+                                                               @RequestParam(value = "sort", defaultValue = "category_id") String prop,
+                                                               @RequestParam(value = "type", defaultValue = "ASC") Sort.Direction direction) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+
+        Page<ProductDTO> productDTOPage = productService.getProductDTOPage(q.toLowerCase(), pageable);
+
+        return ResponseEntity.ok(productDTOPage);
+    }
+
+    @GetMapping("/featured")
+    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<List<ProductResponse>> getFeaturedProducts(){
+
+        List<ProductResponse> productResponse = productService.getAllFeaturedProducts();
+
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<ProductDTO> getProductsById (@PathVariable("id") Long id){
+
+        ProductDTO productDTO = productService.getProductById(id);
+
+        return ResponseEntity.ok(productDTO);
 
     }
 
