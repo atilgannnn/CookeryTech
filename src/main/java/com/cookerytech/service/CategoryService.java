@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Category;
+import com.cookerytech.domain.Product;
 import com.cookerytech.dto.CategoryDTO;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.CategoryRequest;
@@ -89,5 +90,25 @@ public class CategoryService {
 
         Category updateCategory = categoryRepository.save(category);
         return categoryMapper.categoryToCategoryDTO(updateCategory);
+    }
+
+    public CategoryDTO deleteCategoryByID(Long id) {
+
+        Category category = getCategory(id);
+
+        if(category.getBuiltIn()){
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        List<ProductDTO> productDTOList = getProductsByCategory(id);
+
+        if(productDTOList.size()>0){
+            throw new BadRequestException(ErrorMessage.CATEGORY_CANNOT_BE_DELETED_MESSAGE);
+        }
+
+        categoryRepository.delete(category);
+
+        return categoryMapper.categoryToCategoryDTO(category);
+
     }
 }

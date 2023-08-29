@@ -31,4 +31,5 @@ public class ErrorMessage {
 
     public static final String CATEGORY_ALREADY_EXIST_MESSAGE = "Category already exist";
 
+    public static final String CATEGORY_CANNOT_BE_DELETED_MESSAGE = "This category cannot be deleted.It has related records in other table";
 }
