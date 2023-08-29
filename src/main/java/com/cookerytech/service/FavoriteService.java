@@ -37,4 +37,13 @@ public class FavoriteService {
 
         return favoriteDTOS;
     }
+
+    public void deleteAllFavorites() {
+
+        favoriteRepository.deleteAll();
+
+    }
+
+
+
 }
