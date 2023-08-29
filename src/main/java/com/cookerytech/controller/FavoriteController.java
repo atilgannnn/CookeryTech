@@ -3,14 +3,13 @@ package com.cookerytech.controller;
 
 import com.cookerytech.dto.FavoriteDTO;
 import com.cookerytech.dto.ProductDTO;
+import com.cookerytech.dto.response.CTResponse;
+import com.cookerytech.dto.response.ResponseMessage;
 import com.cookerytech.service.FavoriteService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,6 +32,21 @@ public class FavoriteController {
 
         return ResponseEntity.ok(favoriteDTOS);
     }
+
+    @DeleteMapping("/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
+            " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
+    public ResponseEntity<CTResponse> deleteFavouritesFromAuthUsers(){ // K03
+
+        favoriteService.deleteAllFavorites();
+        CTResponse response = new CTResponse();
+        response.setMessage(ResponseMessage.FAVORITE_DELETE_RESPONSE_MESSAGE);
+        response.setSuccess(true);
+
+        return ResponseEntity.ok(response);
+
+    }
+
 
 
 }
