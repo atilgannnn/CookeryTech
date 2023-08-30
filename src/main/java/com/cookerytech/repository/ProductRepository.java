@@ -2,12 +2,12 @@ package com.cookerytech.repository;
 
 import com.cookerytech.domain.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Repository
@@ -18,6 +18,15 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     @Query("SELECT p FROM Product p JOIN p.brands b WHERE b.id = :brandId")
     List<Product> findProductByBrandId(@Param("brandId") Long brandId);
+
+    @Query("SELECT p FROM Product p\n" +
+            "JOIN p.brands b\n" +
+            "JOIN p.category c\n" +
+            "WHERE b.isActive = true AND c.isActive = true AND p.isActive = true AND p.title = ?1")
+    Page<Product> getActiveProducts(String q, Pageable pageable);
+
+    @Query("SELECT p FROM Product p JOIN p.brands b JOIN p.category c WHERE b.isActive = true AND c.isActive = true AND p.isFeatured = true")
+    List<Product> getAllFeaturedProducts();
 
 
 }
