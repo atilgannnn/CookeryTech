@@ -1,6 +1,8 @@
 package com.cookerytech.service;
 
 
+import com.cookerytech.domain.Cart;
+import com.cookerytech.domain.Cart_Items;
 import com.cookerytech.domain.Favorite;
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.FavoriteDTO;
@@ -17,10 +19,17 @@ public class FavoriteService {
     private final UserService userService;
     private final ProductMapper productMapper;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, UserService userService, ProductMapper productMapper) {
+    private final CartService cartService;
+
+
+
+    public FavoriteService(FavoriteRepository favoriteRepository, UserService userService, ProductMapper productMapper, CartService cartService) {
         this.favoriteRepository = favoriteRepository;
         this.userService = userService;
         this.productMapper = productMapper;
+
+        this.cartService = cartService;
+
     }
 
 
@@ -44,6 +53,18 @@ public class FavoriteService {
 
     }
 
+
+    public void moveUsersFavoritesToCart() {  //K04
+        //currently users favorites
+      List<FavoriteDTO> usersFavorites = getFavoritesByCurrentlyUser();
+
+
+        for (FavoriteDTO userFavorite:usersFavorites) {
+          //  cartService.manageCartItem(userFavorite.getModelDTO().getId(),1)
+
+        }
+
+    }
 
 
 }

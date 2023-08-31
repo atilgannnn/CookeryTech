@@ -47,6 +47,21 @@ public class FavoriteController {
 
     }
 
+    @PutMapping("/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
+            " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
+    public ResponseEntity<CTResponse> moveUsersFavoritesToCart(){  //K04
+
+     favoriteService.moveUsersFavoritesToCart();
+     CTResponse response = new CTResponse();
+     response.setMessage(ResponseMessage.USERS_FAVORITES_MOVED_TO_CART);
+     response.setSuccess(true);
+
+     return ResponseEntity.ok(response);
+
+    }
+
+
 
 
 }
