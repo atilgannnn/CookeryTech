@@ -74,4 +74,11 @@ public class OfferController {
         return ResponseEntity.ok(offerDTO);
     }
 
+    @PostMapping("/auth")               //Page 62->E06
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PRODUCT_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<OfferCreateResponse> createOffer(@Valid @RequestBody OfferCreate offerCreate){
+      OfferCreateResponse offerCreateResponse = offerService.makeOffer(offerCreate);
+      return ResponseEntity.ok(offerCreateResponse);
+    }
+
 }

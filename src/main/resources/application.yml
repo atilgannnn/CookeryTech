@@ -18,6 +18,18 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       '[hibernate.format_sql]': true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: coderunnersmate@gmail.com
+    password: ivnuilnnhujbfzec
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
 #image
 servlet:
