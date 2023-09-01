@@ -20,6 +20,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +43,48 @@ public class OfferService {
         this.mailSender = mailSender;
     }
 
+    public Page<OfferDTO> findFilteredOffers(String query, Integer statusValue, LocalDate date1, LocalDate date2,
+                                             Pageable pageable) {
+
+        OfferStatus status = null;
+        if (statusValue != null) {
+            status = OfferStatus.fromValue(statusValue);
+        }
+
+//        LocalDateTime dateTime1 = date1 != null ? date1.atStartOfDay() : null;
+//        LocalDateTime dateTime2 = date2 != null ? date2.atStartOfDay().plusDays(1).minusSeconds(1) : null;
+
+        /*LocalDateTime dateTime1 = date1 != null ? date1.atStartOfDay() : null;
+        LocalDateTime dateTime2 = date2 != null ? date2.atTime(23, 59, 59) : null;*/
+
+//        LocalDateTime startDateTime = date1 != null ? LocalDateTime.parse(date1 + "T00:00:00") :
+//                LocalDateTime.now().minusYears(2000);
+//        LocalDateTime endDateTime = date2 != null ? LocalDateTime.parse(date2 + "T23:59:59") :
+//                LocalDateTime.now();
+        LocalDateTime startDateTime = date1 != null ?
+                LocalDateTime.of(date1.getYear(), date1.getMonth(), date1.getDayOfMonth(), 0, 0, 0) :
+                LocalDateTime.now().minusYears(2000);
+        LocalDateTime endDateTime = date2 != null ?
+                LocalDateTime.of(date2.getYear(), date2.getMonth(), date2.getDayOfMonth(), 23, 59, 59) :
+                LocalDateTime.now();
+
+        System.out.println(startDateTime + "<- ilk tarih | ikinci tarih ->" + endDateTime);
+        System.out.println(new Offer().getSubTotal() + " <- bu sub total");
+        System.out.println(new OfferDTO().getSubTotal() + " <- bu OfferDTO sub total");
+        System.out.println(new Offer().getDiscount() + " <- bu discount");
+        System.out.println(new OfferDTO().getDiscount() + " <- bu OfferDTO discount");
+        System.out.println(new Offer().getGrandTotal() + " <- bu grand total");
+        System.out.println(new OfferDTO().getGrandTotal() + " <- bu OfferDTO grand total");
+
+        Page<Offer> filteredOffers = offerRepository.findFilteredOffers(query, status, startDateTime, endDateTime, pageable);
+
+
+        return filteredOffers.map(offerMapper::offerToOfferDTO);
+    }
+
     public OfferDTO findByIdAndUser(Long id, User user) {
 
-        Offer offer = offerRepository.findByIdAndUser(id,user).orElseThrow(
+        Offer offer = offerRepository.findByIdAndUser(id, user).orElseThrow(
                 ()-> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
         );
 

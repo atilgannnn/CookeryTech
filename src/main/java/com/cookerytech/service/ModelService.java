@@ -32,7 +32,7 @@ public class ModelService {
 
     private final CurrencyService currencyService;
 
-    private Model getModelById(Long id){
+    public Model getModelById(Long id){
        return modelRepository.findById(id).
                orElseThrow(()-> new RuntimeException(String.format(ErrorMessage.MODEL_NOT_FOUND_EXCEPTION, id)));
     }

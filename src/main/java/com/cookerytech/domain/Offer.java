@@ -2,6 +2,7 @@ package com.cookerytech.domain;
 
 
 import com.cookerytech.domain.enums.OfferStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class Offer {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OfferStatus status=OfferStatus.CREATED;
+    private OfferStatus status= OfferStatus.fromValue(0);
 
     private Double subTotal;
 
@@ -37,19 +38,19 @@ public class Offer {
 
     private Double grandTotal;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "currency_id")   //, referencedColumnName = "code"
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
     private LocalDateTime deliveryAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updateAt;
 }

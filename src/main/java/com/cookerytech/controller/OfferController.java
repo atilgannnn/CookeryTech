@@ -12,15 +12,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 import com.cookerytech.dto.response.OfferResponse;
 import org.springframework.web.bind.annotation.PathVariable;
-import com.cookerytech.service.OfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDate;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -29,11 +32,43 @@ import java.util.List;
 public class OfferController {
 
     private final OfferService offerService;
+
     private final UserService userService;
 
-    public OfferController(OfferService offerService,@Lazy UserService userService) {
+    public OfferController(OfferService offerService, @Lazy UserService userService) {
         this.offerService = offerService;
         this.userService = userService;
+    }
+
+    @GetMapping("/admin")  // E01
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<Page<OfferDTO>> getOffersForAdmin(
+            @RequestParam(value = "q", defaultValue = "") String query,
+            @RequestParam(value = "status", required = false) Integer statusValue,
+            @RequestParam(value = "date1", required = false)
+                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date1,
+            @RequestParam(value = "date2", required = false)
+                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date2,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "createAt") String prop,
+            @RequestParam(value = "type",
+                    required = false,
+                    defaultValue = "DESC") Sort.Direction direction
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+
+//        OfferStatus status = null;
+//        if (statusValue != null) {
+//            status = OfferStatus.fromValue(statusValue);
+//        }
+//
+
+        Page<OfferDTO> filteredOffers = offerService.findFilteredOffers(query.toLowerCase(), statusValue, date1, date2, pageable);
+
+
+        return ResponseEntity.ok(filteredOffers);
     }
 
     @GetMapping("/{id}/auth")
@@ -80,5 +115,8 @@ public class OfferController {
       OfferCreateResponse offerCreateResponse = offerService.makeOffer(offerCreate);
       return ResponseEntity.ok(offerCreateResponse);
     }
+
+
+
 
 }

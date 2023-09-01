@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,23 +14,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table (name = "t_currency")
-
+@Table(name = "t_currency")
 public class Currency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 10)
-    private  String code;
+//    @Size(min = 2, max = 10)
+    @Column(nullable = false, unique = true, length = 10)
+    private String code;
 
-    @Column(length = 3)
-    private  String symbol;
-
-    //"tam anlaşılmadı"
-    private  Double value;
+//    @Size(max = 3)
+    @Column(nullable = true, length = 3)
+    private String symbol;
 
     @Column(nullable = false)
+    private Double value;
+
+    @Column(nullable = true)
     private LocalDateTime updateAt;
+
 }
