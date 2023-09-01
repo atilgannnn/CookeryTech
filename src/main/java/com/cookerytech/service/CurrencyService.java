@@ -86,7 +86,7 @@ public class CurrencyService {
             return currencyDTOPage;
 
         } catch (Exception e) {
-            System.out.println("Siteye ulaşılamadı, lütfen internet bağlantınızı kontrol edin (Döviz)");
+            System.out.println("Siteye ulaşılamadı, lütfen internet bağlantınızı kontrol edin (Döviz): " + e.getMessage());
         }
         return currencyDTOPage;
     }

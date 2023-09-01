@@ -20,7 +20,7 @@ public class FavoriteDTO {
     private Long id;
 
 
-    private ProductDTO productDTO;
+    private ModelDTO modelDTO;
 
 
     private Long userId;
@@ -28,11 +28,11 @@ public class FavoriteDTO {
 
     private LocalDateTime createAt;
 
-    public FavoriteDTO(Favorite favorite,ProductDTO productDTO) {
-        this.id=favorite.getId();
-        this.createAt=favorite.getCreateAt();
-        this.userId=favorite.getUser().getId();
-        this.productDTO=productDTO;
+    public FavoriteDTO(Favorite favorite, ModelDTO modelDTO) {
+        this.id = favorite.getId();
+        this.createAt = favorite.getCreateAt();
+        this.userId = favorite.getUser().getId();
+        this.modelDTO = modelDTO;
 //        this.productDTO.setId(favorite.getProduct().getId());
 //        this.productDTO.setTitle(favorite.getProduct().getTitle());
 //        this.productDTO.setShortDesc(favorite.getProduct().getShortDesc());

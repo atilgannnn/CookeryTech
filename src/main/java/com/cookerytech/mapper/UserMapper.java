@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface UserMapper {
 
-
     UserDTO userToUserDTO(User user);
+
 }

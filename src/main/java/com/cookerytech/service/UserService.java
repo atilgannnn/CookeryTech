@@ -192,6 +192,14 @@ public class UserService {
         return user;
     }
 
+    // 13.08.2023
+    public UserDTO getPrincipal() {
+        User user = getCurrentUser();
+
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+
+        return userDTO;
+    }
 
     public void removeUserByAuth(UserDeleteRequest userDeleteRequest) {
         User user = getCurrentUser();

@@ -30,7 +30,19 @@ public class UserController {
         this.userService = userService;
     }
 
+    // !!!  Sisteme giriş yapan kullanıcının bilgisi...
+    @GetMapping("/auth")  // F05
+    @PreAuthorize("hasRole('ADMIN') or " +
+                  "hasRole('CUSTOMER') or " +
+                  "hasRole('PRODUCT_MANAGER') or " +
+                  "hasRole('SALES_SPECIALIST') or " +
+                  "hasRole('SALES_MANAGER')")
+    public ResponseEntity<UserDTO> getUser() {
 
+        UserDTO userDTO = userService.getPrincipal();  // currently login olan kullanıcı
+
+        return ResponseEntity.ok(userDTO);
+    }
     @DeleteMapping("/{id}/auth")    //Page 76
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<UserDTO> deleteByUserWithId(@PathVariable Long id){
