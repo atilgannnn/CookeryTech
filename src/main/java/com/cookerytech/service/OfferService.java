@@ -1,5 +1,6 @@
 package com.cookerytech.service;
 
+import com.cookerytech.config.EmailConfig;
 import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.OfferItem;
 import com.cookerytech.domain.User;
@@ -11,9 +12,11 @@ import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
@@ -29,12 +32,14 @@ public class OfferService {
     private final OfferMapper offerMapper;
     private final UserService userService;
     private final OfferItemService offerItemService;
+    private final JavaMailSender mailSender;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, OfferItemService offerItemService) {
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, OfferItemService offerItemService, JavaMailSender mailSender) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
         this.userService = userService;
         this.offerItemService = offerItemService;
+        this.mailSender = mailSender;
     }
 
     public OfferDTO findByIdAndUser(Long id, User user) {
@@ -104,16 +109,25 @@ public class OfferService {
         newOffer.setGrandTotal(grandTotalCalculate(offerId));
         //stock amount azalt
         stockAmountDecrease(offerId);
-        newOffer.setStatus(OfferStatus.WAITING_FOR_APPROVAL);       //Burası AuthUser'a göre değişecek ise koda if eklenecek
+        newOffer.setStatus(OfferStatus.CREATED);       //Burası AuthUser'a göre değişecek ise koda if eklenecek
         newOffer.setUser(user);
         newOffer.setCreateAt(LocalDateTime.now());
         newOffer.setUpdateAt(LocalDateTime.now());
+        offerRepository.save(newOffer);
 
         //response için gerekli işlemler
         offerCreateResponse.setId(offerId);
         offerCreateResponse.setCode(code);
         offerCreateResponse.setStatus(newOffer.getStatus().name());
         offerCreateResponse.setItems(getOfferItems(offerId));
+
+        //mail gönderme
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(EmailConfig.constantEmail);
+        message.setTo(user.getEmail());
+        message.setSubject("New Offer");
+        message.setText(offerCreateResponse.toString());
+        mailSender.send(message);
 
         return offerCreateResponse;
     }

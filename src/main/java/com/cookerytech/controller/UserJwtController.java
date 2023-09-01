@@ -10,6 +10,8 @@ import com.cookerytech.dto.response.*;
 import com.cookerytech.security.jwt.*;
 import com.cookerytech.service.*;
 import org.springframework.http.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.userdetails.*;
@@ -27,6 +29,7 @@ public class UserJwtController {
     private final UserService userService;
 
 
+
     private final AuthenticationManager authenticationManager;//ilk karsilayacak olan
 
     public UserJwtController(JwtUtils jwtUtils, UserService userService, AuthenticationManager authenticationManager) {
@@ -40,7 +43,6 @@ public class UserJwtController {
     public ResponseEntity<UserDTO> registerUser(@Valid
                                                    @RequestBody RegisterRequest registerRequest) {
         UserDTO userDTO=  userService.saveUser(registerRequest);
-
 
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
@@ -68,9 +70,9 @@ public class UserJwtController {
 
     }
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         // Şifre sıfırlama isteği işlemleri
-        userService.createPasswordResetToken(forgotPasswordRequest.getEmail());
+          userService.createPasswordResetToken(forgotPasswordRequest.getEmail());
         return ResponseEntity.ok("Password reset request received.");
     }
 
