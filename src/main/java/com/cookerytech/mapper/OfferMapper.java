@@ -10,11 +10,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface OfferMapper {
-
-    //@Mapping(source="user", target="userId", qualifiedByName = "getUserId")
-    @Mapping(source="user", target="userId", ignore = true)
-    @Mapping(target = "currencyId", source="currency", ignore = true)
+    @Mapping(source = "user.id", target = "userId", ignore = true)
+    @Mapping(source = "currency.id", target = "currencyId", ignore = true)
     OfferDTO offerToOfferDTO(Offer offer);
+    List<OfferDTO> offerListToOfferDTOList(List<Offer> offers);
 
 //    @Mapping(target = "currency", ignore = true)
 //    OfferDTO offerToOfferDTO(Offer offer);
@@ -25,6 +24,5 @@ public interface OfferMapper {
 
     @Mapping(target="id", ignore = true)
     Offer offerResponseToOffer(OfferResponse offerResponse);
-
 
 }

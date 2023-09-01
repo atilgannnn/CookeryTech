@@ -1,7 +1,7 @@
 package com.cookerytech.dto;
 
-import com.cookerytech.domain.Currency;
-import com.cookerytech.domain.User;
+
+import com.cookerytech.domain.enums.OfferStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +16,24 @@ import java.time.LocalDateTime;
 public class OfferDTO {
 
     private Long id;
+
     private String code;
-    private String status;
+
+    private OfferStatus status;
+
     private Double subTotal;
+
     private Double discount;
+
     private Double grandTotal;
+
     private Long userId;
+
     private Long currencyId;
+
     private LocalDateTime deliveryAt;
+
     private LocalDateTime createAt;
+
     private LocalDateTime updateAt;
-
-
 }
