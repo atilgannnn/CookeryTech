@@ -66,4 +66,24 @@ public class CategoryController {
 
     }
 
+    //B01
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<CategoryDTO>  getCategoryByID(@PathVariable Long id){
+
+        CategoryDTO categoryDTO = categoryService.getCategoryByID(id);
+
+        return ResponseEntity.ok(categoryDTO);
+    }
+
+    //B02
+    @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    public ResponseEntity<List<CategoryDTO>>  getAllCategories(){
+
+        List<CategoryDTO>  categoryDTOList = categoryService.getAllCategories();
+
+        return ResponseEntity.ok(categoryDTOList);
+    }
+
 }
