@@ -2,7 +2,6 @@ package com.cookerytech.repository;
 
 import com.cookerytech.domain.Favorite;
 import com.cookerytech.domain.Model;
-import com.cookerytech.domain.Product;
 import com.cookerytech.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
