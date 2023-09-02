@@ -18,10 +18,16 @@ import java.util.Optional;
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Query("SELECT o FROM Offer o " +
-            "WHERE ((:q IS NULL OR o.code LIKE %:q% OR o.user.firstName LIKE %:q% OR o.user.lastName LIKE %:q%) " +
-            "AND (:status IS NULL OR o.status = :status) " +
-            "AND (COALESCE(:date1, CAST('1970-01-01T00:00:00' AS timestamp)) <= o.createAt) " +
-            "AND (COALESCE(:date2, CAST('2100-12-31T23:59:59' AS timestamp)) >= o.createAt)) ")
+            "WHERE (" +
+             "(  :q IS NULL " +
+                 "OR o.code LIKE %:q% " +
+                 "OR o.user.firstName LIKE %:q% " +
+                 "OR o.user.lastName LIKE %:q%" +
+             ") " +
+             "AND (:status IS NULL OR o.status = :status) " +
+             "AND (COALESCE(:date1, CAST('1970-01-01T00:00:00' AS timestamp)) <= o.createAt) " +
+             "AND (COALESCE(:date2, CAST('2100-12-31T23:59:59' AS timestamp)) >= o.createAt)" +
+            ") ")
     Page<Offer> findFilteredOffers(@Param("q") String query,
                                    @Param("status") OfferStatus status,
                                    @Param("date1") LocalDateTime date1,
@@ -38,12 +44,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 //            "AND (:date1 IS NULL OR o.createAt >= :date1) " +
 //            "AND (:date2 IS NULL OR o.createAt <= :date2)")
 
-//    Page<Offer> findByCodeContainingIgnoreCaseOrUser_FirstNameContainingIgnoreCaseOrUser_LastNameContainingIgnoreCaseAndStatusAndCreateAtBetween(
-//            String codeQuery, String userQuery, String lastNameQuery,
-//            OfferStatus status,
-//            LocalDateTime startDate, LocalDateTime endDate,
-//            Pageable pageable
-//    );
 
 
 

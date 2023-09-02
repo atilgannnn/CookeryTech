@@ -39,18 +39,19 @@ public class FavoriteService {
 
 
 
-    public ModelDTO toggleFavorite(FavoriteUpdateRequest modelId) {
+    public ModelDTO toggleFavorite(/*User currentUser,*/ FavoriteUpdateRequest modelId) {
 
+//        User user = currentUser; // Get the authenticated user
         Model model = modelService.getModelById(modelId.getModelId());
         User authenticatedUser = userService.getCurrentUser();
 
         // Check if the model is already in favorites
         Favorite favorite = favoriteRepository.findByModelAndUser(model, authenticatedUser);
         if (favorite != null) {
-            // Remove from favorites
+            // Remove from favorites - Model is already a favorite, remove it
             favoriteRepository.delete(favorite);
         } else {
-            // Add to favorites
+            // Add to favorites - Model is not a favorite, add it
             Favorite newFavorite = new Favorite();
             newFavorite.setModel(model);
             newFavorite.setUser(authenticatedUser);
