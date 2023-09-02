@@ -1,7 +1,9 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Category;
-import com.cookerytech.domain.Product;
+import com.cookerytech.domain.Role;
+import com.cookerytech.domain.User;
+import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.CategoryDTO;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.CategoryRequest;
@@ -14,8 +16,11 @@ import com.cookerytech.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -25,11 +30,14 @@ public class CategoryService {
 
     private final CategoryMapper categoryMapper;
 
+    private final UserService userService;
 
-    public CategoryService(CategoryRepository categoryRepository, ProductService productService, CategoryMapper categoryMapper) {
+
+    public CategoryService(CategoryRepository categoryRepository, ProductService productService, CategoryMapper categoryMapper, UserService userService) {
         this.categoryRepository = categoryRepository;
         this.productService = productService;
         this.categoryMapper = categoryMapper;
+        this.userService = userService;
     }
 
     public List<ProductDTO> getProductsByCategory(Long categoryId) {
@@ -39,9 +47,9 @@ public class CategoryService {
 
     }
 
-    public Category getCategory(Long id){
+    public Category getCategory(Long id) {
 
-        return categoryRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
 
     }
 
@@ -71,10 +79,11 @@ public class CategoryService {
         categoryRepository.save(category);
         return categoryMapper.categoryToCategoryDTO(category);
     }
+
     public CategoryDTO updateCategoryWithId(Long id, CategoryUpdateRequest categoryUpdateRequest) {
         Category category = getCategory(id);
 
-        if(category.getBuiltIn()){
+        if (category.getBuiltIn()) {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
@@ -96,13 +105,13 @@ public class CategoryService {
 
         Category category = getCategory(id);
 
-        if(category.getBuiltIn()){
+        if (category.getBuiltIn()) {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
         List<ProductDTO> productDTOList = getProductsByCategory(id);
 
-        if(productDTOList.size()>0){
+        if (productDTOList.size() > 0) {
             throw new BadRequestException(ErrorMessage.CATEGORY_CANNOT_BE_DELETED_MESSAGE);
         }
 
@@ -113,7 +122,67 @@ public class CategoryService {
     }
 
     public long getNumberOfCategories() {
-       return categoryRepository.count();
+        return categoryRepository.count();
+
+    }
+
+    public List<CategoryDTO> getAllCategories() {
+
+        Set<Role> userRoles = userService.getCurrentUser().getRoles();
+        List<CategoryDTO> categoryDTOList = categoryMapper.categoryListToCategoryDTOList(categoryRepository.findAll());
+        List<CategoryDTO> newCategoryDTOList = new ArrayList<>();
+        boolean isAdmin = false;
+        boolean isProductManager = false;
+        for (Role role : userRoles) {
+            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
+                isAdmin = true;
+
+            } else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
+                isProductManager = true;
+
+            }
+        }
+        if (isAdmin) {
+//            return categoryDTOList;
+            return newCategoryDTOList;
+        }
+        if (isProductManager) {
+            for (CategoryDTO categoryDTO : categoryDTOList) {
+                if (categoryDTO.getIsActive()) {
+                    newCategoryDTOList.add(categoryDTO);
+                }
+            }
+            return newCategoryDTOList;
+        }
+        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
+    }
+
+    public CategoryDTO getCategoryByID(Long id) {
+
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+        Category category = getCategory(id);
+        boolean isAdmin = false;
+        boolean isProductManager = false;
+
+        for (Role role : userRole) {
+            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
+                isAdmin = true;
+            } else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
+                isProductManager = true;
+            }
+        }
+
+        if (isAdmin) {
+//            return categoryMapper.categoryToCategoryDTO(category);
+            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
+        }
+        if (isProductManager) {
+            if (!category.getIsActive()) {
+                throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
+            }
+            return categoryMapper.categoryToCategoryDTO(category);
+        }
+        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
 
     }
 }

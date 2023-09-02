@@ -18,6 +18,7 @@ public class ErrorMessage {
 
     public final  static  String MODEL_NOT_FOUND_EXCEPTION="Model: with id %s not found";
     public static final String NO_ACTIVE_BRANDS_MESSAGE = "There are no active brands";
+    public static final String NO_ACTIVE_CATEGORY_MESSAGE = "There are no active category";
 
     public static final String CAN_NOT_UPDATE ="This data can not update";
     public static final String SKU_ALREADY_EXİST = "Sku already exist";
