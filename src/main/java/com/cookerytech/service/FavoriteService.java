@@ -2,7 +2,6 @@ package com.cookerytech.service;
 
 
 import com.cookerytech.domain.Cart;
-import com.cookerytech.domain.Cart_Items;
 import com.cookerytech.domain.Favorite;
 import com.cookerytech.domain.Model;
 import com.cookerytech.domain.User;

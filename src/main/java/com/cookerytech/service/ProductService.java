@@ -45,9 +45,11 @@ public class ProductService {
 
     private final CategoryService categoryService;
     private final OfferItemService offerItemService;
+    private final CartItemsService cartItemsService;
+    private final FavoriteService favoriteService;
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService,@Lazy FavoriteService favoriteService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -56,6 +58,8 @@ public class ProductService {
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.offerItemService = offerItemService;
+        this.cartItemsService = cartItemsService;
+        this.favoriteService = favoriteService;
     }
 
     public Product getById(Long id){
@@ -102,24 +106,33 @@ public class ProductService {
         if(existsOfferItemsByProductId){
             throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
         }
+//        List<Long> modelIds =  modelService.getModelIdsByProductId(id);
+//
+//        for (Long modelId : modelIds){
+//            modelService.deleteModelById(modelId);
+//        }
+//
+//        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
+//        for (Long pPKey:pPKeyIds){
+//            productPropertyKeyService.deleteProductPropertyKey(pPKey);
+//        }
+//
+//        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
+//        List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
+//        for (Long cartItemId:cartItemsIds){
+//            cartItemsService.deleteCartItem(cartItemId);
+//        }
+//
+//         List<Long> favoriteIds = favoriteService.getFavoritesByProductId(id);
+//        for (Long favoriteId:favoriteIds){
+//            favoriteService.deleteFavorite(favoriteId);
+//        }
+      //test yapilacak
+        //domainlere koydugum (cascade = CascadeType.REMOVE) ise yariyor mu bakilacak
 
 
         productRepository.delete(product);
 
-      List<Long> modelIds =  modelService.getModelIdsByProductId(id);
-
-      for (Long modelId : modelIds){
-          modelService.deleteModelById(modelId);
-      }
-
-        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
-      for (Long pPKey:pPKeyIds){
-          productPropertyKeyService.deleteProductPropertyKey(pPKey);
-      }
-
-        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
-
-        //eksikleri tamamla!!!
 
         return  productMapper.productToProductDTO(product);
     }
@@ -283,6 +296,11 @@ public class ProductService {
         Product product = getProduct(id);
 
         return productMapper.productToProductDTO(product);
+
+    }
+
+    public long getNumberOfProducts() {
+        return productRepository.count();
 
     }
 }

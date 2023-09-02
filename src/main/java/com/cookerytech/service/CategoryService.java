@@ -111,4 +111,9 @@ public class CategoryService {
         return categoryMapper.categoryToCategoryDTO(category);
 
     }
+
+    public long getNumberOfCategories() {
+       return categoryRepository.count();
+
+    }
 }

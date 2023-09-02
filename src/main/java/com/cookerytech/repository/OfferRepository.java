@@ -66,4 +66,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     Optional<Offer> findByOfferId(@Param("offerId") Long id);
 
     Boolean existsByCode(String code);
+
+    @Query("SELECT COUNT(o) FROM Offer o WHERE o.createAt >= :startTime")
+    long numberOfOffersPerDay(@Param("startTime") LocalDateTime startTime);
 }

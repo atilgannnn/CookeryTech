@@ -212,4 +212,13 @@ public class OfferService {
     public List<Integer> stockAmountDecrease(Long offerId){
         return offerItemService.stockAmountDecrease(offerId);
     }
+
+    public long numberOfOffersPerDay() {
+        LocalDateTime now = LocalDateTime.now();
+
+         // Son 24 saatlik zaman dilimi
+        LocalDateTime twentyFourHoursAgo = now.minusHours(24);
+
+       return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
+    }
 }
