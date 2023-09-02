@@ -25,7 +25,7 @@ public class ImageController {
 
 
 
-    @PostMapping("/{id}")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<ImageSavedResponse> uploadFile(
             @RequestParam("file") MultipartFile file){

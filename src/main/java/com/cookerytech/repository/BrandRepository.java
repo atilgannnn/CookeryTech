@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query("SELECT b FROM Brand b WHERE b.isActive = true")
     Page<Brand> getActiveBrands(Pageable pageable);
+
+
 }

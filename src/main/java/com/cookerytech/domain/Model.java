@@ -54,7 +54,7 @@ public class Model {
     @JoinColumn(name = "currency_id",referencedColumnName = "id")
     private Currency currency;  //fk
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private  Product product;  //fk
 

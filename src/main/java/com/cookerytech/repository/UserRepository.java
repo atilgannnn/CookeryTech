@@ -31,4 +31,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     void deleteByEmail(User user);
     @EntityGraph(attributePaths = "roles")
     User save(User user);
+
+    @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.type = 'ROLE_CUSTOMER'")
+    long countCustomer();
 }

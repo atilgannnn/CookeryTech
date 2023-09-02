@@ -247,4 +247,8 @@ public class UserService {
         UserResponse userResponse = new UserResponse(user);
         return userResponse;
     }
+
+    public long getNumberOfCustomers() {
+      return   userRepository.countCustomer();
+    }
 }

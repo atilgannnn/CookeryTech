@@ -74,7 +74,7 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/{id}")//Sayfa 31 A06
+    @DeleteMapping("/{id}/admin")//Sayfa 31 A06
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id){
         ProductDTO deletedProduct =  productService.deleteProductById(id);
