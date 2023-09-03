@@ -1,6 +1,7 @@
 package com.cookerytech.dto.request;
 
 import com.cookerytech.domain.Currency;
+import com.cookerytech.domain.Image;
 import com.cookerytech.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,8 +37,8 @@ public class ModelCreatRequest {
     @NotNull(message="Please provide the seq of model")
     private Integer seq=0;
 
-    @NotNull(message="Please provide the image Id of model")
-    private Integer imageId;   //fk
+    @NotNull(message="Please provide the image of model")
+    private Set<Image> images;   //fk
 
     @NotNull(message="Please provide the buying price of model")
     private Double buyingPrice;

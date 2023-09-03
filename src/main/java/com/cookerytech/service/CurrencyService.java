@@ -3,6 +3,8 @@ package com.cookerytech.service;
 
 import com.cookerytech.domain.Currency;
 import com.cookerytech.dto.CurrencyDTO;
+import com.cookerytech.exception.ResourceNotFoundException;
+import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.CurrencyMapper;
 import com.cookerytech.repository.CurrencyRepository;
 import org.springframework.context.annotation.Lazy;
@@ -113,5 +115,11 @@ public class CurrencyService {
             Currency newCurrency = new Currency();
             return newCurrency;
         });
+    }
+
+    public Currency getCurrencyById(Long id) {
+        return currencyRepository.findById(id).orElseThrow(() ->
+            new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id))
+        );
     }
 }
