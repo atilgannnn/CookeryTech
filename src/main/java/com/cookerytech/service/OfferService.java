@@ -3,11 +3,15 @@ package com.cookerytech.service;
 import com.cookerytech.config.EmailConfig;
 import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.OfferItem;
+import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.OfferStatus;
+import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.OfferDTO;
 import com.cookerytech.dto.request.OfferCreate;
+import com.cookerytech.dto.request.OfferUpdate;
 import com.cookerytech.dto.response.OfferCreateResponse;
+import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferMapper;
@@ -25,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 public class OfferService {
@@ -35,7 +40,7 @@ public class OfferService {
     private final OfferItemService offerItemService;
     private final JavaMailSender mailSender;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, OfferItemService offerItemService, JavaMailSender mailSender) {
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
         this.userService = userService;
@@ -220,5 +225,64 @@ public class OfferService {
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
 
        return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
+    }
+
+
+    public OfferDTO updateOffers(Long id, OfferUpdate offerUpdate) {
+
+        Offer offer = getOffer(id);
+
+        Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+        boolean isAdmin = false;
+        boolean isSalesManager = false;
+        boolean isSalesSpecialist = false;
+
+        for (Role role : userRole) {
+            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
+                isAdmin = true;
+            } else if (RoleType.ROLE_SALES_MANAGER.equals(role.getType())) {
+                isSalesManager = true;
+            } else if(RoleType.ROLE_SALES_SPECIALIST.equals(role.getType())){
+                isSalesSpecialist = true;
+            }
+        }
+
+        if((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
+                (isSalesManager && (offer.getStatus().name().equals("WAITING_FOR_APPROVAL"))) ||
+                isAdmin){
+
+            offer.setDiscount(offerUpdate.getDiscount());
+            offer.setStatus(offerUpdate.getStatus());
+            offer.setCurrency(offerUpdate.getCurrencyId());
+
+        }else {
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        Offer updateOffer = offerRepository.save(offer);
+        //List<OfferItem> offerItemList = offerItemService.getOfferItems(id);
+
+
+        OfferDTO offerDTO = offerMapper.offerToOfferDTO(updateOffer);
+
+        return offerDTO;
+        //List<OfferItemDTO> offerItemDTOs = offerItemMapper.map(offerItemList);
+
+//        UpdateOfferResponse offerResponse = new UpdateOfferResponse();
+//        offerResponse.setOfferDTO(offerDTO);
+//        offerResponse.setOfferItemDTOList(offerItemDTOs);
+
+        // return offerResponse;
+
+
+    }
+
+
+    public Offer getOffer(Long id) {
+        Offer offer = offerRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+        );
+        return offer;
     }
 }

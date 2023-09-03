@@ -2,8 +2,13 @@ package com.cookerytech.controller;
 
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.OfferItemDTO;
 import com.cookerytech.dto.request.OfferCreate;
+import com.cookerytech.dto.request.OfferItemsUpdate;
+import com.cookerytech.dto.request.OfferUpdate;
 import com.cookerytech.dto.response.OfferCreateResponse;
+import com.cookerytech.dto.response.UpdateOfferResponse;
+import com.cookerytech.service.OfferItemService;
 import com.cookerytech.service.OfferService;
 import com.cookerytech.service.UserService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -15,13 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import com.cookerytech.dto.response.OfferResponse;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
 import javax.validation.Valid;
@@ -34,10 +34,12 @@ public class OfferController {
     private final OfferService offerService;
 
     private final UserService userService;
+    private final OfferItemService offerItemService;
 
-    public OfferController(OfferService offerService, @Lazy UserService userService) {
+    public OfferController(OfferService offerService, @Lazy UserService userService, OfferItemService offerItemService) {
         this.offerService = offerService;
         this.userService = userService;
+        this.offerItemService = offerItemService;
     }
 
     @GetMapping("/admin")  // E01
@@ -116,6 +118,13 @@ public class OfferController {
       return ResponseEntity.ok(offerCreateResponse);
     }
 
+
+    @PutMapping("/{id}/admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
+    public ResponseEntity<OfferDTO> updateOffers(@PathVariable Long id, @RequestBody OfferUpdate offerUpdate){
+        OfferDTO offerDTO = offerService.updateOffers(id,offerUpdate);
+        return ResponseEntity.ok(offerDTO);
+    }
 
 
 
