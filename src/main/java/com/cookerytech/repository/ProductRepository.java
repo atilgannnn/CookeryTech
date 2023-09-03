@@ -28,5 +28,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("SELECT p FROM Product p JOIN p.brands b JOIN p.category c WHERE b.isActive = true AND c.isActive = true AND p.isFeatured = true")
     List<Product> getAllFeaturedProducts();
 
+    @Query("SELECT p FROM Product p LEFT JOIN OfferItem o ON p.id=o.product.id WHERE o.product.id IS NULL")
+    List<Product> getProductsNoOffer();
+
 
 }

@@ -86,12 +86,12 @@ public class ProductPropertyKeyService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-        // İlişkili ModelPropertyValue var mı kontrolü
+        // A ProductPropertKey which has related records in ModelPropertyValues table can not be deleted.
+
         boolean exist = modelPropertyValueService.existByProductPropertyKey(productPropertyKey);
         if(exist) {
             throw  new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
         }
-
 
         productPropertyKeyRepository.delete(productPropertyKey);
 
