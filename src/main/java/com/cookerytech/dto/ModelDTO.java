@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,7 +36,7 @@ public class ModelDTO {
     private Integer seq;
 
 
-   //private Integer imageId;   //fk
+   private Set<String> imageIds;   //fk
 
 
     private Double buyingPrice;
