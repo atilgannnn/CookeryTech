@@ -1,7 +1,9 @@
 package com.cookerytech.mapper;
 
 import com.cookerytech.domain.Offer;
+import com.cookerytech.domain.OfferItem;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.OfferItemDTO;
 import com.cookerytech.dto.response.OfferResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
