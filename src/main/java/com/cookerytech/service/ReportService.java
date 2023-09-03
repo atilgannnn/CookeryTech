@@ -1,8 +1,11 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Product;
+import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.response.DashboardResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 
 @Service
@@ -40,5 +43,12 @@ public class ReportService {
                     numberOfOffersPerDay,
                     getNumberOfCustomers);
 return dashboardResponse;
+    }
+
+    public List<ProductDTO> getProductsNoOffer() {  // G04
+
+        List<ProductDTO> productsNoOffer = productService.getProductsNoOffer();
+        return productsNoOffer;
+
     }
 }

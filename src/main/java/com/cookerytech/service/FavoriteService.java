@@ -91,9 +91,9 @@ public class FavoriteService {
         //currently users favorites
       List<FavoriteDTO> usersFavorites = getFavoritesByCurrentlyUser();
 
-
         for (FavoriteDTO userFavorite : usersFavorites) {
-          //  cartService.manageCartItem(userFavorite.getModelDTO().getId(),1)
+
+        //  cartService.manageCartItem(userFavorite.getModelDTO().getId(),1)
 
         }
 

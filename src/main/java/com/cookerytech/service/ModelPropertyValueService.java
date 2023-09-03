@@ -17,5 +17,4 @@ public class ModelPropertyValueService {
         return  modelPropertyValueRepository.existsByProductPropertyKey(productPropertyKey);
     }
 
-
 }

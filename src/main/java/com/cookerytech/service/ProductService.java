@@ -303,4 +303,12 @@ public class ProductService {
         return productRepository.count();
 
     }
+
+    public List<ProductDTO> getProductsNoOffer() { //G04
+
+        List<Product> productsNoOffer =  productRepository.getProductsNoOffer();
+
+        return  productMapper.map(productsNoOffer);
+
+    }
 }
