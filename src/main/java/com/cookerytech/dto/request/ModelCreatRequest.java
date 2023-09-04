@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -38,7 +39,7 @@ public class ModelCreatRequest {
     private Integer seq=0;
 
     @NotNull(message="Please provide the image of model")
-    private Set<Image> images;   //fk
+    private MultipartFile images;   //fk
 
     @NotNull(message="Please provide the buying price of model")
     private Double buyingPrice;
