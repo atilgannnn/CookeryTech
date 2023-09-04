@@ -88,11 +88,14 @@ public class ModelService {
         }
         LocalDateTime now = LocalDateTime.now();
 
-        String imageId =imageService.saveImage(modelCreatRequest.getImages());
-        Image savedImage = imageService.getImageById(imageId);
+       // String imageId =imageService.saveImage(modelCreatRequest.getImages());
+       Set<String> imageIds = modelCreatRequest.getImages().stream().map(img->imageService.saveImage2(img)).collect(Collectors.toSet());
 
-        Set<Image> setImage= new HashSet<>();
-        setImage.add(savedImage);
+      //  Image savedImage = imageService.getImageById(imageId);
+       Set<Image> savedImages = imageIds.stream().map(id->imageService.getImageById(id)).collect(Collectors.toSet());
+
+        //Set<Image> setImage= new HashSet<>();
+       // setImage.add(savedImage);
 
        // Set<Image> setImage= savedImageIds.stream().map(imageId->imageService.getImageById(imageId)).collect(Collectors.toSet());
         //Gelen currencyId ye göre currency getirilecek
@@ -109,7 +112,7 @@ public class ModelService {
         model.setStockAmount(modelCreatRequest.getStockAmount());
         model.setInBoxQuantity(modelCreatRequest.getInBoxQuantity());
         model.setSeq(model.getSeq());
-        model.setImages(setImage);
+        model.setImages(savedImages);
         model.setBuyingPrice(modelCreatRequest.getBuyingPrice());
         model.setTaxRate(modelCreatRequest.getTaxRate());
         model.setIsActive(modelCreatRequest.getIsActive());

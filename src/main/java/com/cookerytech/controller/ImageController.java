@@ -35,13 +35,6 @@ public class ImageController {
         ImageSavedResponse response = new ImageSavedResponse(ResponseMessage.IMAGE_SAVED_RESPONSE_MESSAGE,true,imageId);
         return ResponseEntity.ok(response);
     }
-    public String uploadFile2(
-            @RequestParam("file") MultipartFile file){
-
-       return imageService.saveImage(file);
-
-
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PRODUCT_MANAGER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")

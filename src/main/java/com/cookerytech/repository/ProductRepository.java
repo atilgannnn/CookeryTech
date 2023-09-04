@@ -32,4 +32,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> getProductsNoOffer();
 
 
+    @Query("SELECT p FROM Product p  JOIN OfferItem o ON p.id=o.product.id GROUP BY p.id ORDER BY COUNT(o) DESC ")
+    List<Product> getMostPopularProducts();
 }
