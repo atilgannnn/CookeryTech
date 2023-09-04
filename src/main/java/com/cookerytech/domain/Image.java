@@ -28,17 +28,16 @@ public class Image {
     @Column(nullable = true)
     private String type;
 
-//    @Column(nullable = false)
-//    private Model model;
+    @Column(nullable = false)
+    private Long model_id;
 
     @OneToOne(cascade = CascadeType.ALL) //ImageFile sildigimizde ImageData'yi da siliyoruz.
     private ImageData imageData;
 
-    public Image(String name, String type, /*Model model_id*/ ImageData imageData){
+    public Image(String name, String type, Long model_id, ImageData imageData){
         this.name = name;
         this.type = type;
-        //this.model = model_id;
+        this.model_id = model_id;
         this.imageData = imageData;
     }
-
 }
