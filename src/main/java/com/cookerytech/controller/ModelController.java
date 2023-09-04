@@ -37,7 +37,7 @@ public class ModelController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ModelDTO> creatModel(@Valid @RequestBody ModelCreatRequest modelCreatRequest){
+    public ResponseEntity<ModelDTO> creatModel(@Valid @ModelAttribute ModelCreatRequest modelCreatRequest){
         ModelDTO createdModel= modelService.creatModel(modelCreatRequest);
         return ResponseEntity.ok(createdModel);
     }

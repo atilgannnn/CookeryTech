@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,9 +87,14 @@ public class ModelService {
             throw new ConflictException(ErrorMessage.SKU_ALREADY_EXİST);
         }
         LocalDateTime now = LocalDateTime.now();
-        Set<String> savedImageIds= modelCreatRequest.getImages().stream().map(img -> imageService.saveImage((MultipartFile) img)).collect(Collectors.toSet());
 
-        Set<Image> setImage= savedImageIds.stream().map(imageId->imageService.getImageById(imageId)).collect(Collectors.toSet());
+        String imageId =imageService.saveImage(modelCreatRequest.getImages());
+        Image savedImage = imageService.getImageById(imageId);
+
+        Set<Image> setImage= new HashSet<>();
+        setImage.add(savedImage);
+
+       // Set<Image> setImage= savedImageIds.stream().map(imageId->imageService.getImageById(imageId)).collect(Collectors.toSet());
         //Gelen currencyId ye göre currency getirilecek
         Currency currency=currencyService.getCurrencyById(modelCreatRequest.getCurrencyId());
 
