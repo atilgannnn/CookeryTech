@@ -311,4 +311,11 @@ public class ProductService {
         return  productMapper.map(productsNoOffer);
 
     }
+
+    public List<ProductDTO> getMostPopularProducts(int amount) {
+        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts();
+        List<Product> amountProducts = mostPopularProducts.stream().limit(amount).collect(Collectors.toList());
+
+        return productMapper.map(amountProducts);
+    }
 }

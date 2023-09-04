@@ -40,4 +40,11 @@ public class Image {
         this.model_id = model_id;
         this.imageData = imageData;
     }
+
+
+    public Image(String name, String type, ImageData imageData) {
+        this.name = name;
+        this.type = type;
+        this.imageData = imageData;
+    }
 }

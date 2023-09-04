@@ -51,4 +51,8 @@ return dashboardResponse;
         return productsNoOffer;
 
     }
+
+    public List<ProductDTO> getMostPopularProducts(int amount) {
+      return   productService.getMostPopularProducts(amount);
+    }
 }

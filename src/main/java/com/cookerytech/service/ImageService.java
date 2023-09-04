@@ -41,6 +41,23 @@ public class ImageService {
         return saveImage.getId();
 
     }
+    public String saveImage2(MultipartFile file) {
+
+        Image image = null;
+        String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+
+
+        try{
+            ImageData imageData = new ImageData(file.getBytes());
+
+            image = new Image(filename,file.getContentType(), imageData);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        Image saveImage = imageRepository.save(image);
+        return saveImage.getId();
+
+    }
 
     public Image getImageById(String id) {
 

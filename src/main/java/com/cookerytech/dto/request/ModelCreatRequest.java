@@ -39,7 +39,7 @@ public class ModelCreatRequest {
     private Integer seq=0;
 
     @NotNull(message="Please provide the image of model")
-    private MultipartFile images;   //fk
+    private Set<MultipartFile> images;   //fk
 
     @NotNull(message="Please provide the buying price of model")
     private Double buyingPrice;
