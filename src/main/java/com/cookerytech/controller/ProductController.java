@@ -36,11 +36,10 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<CTResponse> createProduct(
+    public ResponseEntity<ProductDTO> createProduct(
             @Valid @RequestBody ProductSaveRequest productSaveRequest){
-        productService.saveProduct(productSaveRequest);
-        CTResponse response = new CTResponse(ResponseMessage.PRODUCT_SAVED_RESPONSE_MESSAGE, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        ProductDTO createProduct = productService.saveProduct(productSaveRequest);
+        return ResponseEntity.ok(createProduct);
     }
 
     @PutMapping("/{id}")

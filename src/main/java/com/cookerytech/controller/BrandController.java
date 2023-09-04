@@ -35,14 +35,10 @@ public class BrandController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<CTResponse> createBrand(
+    public ResponseEntity<BrandDTO> createBrand(
             @Valid @RequestBody BrandSaveRequest brandSaveRequest){
-
-        brandService.saveBrand(brandSaveRequest);
-
-        CTResponse response = new CTResponse(ResponseMessage.BRAND_SAVED_RESPONSE_MESSAGE, true);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        BrandDTO createBrand =  brandService.saveBrand(brandSaveRequest);
+        return ResponseEntity.ok(createBrand);
     }
 
 

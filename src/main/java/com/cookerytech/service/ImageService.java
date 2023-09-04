@@ -29,9 +29,11 @@ public class ImageService {
         Image image = null;
         String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
+
         try{
             ImageData imageData = new ImageData(file.getBytes());
-            image = new Image(filename, file.getContentType(), imageData);
+            //image = new Image(filename, file.getContentType(), imageData);
+            image = new Image(filename,file.getContentType(), image.getModel_id(), imageData);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
