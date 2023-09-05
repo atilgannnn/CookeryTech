@@ -4,10 +4,7 @@ import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.UserDTO;
-import com.cookerytech.dto.request.RegisterRequest;
-import com.cookerytech.dto.request.UserDeleteRequest;
-import com.cookerytech.dto.request.UserRequest;
-import com.cookerytech.dto.request.UserUpdateRequest;
+import com.cookerytech.dto.request.*;
 import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ConflictException;
@@ -23,6 +20,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
@@ -251,4 +249,103 @@ public class UserService {
     public long getNumberOfCustomers() {
       return   userRepository.countCustomer();
     }
+
+    public UserResponse updateUserResponseById(Long id, AdminUserUpdateRequest adminUserUpdateRequest) {
+
+        User user = getCurrentUser();
+        User alteredUser = getById(id);
+
+        boolean currentUserAdmin = user.getRoles().contains(roleService.findByType(RoleType.ROLE_ADMIN));
+        boolean currentUserSalesManager = user.getRoles().contains(roleService.findByType(RoleType.ROLE_SALES_MANAGER));
+        boolean currentUserSalesSpecialist = user.getRoles().contains(roleService.findByType(RoleType.ROLE_SALES_SPECIALIST));
+
+
+
+            if(alteredUser.getBuiltIn()){
+                throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+            }
+
+            boolean emailExist = userRepository.existsByEmail(adminUserUpdateRequest.getEmail());
+
+            if(emailExist && !adminUserUpdateRequest.getEmail().equals(alteredUser.getEmail())) {
+                throw new ConflictException(
+                        String.format(ErrorMessage.EMAIL_ALREADY_EXIST_MESSAGE,adminUserUpdateRequest.getEmail()));
+            }
+
+
+            if ((currentUserAdmin)||
+                    (currentUserSalesManager && !(alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_ADMIN)) ||
+                            alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_PRODUCT_MANAGER)) ||
+                            alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_SALES_MANAGER)))) ||
+                    (currentUserSalesSpecialist && !(alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_ADMIN)) ||
+                            alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_PRODUCT_MANAGER)) ||
+                            alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_SALES_MANAGER)) ||
+                            alteredUser.getRoles().contains(roleService.findByType(RoleType.ROLE_SALES_SPECIALIST))))){
+
+                alteredUser.setFirstName(adminUserUpdateRequest.getFirstName());
+                alteredUser.setLastName(adminUserUpdateRequest.getLastName());
+                alteredUser.setEmail(adminUserUpdateRequest.getEmail());
+                alteredUser.setPassword(passwordEncoder.encode(adminUserUpdateRequest.getPassword()));
+                alteredUser.setPhone(adminUserUpdateRequest.getPhone());
+                alteredUser.setAddress(adminUserUpdateRequest.getAddress());
+                alteredUser.setCity(adminUserUpdateRequest.getCity());
+                alteredUser.setCountry(adminUserUpdateRequest.getCountry());
+                alteredUser.setBirthDate(adminUserUpdateRequest.getBirthDate());
+                alteredUser.setTaxNo(adminUserUpdateRequest.getTaxNo());
+                alteredUser.setStatus(adminUserUpdateRequest.getStatus());
+                alteredUser.setBuiltIn(adminUserUpdateRequest.getBuiltIn());
+                alteredUser.setUpdateAt(LocalDateTime.now());
+
+
+            }else {
+
+                throw new BadRequestException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
+
+            }
+
+            if(currentUserAdmin){
+                alteredUser.setRoles(convertRoles(adminUserUpdateRequest.getRoles()));
+            }
+
+            User updatedUser = userRepository.save(alteredUser);
+
+            UserResponse response = new UserResponse(updatedUser);
+            response.setRoles(updatedUser.getRoles());
+            return response;
+
+    }
+
+    private Set<Role> convertRoles(Set<String> pRoles){
+        Set<Role> roles = new HashSet<>();
+
+        if(pRoles==null){
+            Role userRole = roleService.findByType(RoleType.ROLE_CUSTOMER);
+            roles.add(userRole);
+        } else {
+            pRoles.forEach(roleStr->{
+                if(roleStr.equals(RoleType.ROLE_ADMIN.getName())){ // Administrator
+                    Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
+                    roles.add(adminRole); //ROLE_ADMIN
+                } else if (roleStr.equals(RoleType.ROLE_CUSTOMER.getName())){
+                    Role userRole = roleService.findByType(RoleType.ROLE_CUSTOMER);// Customer
+                    roles.add(userRole);//ROLE_CUSTOMER
+                } else if (roleStr.equals(RoleType.ROLE_PRODUCT_MANAGER.getName())){
+                    Role userRole = roleService.findByType(RoleType.ROLE_PRODUCT_MANAGER);// Product Manager
+                    roles.add(userRole);//ROLE_PRODUCT_MANAGER
+                } else if(roleStr.equals(RoleType.ROLE_SALES_MANAGER.getName())){
+                    Role userRole = roleService.findByType(RoleType.ROLE_SALES_MANAGER);// Sales Manager
+                    roles.add(userRole);//ROLE_SALES_MANAGER
+                } else {
+                    Role userRole = roleService.findByType(RoleType.ROLE_SALES_SPECIALIST);// Sales Specialist
+                    roles.add(userRole);//ROLE_SALES_SPECIALIST
+                }
+            });
+        }
+        return roles;
+    }
+
+
+
 }
+
+

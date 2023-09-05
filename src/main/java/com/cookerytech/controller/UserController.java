@@ -2,6 +2,7 @@ package com.cookerytech.controller;
 
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.UserDTO;
+import com.cookerytech.dto.request.AdminUserUpdateRequest;
 import com.cookerytech.dto.request.UserDeleteRequest;
 import com.cookerytech.dto.request.UserRequest;
 import com.cookerytech.dto.request.UserUpdateRequest;
@@ -106,6 +107,17 @@ public class UserController {
         UserResponse userResponse = userService.getUserResponseById(id);
        return ResponseEntity.ok(userResponse);
     }
-}
 
-//Deneme
+    @PutMapping("/{id}/admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable("id") Long id,@Valid @RequestBody AdminUserUpdateRequest adminUserUpdateRequest){
+
+        UserResponse response = userService.updateUserResponseById(id,adminUserUpdateRequest);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
+}

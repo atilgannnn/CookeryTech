@@ -1,14 +1,19 @@
 package com.cookerytech.dto.request;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -42,13 +47,21 @@ public class UserRequest {
     @NotBlank
     private String country;
 
-    @NotBlank
+    @NotNull
     private LocalDate birthDate;
 
     @NotBlank
     private String taxNo;
 
     private Integer status;
+    @NotBlank
+    private String password;
+
+    private Boolean builtIn;
+
+    @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime createdAt;
 
 
 }
