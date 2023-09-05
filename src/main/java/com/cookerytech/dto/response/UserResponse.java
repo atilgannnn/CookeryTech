@@ -61,7 +61,7 @@ public class UserResponse {
             if(r.getType().equals(RoleType.ROLE_CUSTOMER)) {
                 rolesStr.add("Customer");
             } else if (r.getType().equals(RoleType.ROLE_ADMIN)) {
-                rolesStr.add("Adminastrator");
+                rolesStr.add("Administrator");
             } else if (r.getType().equals(RoleType.ROLE_PRODUCT_MANAGER)) {
                 rolesStr.add("ProductManager");
             }else if (r.getType().equals(RoleType.ROLE_SALES_SPECIALIST)) {

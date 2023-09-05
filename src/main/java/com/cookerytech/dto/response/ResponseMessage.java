@@ -13,6 +13,7 @@ public class ResponseMessage {
 
     public static final String CATEGORY_SAVED_RESPONSE_MESSAGE = "Category Successfully Saved";;
     public static final String FAVORITE_DELETE_RESPONSE_MESSAGE = "All Favorites Successfully Deleted";
+    public static final String USER_UPDATE_RESPONSE_MESSAGE = "User has been updated successfully";
 
     public final static String USERS_FAVORITES_MOVED_TO_CART = "Users all Favorites Moved To Cart.";
 }
