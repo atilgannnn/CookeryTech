@@ -1,5 +1,6 @@
 package com.cookerytech.service;
 
+import com.cookerytech.config.EmailConfig;
 import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
@@ -13,6 +14,7 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.UserMapper;
 import com.cookerytech.repository.UserRepository;
 import com.cookerytech.security.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailConfig emailConfig;
+    @Autowired
+    private JavaMailSender mailSender;
 
     private final UserMapper userMapper;
 
@@ -134,16 +141,25 @@ public class UserService {
         }
         return usersWithPage;
     }
-    public void createPasswordResetToken(String email) {
+    public String createPasswordResetToken(String email) {
         User user =  getUserByEmail(email);
 
 //        // Şifre sıfırlama tokenı oluştur
-//        String tokenValue = generateToken();
+        String tokenValue = generateToken();
 //        PasswordResetToken token = new PasswordResetToken();
 //        token.setUser(user);
 //        token.setToken(tokenValue);
 //
 //        passwordResetTokenRepository.save(token);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(emailConfig.getConstantEmail());
+        message.setTo("erultimate1@gmail.com");
+        message.setSubject("Attention!!!");
+
+        message.setText(tokenValue);
+        mailSender.send(message);
+        return tokenValue;
     }
 
     public void resetPassword(String email, String password) {

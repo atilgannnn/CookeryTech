@@ -168,7 +168,7 @@ public class OfferService {
 
         //mail gönderme
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(EmailConfig.constantEmail);
+//        message.setFrom(EmailConfig.constantEmail);
         message.setTo(user.getEmail());
         message.setSubject("New Offer");
         message.setText(offerCreateResponse.toString());
