@@ -7,6 +7,8 @@ import com.cookerytech.domain.Model;
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.request.FavoriteUpdateRequest;
+import com.cookerytech.exception.ResourceNotFoundException;
+import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.dto.FavoriteDTO;
 import com.cookerytech.mapper.ProductMapper;
@@ -96,6 +98,24 @@ public class FavoriteService {
         //  cartService.manageCartItem(userFavorite.getModelDTO().getId(),1)
 
         }
+
+    }
+
+
+    public List<Long> getFavoritesByModelsOfProduct(Long productId) {
+       List<Favorite> favorites =  favoriteRepository.getFavoritesByModelsOfProduct(productId);
+       return  favorites.stream().map(favorite->favorite.getId()).collect(Collectors.toList());
+    }
+
+    public void deleteFavorite(Long favoriteId) {
+      Favorite favorite =  getFavorite(favoriteId);
+        favoriteRepository.delete(favorite);
+    }
+
+    public Favorite getFavorite(Long id){
+    return     favoriteRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
+        );
 
     }
 

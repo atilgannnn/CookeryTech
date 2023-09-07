@@ -18,7 +18,7 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
 
     Boolean existsBySku(String sku);
 
-    @Query("Select m from Model m join m.product pr where pr.id=:productId")
+    @Query("Select m from Model m  where m.product.id=:productId")
     List<Model> findAllByProductId(@Param("productId") Long productId);
 
 }

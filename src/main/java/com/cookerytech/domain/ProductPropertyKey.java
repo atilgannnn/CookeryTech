@@ -26,7 +26,8 @@ public class ProductPropertyKey {
 
     private Boolean builtIn=false;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    //(cascade = CascadeType.REMOVE)
+    @OneToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product productId;
 
