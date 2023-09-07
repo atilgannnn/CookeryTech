@@ -54,6 +54,30 @@ public class OfferService {
         OfferStatus status = null;
         if (statusValue != null) {
             status = OfferStatus.fromValue(statusValue);
+        } else {
+            
+            User currentUser = userService.getCurrentUser(); // Assuming you have a method to get the current user
+            if (currentUser != null) {
+                boolean isSalesSpecialist = false;
+                boolean isSalesManager = false;
+
+                for (Role role : currentUser.getRoles()) {
+                    if (role.getType().equals(RoleType.ROLE_SALES_SPECIALIST)) {
+                        isSalesSpecialist = true;
+                        break;
+                    } else if (role.getType().equals(RoleType.ROLE_SALES_MANAGER)) {
+                        isSalesManager = true;
+                        break;
+                    }
+                }
+
+                if (isSalesSpecialist) {
+                    status = OfferStatus.fromValue(OfferStatus.WAITING_FOR_APPROVAL.getValue()); // Sales Specialists default status
+                } else if (isSalesManager) {
+                    status = OfferStatus.fromValue(OfferStatus.APPROVED.getValue()); // Sales Managers default status
+                }
+
+            }
         }
 
 //        LocalDateTime dateTime1 = date1 != null ? date1.atStartOfDay() : null;

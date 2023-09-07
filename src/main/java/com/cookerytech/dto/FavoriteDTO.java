@@ -1,14 +1,11 @@
 package com.cookerytech.dto;
 
 import com.cookerytech.domain.Favorite;
-import com.cookerytech.domain.Product;
-import com.cookerytech.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter

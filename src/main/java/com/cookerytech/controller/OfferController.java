@@ -55,8 +55,8 @@ public class OfferController {
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "createAt") String prop,
             @RequestParam(value = "type",
-                    required = false,
-                    defaultValue = "DESC") Sort.Direction direction
+                          required = false,
+                          defaultValue = "DESC") Sort.Direction direction
     ) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
@@ -121,7 +121,7 @@ public class OfferController {
 
     @PutMapping("/{id}/admin")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
-    public ResponseEntity<OfferDTO> updateOffers(@PathVariable Long id, @RequestBody OfferUpdate offerUpdate){
+    public ResponseEntity<OfferDTO> updateOffers(@PathVariable Long id, @Valid @RequestBody OfferUpdate offerUpdate){
         OfferDTO offerDTO = offerService.updateOffers(id,offerUpdate);
         return ResponseEntity.ok(offerDTO);
     }

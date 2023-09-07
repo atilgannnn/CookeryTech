@@ -1,6 +1,5 @@
 package com.cookerytech.controller;
 
-import com.cookerytech.domain.User;
 import com.cookerytech.dto.UserDTO;
 import com.cookerytech.dto.request.AdminUserUpdateRequest;
 import com.cookerytech.dto.request.UserDeleteRequest;
@@ -10,7 +9,7 @@ import com.cookerytech.dto.response.CTResponse;
 import com.cookerytech.dto.response.ResponseMessage;
 import com.cookerytech.dto.response.UserResponse;
 import com.cookerytech.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

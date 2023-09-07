@@ -1,6 +1,5 @@
 package com.cookerytech.dto;
 
-import com.cookerytech.domain.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
