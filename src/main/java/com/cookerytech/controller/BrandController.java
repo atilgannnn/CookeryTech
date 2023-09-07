@@ -55,7 +55,7 @@ public class BrandController {
         return  ResponseEntity.ok(deletedBrand);
     }
 
-    @GetMapping("/auth")
+    @GetMapping()
     @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Page<BrandDTO>> getBrandsForPM(@RequestParam (value = "page", defaultValue = "0") int page,
                                                     @RequestParam (value = "size", defaultValue = "20") int size,

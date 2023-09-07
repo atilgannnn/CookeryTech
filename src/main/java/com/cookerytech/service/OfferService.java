@@ -24,12 +24,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class OfferService {
@@ -252,6 +250,7 @@ public class OfferService {
     }
 
 
+
     public OfferDTO updateOffers(Long id, OfferUpdate offerUpdate) {
 
         Offer offer = getOffer(id);
@@ -272,32 +271,31 @@ public class OfferService {
             }
         }
 
-        if((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
-                (isSalesManager && (offer.getStatus().name().equals("WAITING_FOR_APPROVAL"))) ||
-                isAdmin){
+//        if(isSalesSpecialist && (OfferStatus.CREATED).equals(offer.getStatus()) || (OfferStatus.REJECTED).equals(offer.getStatus())){
+//            offer.setDiscount(offerUpdate.getDiscount());
+//            offer.setStatus(offerUpdate.getStatus());
+//            offer.setCurrency(offerUpdate.getCurrency());
+//        }
 
+        if(isAdmin || (isSalesSpecialist &&
+                (offer.getStatus().equals(OfferStatus.CREATED) || offer.getStatus().equals(OfferStatus.REJECTED))) ||
+            (isSalesManager &&
+                (offer.getStatus().equals(OfferStatus.WAITING_FOR_APPROVAL)))){
             offer.setDiscount(offerUpdate.getDiscount());
             offer.setStatus(offerUpdate.getStatus());
-            offer.setCurrency(offerUpdate.getCurrencyId());
+            offer.setCurrency(offerUpdate.getCurrency());
 
         }else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
         Offer updateOffer = offerRepository.save(offer);
-        //List<OfferItem> offerItemList = offerItemService.getOfferItems(id);
 
 
         OfferDTO offerDTO = offerMapper.offerToOfferDTO(updateOffer);
 
         return offerDTO;
-        //List<OfferItemDTO> offerItemDTOs = offerItemMapper.map(offerItemList);
 
-//        UpdateOfferResponse offerResponse = new UpdateOfferResponse();
-//        offerResponse.setOfferDTO(offerDTO);
-//        offerResponse.setOfferItemDTOList(offerItemDTOs);
-
-        // return offerResponse;
 
 
     }

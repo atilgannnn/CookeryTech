@@ -99,7 +99,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("/auth")
+    @GetMapping()
     @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<Page<ProductDTO>> getProductsAsPages(@RequestParam(value = "q", defaultValue = "") String q,
                                                                @RequestParam(value = "page", defaultValue = "0") int page,

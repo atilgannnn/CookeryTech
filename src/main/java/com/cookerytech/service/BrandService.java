@@ -117,7 +117,7 @@ public class BrandService {
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
 
-        if (userRole.contains(RoleType.ROLE_PRODUCT_MANAGER)) {
+        if (userRole.contains(roleService.findByType(RoleType.ROLE_PRODUCT_MANAGER))) {
 
             return brandPage.map(brand -> brandMapper.brandToBrandDTO(brand));
         }
@@ -132,7 +132,7 @@ public class BrandService {
 
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
-        if(userRole.contains(RoleType.ROLE_PRODUCT_MANAGER)){
+        if(userRole.contains(roleService.findByType(RoleType.ROLE_PRODUCT_MANAGER))){
             if(!brand.getIsActive()){
             throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_BRANDS_MESSAGE,id));
         }
