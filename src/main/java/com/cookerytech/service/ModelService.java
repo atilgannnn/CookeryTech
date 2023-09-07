@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -141,6 +142,7 @@ public class ModelService {
 
     }
 
+    @Transactional
     public List<Long> getModelIdsByProductId(Long productId) {
         List<Model> modelList= modelRepository.findAllByProductId(productId);
         return modelList.stream().map(model -> model.getId()).collect(Collectors.toList());

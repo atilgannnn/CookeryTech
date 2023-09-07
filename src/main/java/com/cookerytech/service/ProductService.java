@@ -22,7 +22,7 @@ import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.mapper.ProductMapper;
 
 
-
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +95,7 @@ public class ProductService {
         );
         return product;
     }
-
+    @Transactional
     public ProductDTO deleteProductById(Long id) {
         Product product = getProduct(id);
         if (product.getBuiltIn()){
@@ -106,33 +106,35 @@ public class ProductService {
         if(existsOfferItemsByProductId){
             throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
         }
-//        List<Long> modelIds =  modelService.getModelIdsByProductId(id);
-//
-//        for (Long modelId : modelIds){
-//            modelService.deleteModelById(modelId);
-//        }
-//
-//        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
-//        for (Long pPKey:pPKeyIds){
-//            productPropertyKeyService.deleteProductPropertyKey(pPKey);
-//        }
-//
-//        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
-//        List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
-//        for (Long cartItemId:cartItemsIds){
-//            cartItemsService.deleteCartItem(cartItemId);
-//        }
-//
-//         List<Long> favoriteIds = favoriteService.getFavoritesByProductId(id);
-//        for (Long favoriteId:favoriteIds){
-//            favoriteService.deleteFavorite(favoriteId);
-//        }
+        List<Long> favoriteIds = favoriteService.getFavoritesByModelsOfProduct(id);
+        for (Long favoriteId:favoriteIds){
+            favoriteService.deleteFavorite(favoriteId);
+        }
+        List<Long> modelIds =  modelService.getModelIdsByProductId(id);
+
+        for (Long modelId : modelIds){
+            modelService.deleteModelById(modelId);
+        }
+
+        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
+        for (Long pPKey:pPKeyIds){
+            productPropertyKeyService.deleteProductPropertyKey(pPKey);
+        }
+
+        // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
+        List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
+        for (Long cartItemId:cartItemsIds){
+            cartItemsService.deleteCartItem(cartItemId);
+        }
+
+
       //test yapilacak
         //domainlere koydugum (cascade = CascadeType.REMOVE) ise yariyor mu bakilacak
 
 
         productRepository.delete(product);
 
+        System.out.println(product.getId());
 
         return  productMapper.productToProductDTO(product);
     }
@@ -243,6 +245,7 @@ public class ProductService {
 //
 //    }
 
+    @Transactional
     public List<ModelDTO> getModelsByProductId(Long id) {
         List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(id);
         List<ModelDTO> modelDTOS=new ArrayList<>();
