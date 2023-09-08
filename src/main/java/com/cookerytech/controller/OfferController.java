@@ -121,7 +121,7 @@ public class OfferController {
 
     @PutMapping("/{id}/admin")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
-    public ResponseEntity<OfferDTO> updateOffers(@PathVariable Long id, @Valid @RequestBody OfferUpdate offerUpdate){
+    public ResponseEntity<OfferDTO> updateOffers(@PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody OfferUpdate offerUpdate){
         OfferDTO offerDTO = offerService.updateOffers(id,offerUpdate);
         return ResponseEntity.ok(offerDTO);
     }

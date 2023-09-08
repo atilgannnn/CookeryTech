@@ -25,7 +25,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "WHERE b.isActive = true AND c.isActive = true AND p.isActive = true AND p.title = ?1")
     Page<Product> getActiveProducts(String q, Pageable pageable);
 
-    @Query("SELECT p FROM Product p JOIN p.brands b JOIN p.category c WHERE b.isActive = true AND c.isActive = true AND p.isActive = true AND p.isFeatured = true")
+    @Query("SELECT p FROM Product p JOIN p.brands b JOIN p.category c " +
+            "WHERE b.isActive = true " +
+            " AND c.isActive = true " +
+            " AND p.isActive = true" +
+            " AND p.isFeatured = true")
     List<Product> getAllFeaturedProducts();
 
     @Query("SELECT p FROM Product p LEFT JOIN OfferItem o ON p.id=o.product.id WHERE o.product.id IS NULL")
@@ -34,4 +38,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     @Query("SELECT p FROM Product p  JOIN OfferItem o ON p.id=o.product.id GROUP BY p.id ORDER BY COUNT(o) DESC ")
     List<Product> getMostPopularProducts();
+
+    @Query("SELECT p FROM Product p WHERE p.isFeatured = true")
+    List<Product> getAllFeaturedProductsForAdmin();
 }
