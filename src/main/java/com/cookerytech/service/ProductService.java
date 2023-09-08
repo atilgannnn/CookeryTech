@@ -4,6 +4,7 @@ import com.cookerytech.domain.Brand;
 import com.cookerytech.domain.Category;
 import com.cookerytech.domain.Product;
 import com.cookerytech.domain.Role;
+import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
@@ -47,7 +48,6 @@ public class ProductService {
     private final OfferItemService offerItemService;
     private final CartItemsService cartItemsService;
     private final FavoriteService favoriteService;
-
     private final RoleService roleService;
 
 
@@ -278,7 +278,7 @@ public class ProductService {
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
 
-        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
+        if (!userRole.contains(RoleType.ROLE_ADMIN)) {  //roleService.findByType(RoleType.ROLE_ADMIN)
             Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
 
             return productPage.map(brand -> productMapper.productToProductDTO(brand));
@@ -292,6 +292,15 @@ public class ProductService {
     public List<ProductResponse> getAllFeaturedProducts() {
 
         List<Product> productList = productRepository.getAllFeaturedProducts();
+
+        User authenticatedUser = userService.getCurrentUser();
+
+        if (authenticatedUser.getRoles().contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
+
+            List<Product> adminProductList = productRepository.getAllFeaturedProductsForAdmin();
+
+            return productMapper.productToProductResponse(adminProductList);
+        }
 
         return productMapper.productToProductResponse(productList);
 

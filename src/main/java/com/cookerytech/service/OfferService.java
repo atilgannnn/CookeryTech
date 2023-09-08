@@ -24,10 +24,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 @Service
 public class OfferService {
@@ -37,13 +39,15 @@ public class OfferService {
     private final UserService userService;
     private final OfferItemService offerItemService;
     private final JavaMailSender mailSender;
+    private final CurrencyService currencyService;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender) {
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender, CurrencyService currencyService) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
         this.userService = userService;
         this.offerItemService = offerItemService;
         this.mailSender = mailSender;
+        this.currencyService = currencyService;
     }
 
     public Page<OfferDTO> findFilteredOffers(String query, Integer statusValue, LocalDate date1, LocalDate date2,
@@ -55,27 +59,26 @@ public class OfferService {
         } else {
             
             User currentUser = userService.getCurrentUser(); // Assuming you have a method to get the current user
-            if (currentUser != null) {
-                boolean isSalesSpecialist = false;
-                boolean isSalesManager = false;
 
-                for (Role role : currentUser.getRoles()) {
-                    if (role.getType().equals(RoleType.ROLE_SALES_SPECIALIST)) {
-                        isSalesSpecialist = true;
-                        break;
-                    } else if (role.getType().equals(RoleType.ROLE_SALES_MANAGER)) {
-                        isSalesManager = true;
-                        break;
-                    }
+            boolean isSalesSpecialist = false;
+            boolean isSalesManager = false;
+
+            for (Role role : currentUser.getRoles()) {
+                if (role.getType().equals(RoleType.ROLE_SALES_MANAGER)) {
+                    isSalesManager = true;
+                    break;
+                } else if (role.getType().equals(RoleType.ROLE_SALES_SPECIALIST)) {
+                    isSalesSpecialist = true;
+                    break;
                 }
-
-                if (isSalesSpecialist) {
-                    status = OfferStatus.fromValue(OfferStatus.WAITING_FOR_APPROVAL.getValue()); // Sales Specialists default status
-                } else if (isSalesManager) {
-                    status = OfferStatus.fromValue(OfferStatus.APPROVED.getValue()); // Sales Managers default status
-                }
-
             }
+
+            if (isSalesManager) {
+                status = OfferStatus.fromValue(OfferStatus.WAITING_FOR_APPROVAL.getValue()); // Sales Managers default status
+            } else if (isSalesSpecialist) {
+                status = OfferStatus.fromValue(OfferStatus.CREATED.getValue()); // Sales Specialists default status
+            }
+
         }
 
 //        LocalDateTime dateTime1 = date1 != null ? date1.atStartOfDay() : null;
@@ -250,7 +253,6 @@ public class OfferService {
     }
 
 
-
     public OfferDTO updateOffers(Long id, OfferUpdate offerUpdate) {
 
         Offer offer = getOffer(id);
@@ -271,31 +273,32 @@ public class OfferService {
             }
         }
 
-//        if(isSalesSpecialist && (OfferStatus.CREATED).equals(offer.getStatus()) || (OfferStatus.REJECTED).equals(offer.getStatus())){
-//            offer.setDiscount(offerUpdate.getDiscount());
-//            offer.setStatus(offerUpdate.getStatus());
-//            offer.setCurrency(offerUpdate.getCurrency());
-//        }
+        if((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
+                (isSalesManager && (offer.getStatus().name().equals("WAITING_FOR_APPROVAL"))) ||
+                isAdmin){
 
-        if(isAdmin || (isSalesSpecialist &&
-                (offer.getStatus().equals(OfferStatus.CREATED) || offer.getStatus().equals(OfferStatus.REJECTED))) ||
-            (isSalesManager &&
-                (offer.getStatus().equals(OfferStatus.WAITING_FOR_APPROVAL)))){
             offer.setDiscount(offerUpdate.getDiscount());
             offer.setStatus(offerUpdate.getStatus());
-            offer.setCurrency(offerUpdate.getCurrency());
+            offer.setCurrency(currencyService.getCurrencyById(offerUpdate.getCurrencyId()));
 
         }else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
         Offer updateOffer = offerRepository.save(offer);
+        //List<OfferItem> offerItemList = offerItemService.getOfferItems(id);
 
 
         OfferDTO offerDTO = offerMapper.offerToOfferDTO(updateOffer);
 
         return offerDTO;
+        //List<OfferItemDTO> offerItemDTOs = offerItemMapper.map(offerItemList);
 
+//        UpdateOfferResponse offerResponse = new UpdateOfferResponse();
+//        offerResponse.setOfferDTO(offerDTO);
+//        offerResponse.setOfferItemDTOList(offerItemDTOs);
+
+        // return offerResponse;
 
 
     }

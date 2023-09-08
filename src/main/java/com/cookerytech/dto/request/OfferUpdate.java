@@ -17,6 +17,6 @@ public class OfferUpdate {
 
     private OfferStatus status;
 
-    private Currency currency;
+    private Long currencyId;
 
 }

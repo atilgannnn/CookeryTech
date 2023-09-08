@@ -12,8 +12,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface OfferMapper {
-    @Mapping(source = "user.id", target = "userId", ignore = true)
-    @Mapping(source = "currency.id", target = "currencyId", ignore = true)
+    @Mapping(source = "user.id", target = "userId"/*, ignore = true*/)
+    @Mapping(source = "currency.id", target = "currencyId"/*, ignore = true*/)
     OfferDTO offerToOfferDTO(Offer offer);
     List<OfferDTO> offerListToOfferDTOList(List<Offer> offers);
 
