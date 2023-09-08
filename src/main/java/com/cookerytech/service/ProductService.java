@@ -48,8 +48,10 @@ public class ProductService {
     private final CartItemsService cartItemsService;
     private final FavoriteService favoriteService;
 
+    private final RoleService roleService;
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService,@Lazy FavoriteService favoriteService) {
+
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -60,6 +62,7 @@ public class ProductService {
         this.offerItemService = offerItemService;
         this.cartItemsService = cartItemsService;
         this.favoriteService = favoriteService;
+        this.roleService = roleService;
     }
 
     public Product getById(Long id){
@@ -275,7 +278,7 @@ public class ProductService {
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
 
-        if (!userRole.contains(RoleType.ROLE_ADMIN)) {
+        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
             Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
 
             return productPage.map(brand -> productMapper.productToProductDTO(brand));
