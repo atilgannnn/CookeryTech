@@ -90,7 +90,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("/{id}/models")
+    @GetMapping("/{id}/models") //A11
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER') or " +
             " hasRole('PRODUCT_MANAGER') or hasRole('CUSTOMER')")
     public ResponseEntity<List<ModelDTO>> getModelsByProductId(@PathVariable Long id){

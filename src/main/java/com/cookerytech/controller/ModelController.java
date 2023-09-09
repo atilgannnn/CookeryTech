@@ -24,12 +24,14 @@ public class ModelController {
     private final ModelService modelService;
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ModelUpdateRequest> updateModelById(@PathVariable("id") Long id, @RequestBody ModelUpdateRequest modelUpdateRequest){
         modelService.updateModelById(id, modelUpdateRequest);
         return ResponseEntity.ok(modelUpdateRequest);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<ModelResponse> deleteModelById(@PathVariable("id") Long id){
         ModelResponse modelResponse = modelService.deleteModelById(id);
         return ResponseEntity.ok(modelResponse);

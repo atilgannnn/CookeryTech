@@ -254,7 +254,7 @@ public class ProductService {
         List<ModelDTO> modelDTOS=new ArrayList<>();
         modelDTOS=adminModelDTOS.stream().filter(model->model.getIsActive()).collect(Collectors.toList());
         Set<Role> userRole = userService.getCurrentUser().getRoles();
-
+//sorgu degisecek,requiremente bak
         if (!userRole.contains(RoleType.ROLE_ADMIN)) {
             return modelDTOS;
         }
@@ -263,6 +263,7 @@ public class ProductService {
     }
 
     public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
+
         List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
         return productPropertyKeyDTOS;
 
