@@ -44,11 +44,15 @@ public class ModelService {
                orElseThrow(()-> new RuntimeException(String.format(ErrorMessage.MODEL_NOT_FOUND_EXCEPTION, id)));
     }
 
-    public void updateModelById(Long id, ModelUpdateRequest modelUpdateRequest) {
+    public ModelDTO updateModelById(Long id, ModelUpdateRequest modelUpdateRequest) {
         Model model = getModelById(id);
 
         if (model.getBuiltIn()){
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        Boolean existsBySku= modelRepository.existsBySku(modelUpdateRequest.getSku());
+        if(existsBySku) {
+            throw new ConflictException(ErrorMessage.SKU_ALREADY_EXİST);
         }
 
         model.setTitle(modelUpdateRequest.getTitle());
@@ -64,6 +68,8 @@ public class ModelService {
         model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyId()));
 
         modelRepository.save(model);
+
+        return modelMapper.modelToModelDTO(model);
 
     }
 

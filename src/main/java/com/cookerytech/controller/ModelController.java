@@ -25,9 +25,9 @@ public class ModelController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ModelUpdateRequest> updateModelById(@PathVariable("id") Long id, @RequestBody ModelUpdateRequest modelUpdateRequest){
-        modelService.updateModelById(id, modelUpdateRequest);
-        return ResponseEntity.ok(modelUpdateRequest);
+    public ResponseEntity<ModelDTO> updateModelById(@PathVariable("id") Long id, @RequestBody ModelUpdateRequest modelUpdateRequest){
+        ModelDTO modelDTO = modelService.updateModelById(id, modelUpdateRequest);
+        return ResponseEntity.ok(modelDTO);
     }
 
     @DeleteMapping("/{id}")
