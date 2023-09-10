@@ -2,6 +2,7 @@ package com.cookerytech.dto.request;
 
 import com.cookerytech.domain.Currency;
 import com.cookerytech.domain.Image;
+import com.cookerytech.domain.ImageData;
 import com.cookerytech.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
