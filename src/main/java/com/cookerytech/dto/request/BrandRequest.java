@@ -24,6 +24,7 @@ public class BrandRequest {
     private Double profitRate;
 
 
+    @NotNull(message = "Please enter isActive")
     private Boolean isActive;
 
 

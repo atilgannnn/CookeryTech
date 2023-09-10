@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+import javax.persistence.Column;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class UpdateAuthenticatedUser {
+
     @Size(min=2, max=30)
     @NotBlank(message="Please provide your First Name")
     private String firstName;
@@ -53,18 +55,6 @@ public class RegisterRequest {
     @Size(max=150)
     @NotBlank(message="Please provide your tax number")
     private String taxNo;
-
-
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", //Password1!
-            message = "The password must contain at least one letter, one number and one special character")
-    @Size(min=8 , max=120, message="Password must be at least 8 characters")
-    @NotBlank(message="Please provide your password")
-    private String password;
-
-
-
-
-
 
 
 

@@ -122,7 +122,7 @@ public class CategoryService {
     }
 
     public long getNumberOfCategories() {
-        return categoryRepository.count();
+        return categoryRepository.numberOfPublishedCategory();
 
     }
 
