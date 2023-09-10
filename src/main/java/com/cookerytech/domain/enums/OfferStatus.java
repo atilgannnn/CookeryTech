@@ -1,5 +1,7 @@
 package com.cookerytech.domain.enums;
 
+import java.util.Arrays;
+
 public enum OfferStatus {
 
     CREATED(0),
@@ -19,8 +21,9 @@ public enum OfferStatus {
     }
 
     public static OfferStatus fromValue(int value) {
+
         for (OfferStatus status : OfferStatus.values()) {
-            if (status.value == value) {
+            if (status.getValue() == value) {
                 return status;
             }
         }

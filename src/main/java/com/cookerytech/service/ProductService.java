@@ -23,6 +23,7 @@ import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.mapper.ProductMapper;
 
 
+
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class ProductService {
     private final CartItemsService cartItemsService;
     private final FavoriteService favoriteService;
     private final RoleService roleService;
+
 
 
     public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
@@ -316,7 +318,7 @@ public class ProductService {
     }
 
     public long getNumberOfProducts() {
-        return productRepository.count();
+        return productRepository.numberOfPublishedProduct();
 
     }
 
@@ -329,9 +331,13 @@ public class ProductService {
     }
 
     public List<ProductDTO> getMostPopularProducts(int amount) {
-        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts();
+        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts(amount);
         List<Product> amountProducts = mostPopularProducts.stream().limit(amount).collect(Collectors.toList());
 
         return productMapper.map(amountProducts);
     }
+
+
+
+
 }

@@ -14,6 +14,7 @@ import com.cookerytech.mapper.ProductMapper;
 import com.cookerytech.repository.FavoriteRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,12 +63,12 @@ public class FavoriteService {
         return modelMapper.modelToModelDTO(model);
     }
 
+    @Transactional
     public List<FavoriteDTO> getFavoritesByCurrentlyUser() {
 
-        User currentlyUser = userService.getCurrentUser();
-        Long userId = currentlyUser.getId();
+         User currentlyUser = userService.getCurrentUser();
 
-        List<Favorite>  favorites =  favoriteRepository.findAllByUserId(userId);
+        List<Favorite>  favorites =  favoriteRepository.findAllByUser(currentlyUser);
 
         List<FavoriteDTO> favoriteDTOS = favorites.stream().
                 map(
@@ -94,7 +95,11 @@ public class FavoriteService {
 
         for (FavoriteDTO userFavorite : usersFavorites) {
 
+
         //  cartItemService.manageCartItem(userFavorite.getModelDTO().getId(),1)
+
+ 
+
 
         }
 

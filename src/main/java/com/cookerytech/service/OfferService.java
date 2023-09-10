@@ -26,6 +26,7 @@ import com.cookerytech.dto.response.OfferResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -115,7 +116,7 @@ public class OfferService {
     public OfferDTO findByIdAndUser(Long id, User user) {
 
         Offer offer = offerRepository.findByIdAndUser(id, user).orElseThrow(
-                ()-> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+                () -> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
         );
 
         return offerMapper.offerToOfferDTO(offer);
@@ -128,26 +129,49 @@ public class OfferService {
         Page<Offer> offers = null;
 
         if (!qLower.isEmpty() || !date1.isEmpty() || !date2.isEmpty() || !statusLower.isEmpty()) {
-            offers = offerRepository.getAllOffers(qLower,date1,date2,statusLower, pageable);
+            offers = offerRepository.getAllOffers(qLower, date1, date2, statusLower, pageable);
         } else {
             offers = offerRepository.findAllOffersWithPage(pageable);
         }
 
-        if(offers.isEmpty()) {
+        if (offers.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ErrorMessage.NO_DATA_IN_DB_TABLE_MESSAGE, "Offers"));
         }
         return offers.map(offerMapper::offerToOfferDTO);
     }
 
-      public List<OfferResponse> getOffersByUserId(Long id) {
-       return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
+    //E03  icin
+    public Page<OfferDTO> getAllOffersByUser(Long userId,String date1, String date2, int status, Pageable pageable) {
+
+        User user = userService.getById(userId);
+        String newDate1 = date1+" 00:00:00.000000";
+        String newDate2 = date2+" 00:00:00.000000";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");//2023-09-09 15:29:21.240129
+        LocalDateTime dateTime1 = LocalDateTime.parse(newDate1, formatter);
+        LocalDateTime dateTime2 = LocalDateTime.parse(newDate2, formatter);
+
+        OfferStatus offerStatus = OfferStatus.fromValue(status);
+
+        Page<Offer> offers = null;
+
+        //if (!(date1==null) || !(date2==null) || !(status==0)) {
+            offers = offerRepository.getAllOffersByUser( dateTime1, dateTime2, offerStatus,user, pageable);
+//        } else {
+//            offers = offerRepository.findAllOffersWithPageByUser(pageable,user);
+//        }
+        return offers.map(offerMapper::offerToOfferDTO);
     }
 
-    public Offer getById(Long id){
-        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+    public List<OfferResponse> getOffersByUserId(Long id) {
+        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
+    }
+
+    public Offer getById(Long id) {
+        Offer offer = offerRepository.findByOfferId(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
         return offer;
     }
+
     public OfferDTO getOfferDTO(Long id) {
         Offer offer = getById(id);
         return offerMapper.offerToOfferDTO(offer);
@@ -169,10 +193,10 @@ public class OfferService {
         //code oluşturuldu ve DB'de varmı kontrolü yapıldı
         Boolean isThereCode;
         String code;
-        do{
+        do {
             code = codeGenerate();
             isThereCode = codeTest(code);
-        }while (!isThereCode);
+        } while (!isThereCode);
 
         newOffer.setCode(code);
         //grand total setlendi
@@ -203,14 +227,14 @@ public class OfferService {
     }
 
     //***** unique code generate  ********
-    public String codeGenerate(){
+    public String codeGenerate() {
 
         Random random = new Random();
 
-        List<String> codeNumeric = Arrays.asList("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","W","Y","Z","0","1","2","3","4","5","6","7","8","9");
+        List<String> codeNumeric = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "W", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
         StringBuilder uniqueCode = new StringBuilder();
-        for (int i=0; i<8; i++){
-            int randomNumber = random.nextInt(33-0+1)+0;
+        for (int i = 0; i < 8; i++) {
+            int randomNumber = random.nextInt(33 - 0 + 1) + 0;
             uniqueCode.append(codeNumeric.get(randomNumber));
         }
         String newCode = uniqueCode.toString();
@@ -218,38 +242,38 @@ public class OfferService {
     }
 
     //***** Create adilen code Database'de var mı? Kontrolü yapar     ********
-    public Boolean codeTest(String code){
+    public Boolean codeTest(String code) {
         return offerRepository.existsByCode(code);
     }
 
     //***** get offer items   ****************
-    public List<OfferItem> getOfferItems(Long offerId){
+    public List<OfferItem> getOfferItems(Long offerId) {
         return offerItemService.getOfferItems(offerId);
     }
 
     //*****     grand_total calculate   *****
-    public Double grandTotalCalculate(Long offerId){
+    public Double grandTotalCalculate(Long offerId) {
         List<OfferItem> offerItems = getOfferItems(offerId);
-        Double grandTotal =0.0;
-        for (int i=0; i<offerItems.size(); i++){
-            grandTotal+=offerItems.get(i).getSubTotal()*(1- (offerItems.get(i).getDiscount()/100));
+        Double grandTotal = 0.0;
+        for (int i = 0; i < offerItems.size(); i++) {
+            grandTotal += offerItems.get(i).getSubTotal() * (1 - (offerItems.get(i).getDiscount() / 100));
         }
         return grandTotal;
     }
 
     //  *****   stock amount decrease   ****
 
-    public List<Integer> stockAmountDecrease(Long offerId){
+    public List<Integer> stockAmountDecrease(Long offerId) {
         return offerItemService.stockAmountDecrease(offerId);
     }
 
     public long numberOfOffersPerDay() {
         LocalDateTime now = LocalDateTime.now();
 
-         // Son 24 saatlik zaman dilimi
+        // Son 24 saatlik zaman dilimi
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
 
-       return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
+        return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
     }
 
 
@@ -268,20 +292,20 @@ public class OfferService {
                 isAdmin = true;
             } else if (RoleType.ROLE_SALES_MANAGER.equals(role.getType())) {
                 isSalesManager = true;
-            } else if(RoleType.ROLE_SALES_SPECIALIST.equals(role.getType())){
+            } else if (RoleType.ROLE_SALES_SPECIALIST.equals(role.getType())) {
                 isSalesSpecialist = true;
             }
         }
 
-        if((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
+        if ((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
                 (isSalesManager && (offer.getStatus().name().equals("WAITING_FOR_APPROVAL"))) ||
-                isAdmin){
+                isAdmin) {
 
             offer.setDiscount(offerUpdate.getDiscount());
             offer.setStatus(offerUpdate.getStatus());
             offer.setCurrency(currencyService.getCurrencyById(offerUpdate.getCurrencyId()));
 
-        }else {
+        } else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
@@ -305,7 +329,7 @@ public class OfferService {
 
 
     public Offer getOffer(Long id) {
-        Offer offer = offerRepository.findById(id).orElseThrow(()->
+        Offer offer = offerRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
         );
         return offer;
