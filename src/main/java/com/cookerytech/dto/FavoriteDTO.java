@@ -30,19 +30,6 @@ public class FavoriteDTO {
         this.createAt = favorite.getCreateAt();
         this.userId = favorite.getUser().getId();
         this.modelDTO = modelDTO;
-//        this.productDTO.setId(favorite.getProduct().getId());
-//        this.productDTO.setTitle(favorite.getProduct().getTitle());
-//        this.productDTO.setShortDesc(favorite.getProduct().getShortDesc());
-//        this.productDTO.setLongDesc(favorite.getProduct().getLongDesc());
-//        this.productDTO.setSlug(favorite.getProduct().getSlug());
-//        this.productDTO.setSeq(favorite.getProduct().getSeq());
-//        this.productDTO.setIsNew(favorite.getProduct().getIsNew());
-//        this.productDTO.setIsFeatured(favorite.getProduct().getIsFeatured());
-//        this.productDTO.setIsActive(favorite.getProduct().getIsActive());
-//        this.productDTO.setBuiltIn(favorite.getProduct().getBuiltIn());
-//        this.productDTO.setBuiltIn(favorite.getProduct().getBuiltIn());
-//        this.productDTO.setBrandIds(favorite.getProduct().getBrands().stream().map(b));
-
 
     }
 }
