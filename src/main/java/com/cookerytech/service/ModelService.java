@@ -61,7 +61,9 @@ public class ModelService {
         model.setIsActive(modelUpdateRequest.getIsActive());
         model.setUpdateAt(LocalDateTime.now());
         model.setProduct(productService.getById(modelUpdateRequest.getProductId()));
-        model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyCode()));
+        model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyId()));
+
+        modelRepository.save(model);
 
     }
 
