@@ -10,9 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
-public class CartResponse {
+public class CartItemsResponse {
 
     private Long id;
 
@@ -20,5 +20,12 @@ public class CartResponse {
 
     private Model model;
 
-    private Double amount;
+    private Integer amount;
+
+    public CartItemsResponse(Long id, Product product, Model model, Integer amount) {
+        this.id = id;
+        this.product = product;
+        this.model = model;
+        this.amount = amount;
+    }
 }

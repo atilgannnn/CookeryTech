@@ -15,27 +15,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_cartItem")
-public class Cart_Items {
+public class CartItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false, unique = true)
+    @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     //(cascade = CascadeType.REMOVE)
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product productId;
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "model_id", referencedColumnName = "id")
-    private Model modelId;
+    private Model model;
 
     @Column(nullable = false)
-    private Double amount;
+    private Integer amount;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")

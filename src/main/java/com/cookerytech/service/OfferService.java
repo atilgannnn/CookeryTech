@@ -57,7 +57,7 @@ public class OfferService {
         if (statusValue != null) {
             status = OfferStatus.fromValue(statusValue);
         } else {
-            
+
             User currentUser = userService.getCurrentUser(); // Assuming you have a method to get the current user
 
             boolean isSalesSpecialist = false;
