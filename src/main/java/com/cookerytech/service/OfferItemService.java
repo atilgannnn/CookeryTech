@@ -14,6 +14,7 @@ import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferItemRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -64,24 +65,25 @@ public class OfferItemService {
 
     }
 
-    public List<OfferItemDTO> updateOfferItems(Long id, OfferItemsUpdate offerItemsUpdate) {
-
-        OfferItem offerItem = new OfferItem();
+    public OfferItemDTO updateOfferItems(Long id, OfferItemsUpdate offerItemsUpdate) {
         Offer offer = new Offer();
-        List<OfferItem> offerItemList = getOfferItems(id);
+        OfferItem offerItem = getOfferItem(id);
 
-        if((offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))){
+        if((offerItem.getOffer().getStatus().name().equals("CREATED") || offerItem.getOffer().getStatus().name().equals("REJECTED"))){
 
             offerItem.setQuantity(offerItemsUpdate.getQuantity());
             offerItem.setSellingPrice(offerItemsUpdate.getPrice());
             offerItem.setTax(offerItemsUpdate.getTax());
             offerItem.setDiscount(offerItemsUpdate.getDiscount());
+            offerItem.setUpdateAt(LocalDateTime.now());
 
         }else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-        List<OfferItemDTO> offerItemDTOs = offerItemMapper.map(offerItemList);
+        OfferItem updateOfferItem = offerItemRepository.save(offerItem);
+
+        OfferItemDTO offerItemDTOs = offerItemMapper.OfferItemToOfferItemDTO(updateOfferItem);
 
         return offerItemDTOs;
 
@@ -107,7 +109,7 @@ public class OfferItemService {
 
     public OfferItem getOfferItem(Long id) {
         OfferItem offerItem = offerItemRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );
         return offerItem;
     }

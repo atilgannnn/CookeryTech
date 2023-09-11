@@ -38,7 +38,6 @@ public interface OfferItemMapper {
 //    }
 
 
-    List<OfferItemDTO> map(List<OfferItem> offerItems);
 
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-
+    //@Query("SELECT f FROM Favorite f JOIN f.model m JOIN f.user u WHERE m.id = :model AND u.id = :authenticatedUser")
     Favorite findByModelAndUser(Model model, User authenticatedUser);
 
 

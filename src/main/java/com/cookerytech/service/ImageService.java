@@ -33,7 +33,7 @@ public class ImageService {
         try{
             ImageData imageData = new ImageData(file.getBytes());
             //image = new Image(filename, file.getContentType(), imageData);
-            image = new Image(filename,file.getContentType(), image.getModel_id(), imageData);
+            image = new Image(filename,file.getContentType(), imageData);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
