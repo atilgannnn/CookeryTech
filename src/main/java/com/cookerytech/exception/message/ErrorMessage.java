@@ -28,9 +28,10 @@ public class ErrorMessage {
 
     public  final  static  String CAN_NOT_BE_DELETED_MESSAGE = "Cannot be deleted.Has related records in other table";
 
-
+    public static final String PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE = "Cannot be create this name";
 
     public static final String CATEGORY_ALREADY_EXIST_MESSAGE = "Category already exist";
 
     public static final String CATEGORY_CANNOT_BE_DELETED_MESSAGE = "This category cannot be deleted.It has related records in other table";
+    public static final String DELİVERY_DATE_INCORRECT_MESSAGE = "Delivery Date not correct";
 }
