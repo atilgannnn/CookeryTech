@@ -47,13 +47,13 @@ public class ProductService {
 
     private final CategoryService categoryService;
     private final OfferItemService offerItemService;
-    private final CartItemsService cartItemsService;
+    private final CartItemService cartItemService;
     private final FavoriteService favoriteService;
     private final RoleService roleService;
 
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService,@Lazy CartItemService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -62,7 +62,7 @@ public class ProductService {
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.offerItemService = offerItemService;
-        this.cartItemsService = cartItemsService;
+        this.cartItemService = cartItemsService;
         this.favoriteService = favoriteService;
         this.roleService = roleService;
     }
@@ -127,9 +127,9 @@ public class ProductService {
         }
 
         // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
-        List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
+        List<Long> cartItemsIds = cartItemService.getCartItemsByProductId(id);
         for (Long cartItemId:cartItemsIds){
-            cartItemsService.deleteCartItem(cartItemId);
+            cartItemService.deleteCartItem(cartItemId);
         }
 
 
