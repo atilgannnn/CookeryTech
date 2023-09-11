@@ -17,10 +17,10 @@ import java.util.List;
 public interface ProductPropertyKeyMapper {
 
 
-   @Mapping(source="products", target="productId", ignore = true)
+   @Mapping(source="productId", target="productId", ignore = true)
    ProductPropertyKeyDTO productPropertyKeyToProductPropertyKeyDTO(ProductPropertyKey productPropertyKey);
 
-   @Mapping(source = "productId",target = "products", ignore = true)
+   @Mapping(source = "productId",target = "productId", ignore = true)
    ProductPropertyKey productPropertyKeyRequestToProductPropertyKey(ProductPropertyRequest productPropertyRequest);
 
    List<ProductPropertyKeyDTO> map(List<ProductPropertyKey> productPropertyKeys);
