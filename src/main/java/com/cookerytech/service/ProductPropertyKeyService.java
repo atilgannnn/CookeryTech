@@ -34,6 +34,9 @@ public class ProductPropertyKeyService {
 
     public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest) {
 
+        if(isThereNameToDB(createProductPropertyRequest.getName())){
+            throw new BadRequestException(ErrorMessage.PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE);
+        }
         ProductPropertyKey productPropertyKey = new ProductPropertyKey();
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
@@ -99,5 +102,8 @@ public class ProductPropertyKeyService {
 
     }
 
+    public Boolean isThereNameToDB(String name){
+        return productPropertyKeyRepository.existsByName(name);
+    }
 
 }
