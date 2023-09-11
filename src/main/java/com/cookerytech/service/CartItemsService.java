@@ -1,7 +1,7 @@
 package com.cookerytech.service;
 
 
-import com.cookerytech.domain.Cart_Items;
+import com.cookerytech.domain.CartItems;
 import com.cookerytech.repository.CartItemRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class CartItemsService {
 
 
     public List<Long> getCartItemsByProductId(Long productId) {
-       List<Cart_Items>  cartItemsList = cartItemRepository.getCartItemsByProductId(productId);
+       List<CartItems>  cartItemsList = cartItemRepository.getCartItemsByProductId(productId);
       return cartItemsList.stream().map(cartItems -> cartItems.getId()).collect(Collectors.toList());
     }
 

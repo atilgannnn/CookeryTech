@@ -1,6 +1,5 @@
 package com.cookerytech.service;
 
-import com.cookerytech.config.EmailConfig;
 import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.OfferItem;
 import com.cookerytech.domain.Role;
@@ -23,6 +22,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -276,7 +276,7 @@ public class OfferService {
         return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
     }
 
-
+    //@Transactional
     public OfferDTO updateOffers(Long id, OfferUpdate offerUpdate) {
 
         Offer offer = getOffer(id);
@@ -304,6 +304,7 @@ public class OfferService {
             offer.setDiscount(offerUpdate.getDiscount());
             offer.setStatus(offerUpdate.getStatus());
             offer.setCurrency(currencyService.getCurrencyById(offerUpdate.getCurrencyId()));
+            offer.setUpdateAt(LocalDateTime.now());
 
         } else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);

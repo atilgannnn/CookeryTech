@@ -11,7 +11,6 @@ import com.cookerytech.dto.response.UpdateOfferResponse;
 import com.cookerytech.service.OfferItemService;
 import com.cookerytech.service.OfferService;
 import com.cookerytech.service.UserService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

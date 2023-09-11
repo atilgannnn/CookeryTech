@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 
+import com.cookerytech.domain.Cart;
 import com.cookerytech.domain.Favorite;
 import com.cookerytech.domain.Model;
 import com.cookerytech.domain.User;
@@ -27,19 +28,21 @@ public class FavoriteService {
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final ProductMapper productMapper;
+    private final CartService cartService;
     private final CartItemService cartItemService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartItemService cartItemService) {
+    public FavoriteService(FavoriteRepository favoriteRepository, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartService cartService, CartItemService cartItemService) {
         this.favoriteRepository = favoriteRepository;
         this.modelService = modelService;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.productMapper = productMapper;
+        this.cartService = cartService;
         this.cartItemService = cartItemService;
     }
 
 
-
+    @Transactional
     public ModelDTO toggleFavorite(/*User currentUser,*/ FavoriteUpdateRequest modelId) {
 
 //        User user = currentUser; // Get the authenticated user
@@ -98,7 +101,7 @@ public class FavoriteService {
 
         //  cartItemService.manageCartItem(userFavorite.getModelDTO().getId(),1)
 
- 
+
 
 
         }
