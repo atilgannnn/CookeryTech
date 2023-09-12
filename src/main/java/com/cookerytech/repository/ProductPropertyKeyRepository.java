@@ -11,5 +11,7 @@ public interface ProductPropertyKeyRepository extends JpaRepository<ProductPrope
     @Query("SELECT p FROM ProductPropertyKey p JOIN p.products pr WHERE pr.id = :productId")
     List<ProductPropertyKey> findAllByProductId(@Param("productId") Long productId);
 
+    @Query("SELECT p FROM ProductPropertyKey p WHERE p.name = :name")
+    Boolean existsByName(@Param("name")String name);
 
 }

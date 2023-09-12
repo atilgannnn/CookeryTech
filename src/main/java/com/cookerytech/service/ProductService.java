@@ -72,8 +72,7 @@ public class ProductService {
     }
 
     public ProductPropertyKeyDTO makeProductProperty(ProductPropertyRequest createProductPropertyRequest) {
-        Product product = getById(createProductPropertyRequest.getProductId());
-        return productPropertyKeyService.makeProductPropertyKey(createProductPropertyRequest, product);
+        return productPropertyKeyService.makeProductPropertyKey(createProductPropertyRequest);
     }
 
     public ProductPropertyKeyDTO updateProductProperty(Long id, ProductPropertyRequest productPropertyRequest) {
