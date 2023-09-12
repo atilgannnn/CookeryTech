@@ -158,6 +158,12 @@ public class OfferService {
     //TODO : mail atılacak customer ve SS ye
     @Transactional
     public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
+
+        LocalDate now = LocalDate.now();
+        if(offerCreate.getDeliveryDate().isBefore(now)){
+            throw new BadRequestException(ErrorMessage.DELİVERY_DATE_INCORRECT_MESSAGE);
+        }
+
         User user = userService.getCurrentUser();
         OfferCreateResponse offerCreateResponse = new OfferCreateResponse();    //return edilecek
         Offer newOffer = new Offer();                                           //DB'ye setlenecek

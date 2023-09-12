@@ -34,19 +34,26 @@ public class ProductPropertyKeyService {
     }
 
 
-    public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest, Product product) {
+    public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest) {
 
+        if(isThereNameToDB(createProductPropertyRequest.getName())){
+            throw new BadRequestException(ErrorMessage.PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE);
+        }
         ProductPropertyKey productPropertyKey = new ProductPropertyKey();
+        List<Product> productList = new ArrayList<>();
+        productList.add(productService.getById(createProductPropertyRequest.getProductId()));
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
         productPropertyKey.setName(createProductPropertyRequest.getName());
-        List<Product> productList = new ArrayList<>();
-        productList.add(product);
         productPropertyKey.setProducts(productList);
         productPropertyKey.setBuiltIn(false);
 
-       ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
-       return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey1);
+        ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
+        return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey1);
+    }
+
+    private boolean isThereNameToDB(String name) {
+        return productPropertyKeyRepository.existsByName(name);
     }
 
     public ProductPropertyKey getById(Long id){
