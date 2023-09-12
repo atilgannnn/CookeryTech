@@ -1,6 +1,5 @@
 package com.cookerytech.dto.request;
 
-import com.cookerytech.domain.Image;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -21,7 +20,7 @@ public class ModelUpdateRequest {
     @NotBlank
     private Integer seq;
     @NotBlank
-    private Image image;
+    private Integer imageId;
     @NotBlank
     private Double buyingPrice;
     @NotBlank
@@ -29,7 +28,7 @@ public class ModelUpdateRequest {
     @NotBlank
     private Boolean isActive;
     @NotBlank
-    private String currencyId;
+    private String currencyCode;
     @NotBlank
     private  Long productId;
 

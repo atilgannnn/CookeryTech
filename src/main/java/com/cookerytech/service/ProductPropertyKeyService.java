@@ -1,5 +1,6 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Product;
 import com.cookerytech.domain.ProductPropertyKey;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
@@ -11,6 +12,7 @@ import com.cookerytech.repository.ProductPropertyKeyRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +34,15 @@ public class ProductPropertyKeyService {
     }
 
 
-    public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest) {
+    public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest, Product product) {
 
         ProductPropertyKey productPropertyKey = new ProductPropertyKey();
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
         productPropertyKey.setName(createProductPropertyRequest.getName());
-        productPropertyKey.setProductId(productService.getById(createProductPropertyRequest.getProductId()));
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        productPropertyKey.setProducts(productList);
         productPropertyKey.setBuiltIn(false);
 
        ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);

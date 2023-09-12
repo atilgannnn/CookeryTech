@@ -13,6 +13,7 @@ import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.CategoryMapper;
 import com.cookerytech.repository.CategoryRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -122,7 +123,7 @@ public class CategoryService {
     }
 
     public long getNumberOfCategories() {
-        return categoryRepository.numberOfPublishedCategory();
+        return categoryRepository.count();
 
     }
 
