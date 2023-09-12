@@ -1,32 +1,27 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.*;
-import com.cookerytech.dto.BrandDTO;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.request.ModelCreatRequest;
 import com.cookerytech.dto.request.ModelUpdateRequest;
 import com.cookerytech.dto.response.ModelResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ConflictException;
-import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.repository.ModelRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ModelService {
 
     private final ModelRepository modelRepository;
@@ -37,6 +32,13 @@ public class ModelService {
 
     private  final  ImageService imageService;
 
+    public ModelService(ModelRepository modelRepository, ModelMapper modelMapper, @Lazy ProductService productService, CurrencyService currencyService, ImageService imageService) {
+        this.modelRepository = modelRepository;
+        this.modelMapper = modelMapper;
+        this.productService = productService;
+        this.currencyService = currencyService;
+        this.imageService = imageService;
+    }
 
 
     public Model getModelById(Long id){
@@ -44,15 +46,11 @@ public class ModelService {
                orElseThrow(()-> new RuntimeException(String.format(ErrorMessage.MODEL_NOT_FOUND_EXCEPTION, id)));
     }
 
-    public ModelDTO updateModelById(Long id, ModelUpdateRequest modelUpdateRequest) {
+    public void updateModelById(Long id, ModelUpdateRequest modelUpdateRequest) {
         Model model = getModelById(id);
 
         if (model.getBuiltIn()){
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
-        }
-        Boolean existsBySku= modelRepository.existsBySku(modelUpdateRequest.getSku());
-        if(existsBySku) {
-            throw new ConflictException(ErrorMessage.SKU_ALREADY_EXİST);
         }
 
         model.setTitle(modelUpdateRequest.getTitle());
@@ -65,11 +63,7 @@ public class ModelService {
         model.setIsActive(modelUpdateRequest.getIsActive());
         model.setUpdateAt(LocalDateTime.now());
         model.setProduct(productService.getById(modelUpdateRequest.getProductId()));
-        model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyId()));
-
-        modelRepository.save(model);
-
-        return modelMapper.modelToModelDTO(model);
+        model.setCurrency(currencyService.getCurrency(modelUpdateRequest.getCurrencyCode()));
 
     }
 

@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,8 +44,10 @@ public class ProductSaveRequest {
     @NotNull(message = "Please provide Active")
     private Boolean isActive=true;
 
-    private Set<Long> brandsIds= new HashSet<>();
+    private Long brandsId;
 
     private Long categoryId;
+
+    private Set<Long> brandsIds= new HashSet<>();
 
 }

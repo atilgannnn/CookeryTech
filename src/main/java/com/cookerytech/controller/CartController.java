@@ -1,38 +1,43 @@
 package com.cookerytech.controller;
 
+import com.cookerytech.domain.Cart;
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.request.CartItemRequest;
-import com.cookerytech.dto.response.CartItemsResponse;
-import com.cookerytech.service.CartItemService;
+import com.cookerytech.dto.response.CartResponse;
+import com.cookerytech.service.CartService;
 import com.cookerytech.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
 
-    private final CartItemService cartItemService;
+    private final UserService userService;
 
-    public CartController(CartItemService cartItemService) {
-        this.cartItemService = cartItemService;
+    private final CartService cartService;
+
+    public CartController(UserService userService,@Lazy CartService cartService) {
+        this.userService = userService;
+        this.cartService = cartService;
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<List<CartItemsResponse>> getUsersCart(){
+    public ResponseEntity<List<CartResponse>> getUsersCart(){
 
-        List<CartItemsResponse> cart = cartItemService.getCart();
+        List<CartResponse> cart = cartService.getCart();
 
         return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<CartItemsResponse> manageCartItem(@RequestBody CartItemRequest cartItemRequest) {
-
-        CartItemsResponse cartResponse = cartItemService.manageCartItems(
+    public ResponseEntity<CartResponse> manageCartItem(@RequestBody CartItemRequest cartItemRequest) {
+        CartResponse cartResponse = cartService.manageCartItem(
                 cartItemRequest.getModelId(),
                 cartItemRequest.getAmount()
         );

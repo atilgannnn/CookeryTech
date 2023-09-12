@@ -15,7 +15,6 @@ import com.cookerytech.mapper.ProductMapper;
 import com.cookerytech.repository.FavoriteRepository;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,20 +28,18 @@ public class FavoriteService {
     private final UserService userService;
     private final ProductMapper productMapper;
     private final CartService cartService;
-    private final CartItemService cartItemService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartService cartService, CartItemService cartItemService) {
+    public FavoriteService(FavoriteRepository favoriteRepository, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartService cartService) {
         this.favoriteRepository = favoriteRepository;
         this.modelService = modelService;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.productMapper = productMapper;
         this.cartService = cartService;
-        this.cartItemService = cartItemService;
     }
 
 
-    @Transactional
+
     public ModelDTO toggleFavorite(/*User currentUser,*/ FavoriteUpdateRequest modelId) {
 
 //        User user = currentUser; // Get the authenticated user
@@ -66,12 +63,12 @@ public class FavoriteService {
         return modelMapper.modelToModelDTO(model);
     }
 
-    @Transactional
     public List<FavoriteDTO> getFavoritesByCurrentlyUser() {
 
-         User currentlyUser = userService.getCurrentUser();
+        User currentlyUser = userService.getCurrentUser();
+        Long userId = currentlyUser.getId();
 
-        List<Favorite>  favorites =  favoriteRepository.findAllByUser(currentlyUser);
+        List<Favorite>  favorites =  favoriteRepository.findAllByUserId(userId);
 
         List<FavoriteDTO> favoriteDTOS = favorites.stream().
                 map(
@@ -98,11 +95,7 @@ public class FavoriteService {
 
         for (FavoriteDTO userFavorite : usersFavorites) {
 
-
-        //  cartItemService.manageCartItem(userFavorite.getModelDTO().getId(),1)
-
-
-
+        //  cartService.manageCartItem(userFavorite.getModelDTO().getId(),1)
 
         }
 

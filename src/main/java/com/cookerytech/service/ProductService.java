@@ -23,7 +23,6 @@ import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.mapper.ProductMapper;
 
 
-
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,13 +46,12 @@ public class ProductService {
 
     private final CategoryService categoryService;
     private final OfferItemService offerItemService;
-    private final CartItemService cartItemService;
+    private final CartItemsService cartItemsService;
     private final FavoriteService favoriteService;
     private final RoleService roleService;
 
 
-
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService,@Lazy CartItemService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, ModelService modelService, UserService userService, @Lazy BrandService brandService,@Lazy  CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -62,7 +60,7 @@ public class ProductService {
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.offerItemService = offerItemService;
-        this.cartItemService = cartItemsService;
+        this.cartItemsService = cartItemsService;
         this.favoriteService = favoriteService;
         this.roleService = roleService;
     }
@@ -74,8 +72,8 @@ public class ProductService {
     }
 
     public ProductPropertyKeyDTO makeProductProperty(ProductPropertyRequest createProductPropertyRequest) {
-        getById(createProductPropertyRequest.getProductId());
-        return productPropertyKeyService.makeProductPropertyKey(createProductPropertyRequest);
+        Product product = getById(createProductPropertyRequest.getProductId());
+        return productPropertyKeyService.makeProductPropertyKey(createProductPropertyRequest, product);
     }
 
     public ProductPropertyKeyDTO updateProductProperty(Long id, ProductPropertyRequest productPropertyRequest) {
@@ -127,9 +125,9 @@ public class ProductService {
         }
 
         // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
-        List<Long> cartItemsIds = cartItemService.getCartItemsByProductId(id);
+        List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
         for (Long cartItemId:cartItemsIds){
-            cartItemService.deleteCartItem(cartItemId);
+            cartItemsService.deleteCartItem(cartItemId);
         }
 
 
@@ -216,6 +214,7 @@ public class ProductService {
 
 
 
+
     public List<Product> getProductByBrandId(Long brandId) {
 
         List<Product> productList = productRepository.findProductByBrandId(brandId);
@@ -256,7 +255,7 @@ public class ProductService {
         List<ModelDTO> modelDTOS=new ArrayList<>();
         modelDTOS=adminModelDTOS.stream().filter(model->model.getIsActive()).collect(Collectors.toList());
         Set<Role> userRole = userService.getCurrentUser().getRoles();
-//sorgu degisecek,requiremente bak
+
         if (!userRole.contains(RoleType.ROLE_ADMIN)) {
             return modelDTOS;
         }
@@ -265,7 +264,6 @@ public class ProductService {
     }
 
     public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
-
         List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
         return productPropertyKeyDTOS;
 
@@ -318,7 +316,7 @@ public class ProductService {
     }
 
     public long getNumberOfProducts() {
-        return productRepository.numberOfPublishedProduct();
+        return productRepository.count();
 
     }
 
@@ -331,13 +329,19 @@ public class ProductService {
     }
 
     public List<ProductDTO> getMostPopularProducts(int amount) {
-        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts(amount);
+        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts();
         List<Product> amountProducts = mostPopularProducts.stream().limit(amount).collect(Collectors.toList());
 
         return productMapper.map(amountProducts);
     }
 
+    public Boolean isThereProduct(Long id){
+        return productRepository.existsById(id);
+    }
 
-
-
+//    public Double getBrandByProductId(Long productId) {
+//        Product product = getProduct(productId);
+//        Double profitRates = product.getBrand().getProfitRate();
+//        return profitRates;
+//    }
 }

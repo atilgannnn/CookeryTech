@@ -26,16 +26,15 @@ public class Offer {
     private Long id;
 
     @Size(min = 8, max = 8)
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(unique = true, length = 8)
     private String code;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private OfferStatus status= OfferStatus.fromValue(0);
 
-    private Double subTotal;
+   // private Double subTotal;
 
-    private Double discount;
+    private Double discount=15.0;
 
     private Double grandTotal;
 
@@ -47,9 +46,10 @@ public class Offer {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate deliveryAt;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createAt;
 
     @Column(nullable = true)
