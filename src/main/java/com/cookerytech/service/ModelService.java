@@ -46,6 +46,7 @@ public class ModelService {
                orElseThrow(()-> new RuntimeException(String.format(ErrorMessage.MODEL_NOT_FOUND_EXCEPTION, id)));
     }
 
+    @Transactional
     public void updateModelById(Long id, ModelUpdateRequest modelUpdateRequest) {
         Model model = getModelById(id);
 
