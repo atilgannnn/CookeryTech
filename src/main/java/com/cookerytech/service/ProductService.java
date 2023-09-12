@@ -51,7 +51,7 @@ public class ProductService {
     private final RoleService roleService;
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, ModelService modelService, UserService userService, @Lazy BrandService brandService,@Lazy  CategoryService categoryService, OfferItemService offerItemService, CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService,@Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService,@Lazy  CategoryService categoryService, OfferItemService offerItemService,@Lazy CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;

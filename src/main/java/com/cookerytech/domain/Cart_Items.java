@@ -22,7 +22,7 @@ public class Cart_Items {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false, unique = true)
+    @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     //(cascade = CascadeType.REMOVE)

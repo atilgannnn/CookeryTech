@@ -191,8 +191,8 @@ public class OfferService {
 
         //cartService => CartRepo(cartid alındı) => CartItemService => CartItemRepo' dan productid, modelid, amount getirildi
 
-         List<Cart_Items> cartItemList = cartItemsService.getCartItemsForOfferItem(user.getId());
-         List<OfferItem> offferItemList = cartItemList.stream().map(cartItems -> offerItemService.offerItemsCreate(cartItems,saveNewOffer)).collect(Collectors.toList());
+//         List<Cart_Items> cartItemList = cartItemsService.getCartItemsForOfferItem(user.getId());
+//         List<OfferItem> offferItemList = cartItemList.stream().map(cartItems -> offerItemService.offerItemsCreate(cartItems,saveNewOffer)).collect(Collectors.toList());
 
 
 
@@ -207,7 +207,7 @@ public class OfferService {
         offerCreateResponse.setId(offerId);
         offerCreateResponse.setCode(saveNewOffer.getCode());
         offerCreateResponse.setStatus(saveNewOffer.getStatus().name());
-        offerCreateResponse.setItems(offerItemMapper.map(offferItemList));
+//        offerCreateResponse.setItems(offerItemMapper.map(offferItemList));
 
         //mail gönderme
 //        SimpleMailMessage message = new SimpleMailMessage();
