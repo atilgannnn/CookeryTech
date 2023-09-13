@@ -60,8 +60,16 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
                                                      " OR lower(o.status) like %?4%")
     Page<Offer> getAllOffers(String qLower, String date1, String date2, String statusLower, Pageable pageable);
 
+    @Query("SELECT o FROM Offer o where (o.createAt BETWEEN ?1 AND ?2) " +
+            " AND o.status=?3 AND o.user=?4")
+    Page<Offer> getAllOffersByUser(LocalDateTime date1, LocalDateTime date2, OfferStatus status, User user, Pageable pageable);
+
     @Query("SELECT o FROM Offer o")
     Page<Offer> findAllOffersWithPage(Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE " +
+            "o.user.id=?2")
+    Page<Offer> findAllOffersWithPageByUser(Pageable pageable,User user);
 
     @EntityGraph(attributePaths = "offer")
     @Query("SELECT oi FROM OfferItem oi LEFT JOIN FETCH oi.offer WHERE oi.offer=: offerId ")

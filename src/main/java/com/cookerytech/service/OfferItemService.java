@@ -1,28 +1,39 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.*;
+import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.OfferItemDTO;
 import com.cookerytech.dto.request.OfferItemsUpdate;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferItemMapper;
+import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class OfferItemService {
 
     private final OfferItemRepository offerItemRepository;
+    private final UserService userService;
+
     private final OfferItemMapper offerItemMapper;
 
-    public OfferItemService(OfferItemRepository offerItemRepository, OfferItemMapper offerItemMapper) {
+    private final OfferService offerService;
+
+
+
+    public OfferItemService(OfferItemRepository offerItemRepository, UserService userService, OfferItemMapper offerItemMapper, OfferService offerService) {
         this.offerItemRepository = offerItemRepository;
+        this.userService = userService;
         this.offerItemMapper = offerItemMapper;
+        this.offerService = offerService;
     }
 
 
@@ -134,4 +145,7 @@ public class OfferItemService {
     }
 
 
+    public Boolean existsOfferItemsByModel(Model model) {
+     return    offerItemRepository.existsByModel(model);
+    }
 }

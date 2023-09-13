@@ -1,5 +1,6 @@
 package com.cookerytech.repository;
 
+import com.cookerytech.domain.Model;
 import com.cookerytech.domain.OfferItem;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,7 @@ public interface OfferItemRepository extends JpaRepository<OfferItem, Long> {
     @EntityGraph(attributePaths = {"id"})
     @Query("SELECT oi FROM OfferItem oi WHERE oi.offer.id = :offerId")
     List<OfferItem> getByOfferItemByOfferId(@Param("offerId") Long offerId);
+
+
+    Boolean existsByModel(Model model);
 }

@@ -149,6 +149,6 @@ public class BrandService {
 
 
     public long getNumberOfBrands() {
-       return brandRepository.count();
+       return brandRepository.numberOfPublishedBrand();
     }
 }

@@ -13,6 +13,7 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferItemMapper;
 import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +40,7 @@ public class OfferService {
     private final CurrencyService currencyService;
     private final OfferItemMapper offerItemMapper;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, OfferItemService offerItemService, JavaMailSender mailSender,
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
                         CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
@@ -136,6 +138,28 @@ public class OfferService {
         if(offers.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ErrorMessage.NO_DATA_IN_DB_TABLE_MESSAGE, "Offers"));
         }
+        return offers.map(offerMapper::offerToOfferDTO);
+    }
+
+    //E03  icin
+    public Page<OfferDTO> getAllOffersByUser(Long userId,String date1, String date2, int status, Pageable pageable) {
+
+        User user = userService.getById(userId);
+        String newDate1 = date1+" 00:00:00.000000";
+        String newDate2 = date2+" 00:00:00.000000";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");//2023-09-09 15:29:21.240129
+        LocalDateTime dateTime1 = LocalDateTime.parse(newDate1, formatter);
+        LocalDateTime dateTime2 = LocalDateTime.parse(newDate2, formatter);
+
+        OfferStatus offerStatus = OfferStatus.fromValue(status);
+
+        Page<Offer> offers = null;
+
+        //if (!(date1==null) || !(date2==null) || !(status==0)) {
+            offers = offerRepository.getAllOffersByUser( dateTime1, dateTime2, offerStatus,user, pageable);
+//        } else {
+//            offers = offerRepository.findAllOffersWithPageByUser(pageable,user);
+//        }
         return offers.map(offerMapper::offerToOfferDTO);
     }
 
@@ -328,4 +352,6 @@ public class OfferService {
         );
         return offer;
     }
+
+
 }
