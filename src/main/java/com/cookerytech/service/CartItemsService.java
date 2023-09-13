@@ -124,6 +124,16 @@ public class CartItemsService {
     }
 
     public void deleteCartItem(Long id) {
+        getCartItemById(id);
         cartItemRepository.deleteById(id);
+    }
+
+    private Cart_Items getCartItemById(Long id){
+        return    cartItemRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+    }
+
+    public List<Long> getCartItemIdsByModel(Model model) {
+     return  cartItemRepository.findAllByModel(model).stream().map(cI->cI.getId()).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,9 @@
 package com.cookerytech.repository;
 
-import com.cookerytech.domain.*;
+import com.cookerytech.domain.Cart;
+import com.cookerytech.domain.Cart_Items;
+import com.cookerytech.domain.Model;
+import com.cookerytech.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +27,5 @@ public interface CartItemRepository extends JpaRepository<Cart_Items,Long> {
     @Query("SELECT c FROM Cart_Items c WHERE c.cart.user = :user and c.model.id = :modelId")
     Optional<Cart_Items> getCartItemsByModelIdandByUser(@Param("modelId") Long modelId, @Param("user") User user);
 
+    List<Cart_Items> findAllByModel(Model model);
 }

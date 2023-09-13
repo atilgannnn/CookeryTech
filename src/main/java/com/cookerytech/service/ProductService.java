@@ -249,20 +249,21 @@ public class ProductService {
 //    }
 
     @Transactional
-    public List<ModelDTO> getModelsByProductId(Long id) {
-        List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(id);
-        List<ModelDTO> modelDTOS=new ArrayList<>();
-        modelDTOS=adminModelDTOS.stream().filter(model->model.getIsActive()).collect(Collectors.toList());
+    public List<ModelDTO> getModelsByProductId(Long productId,String token) {
+
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
-        if (!userRole.contains(RoleType.ROLE_ADMIN)) {
+        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
+            List<ModelDTO> modelDTOS=modelService.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
             return modelDTOS;
         }
+        List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(productId);
         return adminModelDTOS;
 
     }
 
     public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
+
         List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
         return productPropertyKeyDTOS;
 
@@ -278,7 +279,7 @@ public class ProductService {
         Set<Role> userRole = userService.getCurrentUser().getRoles();
 
 
-        if (!userRole.contains(RoleType.ROLE_ADMIN)) {  //roleService.findByType(RoleType.ROLE_ADMIN)
+        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {  //roleService.findByType(RoleType.ROLE_ADMIN)
             Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
 
             return productPage.map(brand -> productMapper.productToProductDTO(brand));
@@ -315,7 +316,7 @@ public class ProductService {
     }
 
     public long getNumberOfProducts() {
-        return productRepository.count();
+        return productRepository.numberOfPublishedProduct();
 
     }
 
@@ -328,6 +329,7 @@ public class ProductService {
     }
 
     public List<ProductDTO> getMostPopularProducts(int amount) {
+
         List<Product> mostPopularProducts =  productRepository.getMostPopularProducts();
         List<Product> amountProducts = mostPopularProducts.stream().limit(amount).collect(Collectors.toList());
 
