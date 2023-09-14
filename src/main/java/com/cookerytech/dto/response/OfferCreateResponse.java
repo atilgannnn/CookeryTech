@@ -24,4 +24,15 @@ public class OfferCreateResponse {
     private String status;
     List<OfferItemDTO> items = new ArrayList<>();
     private UserDTO userDTO;
+
+    @Override
+    public String toString() {
+        return "OfferCreateResponse{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", status='" + status + '\'' +
+                ", items=" + items +
+                ", userDTO=" + userDTO +
+                '}';
+    }
 }
