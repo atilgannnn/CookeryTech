@@ -17,6 +17,7 @@ import com.cookerytech.mapper.OfferItemMapper;
 import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.mapper.UserMapper;
 import com.cookerytech.repository.OfferRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,9 @@ public class OfferService {
     private final CurrencyService currencyService;
     private final OfferItemMapper offerItemMapper;
     private final UserMapper userMapper;
+
+    @Autowired
+    private EmailConfig emailConfig;
 
     public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
                         CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper, UserMapper userMapper) {
@@ -253,13 +257,12 @@ public class OfferService {
         offerCreateResponse.setUserDTO(userMapper.userToUserDTO(user));
 
         //mail gönderme
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        EmailConfig emailConfig = new EmailConfig();
-//        message.setFrom(emailConfig.getConstantEmail());
-//        message.setTo(user.getEmail());
-//        message.setSubject("New Offer");
-//        message.setText("offerCreateResponse.toString()");
-//        mailSender.send(message);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(emailConfig.getConstantEmail());
+        message.setTo("meozkan07@gmail.com");
+        message.setSubject("New Offer");
+        message.setText(offerCreateResponse.toString());
+        mailSender.send(message);
 
         return offerCreateResponse;
     }

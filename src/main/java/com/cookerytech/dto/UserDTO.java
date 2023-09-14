@@ -53,4 +53,21 @@ public class UserDTO {
         this.roles=roleStr;
 
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", birthDate=" + birthDate +
+                ", taxNo='" + taxNo + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }
