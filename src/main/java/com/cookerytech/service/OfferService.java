@@ -348,7 +348,7 @@ public class OfferService {
 
     public Offer getOffer(Long id) {
         Offer offer = offerRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );
         return offer;
     }

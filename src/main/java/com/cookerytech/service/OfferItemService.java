@@ -75,6 +75,8 @@ public class OfferItemService {
             offerItem.setTax(offerItemsUpdate.getTax());
             offerItem.setDiscount(offerItemsUpdate.getDiscount());
 
+            offerItem.setSubTotal(offerItemsUpdate.getPrice() * offerItemsUpdate.getDiscount() * (1 + offerItemsUpdate.getTax() / 100));
+
         }else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
