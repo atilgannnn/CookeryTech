@@ -1,5 +1,6 @@
 package com.cookerytech.service;
 
+import com.cookerytech.domain.Product;
 import com.cookerytech.domain.ProductPropertyKey;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
@@ -11,6 +12,7 @@ import com.cookerytech.repository.ProductPropertyKeyRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,14 +40,20 @@ public class ProductPropertyKeyService {
             throw new BadRequestException(ErrorMessage.PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE);
         }
         ProductPropertyKey productPropertyKey = new ProductPropertyKey();
+        List<Product> productList = new ArrayList<>();
+        productList.add(productService.getById(createProductPropertyRequest.getProductId()));
 
         productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
         productPropertyKey.setName(createProductPropertyRequest.getName());
-        productPropertyKey.setProductId(productService.getById(createProductPropertyRequest.getProductId()));
+        productPropertyKey.setProducts(productList);
         productPropertyKey.setBuiltIn(false);
 
-       ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
-       return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey1);
+        ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
+        return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey1);
+    }
+
+    private boolean isThereNameToDB(String name) {
+        return productPropertyKeyRepository.existsByName(name);
     }
 
     public ProductPropertyKey getById(Long id){

@@ -1,6 +1,7 @@
 package com.cookerytech.mapper;
 
 import com.cookerytech.domain.Cart;
+import com.cookerytech.dto.response.CartResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;

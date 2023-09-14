@@ -54,7 +54,6 @@ public class UserRequest {
     private String taxNo;
 
     private Integer status;
-
     @NotBlank
     private String password;
 

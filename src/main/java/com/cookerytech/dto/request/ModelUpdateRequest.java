@@ -2,8 +2,10 @@ package com.cookerytech.dto.request;
 
 import com.cookerytech.domain.Image;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -14,23 +16,23 @@ public class ModelUpdateRequest {
     private String title;
     @NotBlank
     private String sku;
-    @NotBlank
+    @NotNull
     private Integer stockAmount;
-    @NotBlank
+    @NotNull
     private Integer inBoxQuantity;
-    @NotBlank
+    @NotNull
     private Integer seq;
-    @NotBlank
-    private Image image;
-    @NotBlank
+
+    private MultipartFile image;
+    @NotNull
     private Double buyingPrice;
-    @NotBlank
+    @NotNull
     private Double taxRate;
-    @NotBlank
+    @NotNull
     private Boolean isActive;
-    @NotBlank
-    private String currencyId;
-    @NotBlank
+    @NotNull
+    private Long currencyId;
+    @NotNull
     private  Long productId;
 
     //private Boolean builtIn; // ?? Update edilebilecek mi?

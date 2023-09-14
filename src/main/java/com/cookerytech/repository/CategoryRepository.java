@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category,Long> {
     Optional<Category> findByTitle(String title);
 
-    @Query("select count(c) from  Category c where c.isActive=true ")
+    @Query("select count(b) from  Product b where b.isActive=true ")
     long numberOfPublishedCategory();
 }

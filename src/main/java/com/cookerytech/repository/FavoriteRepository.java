@@ -12,10 +12,11 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    //@Query("SELECT f FROM Favorite f JOIN f.model m JOIN f.user u WHERE m.id = :model AND u.id = :authenticatedUser")
+
     Favorite findByModelAndUser(Model model, User authenticatedUser);
 
-
+    @Query("SELECT f FROM Favorite f JOIN f.user u WHERE u.id = :userId")
+    List<Favorite> findAllByUserId(@Param("userId") Long userId);
 
 //    @Query("SELECT f FROM Favorite f JOIN f.productId pr WHERE pr.id = :productId")
 //    List<Favorite> getFavoritesByProductId(@Param("productId") Long productId);
@@ -24,4 +25,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
 
     List<Favorite> findAllByUser(User currentlyUser);
+
+    List<Favorite> findAllByModel(Model model);
 }

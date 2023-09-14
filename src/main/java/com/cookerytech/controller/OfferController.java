@@ -24,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

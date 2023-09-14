@@ -1,7 +1,6 @@
 package com.cookerytech.service;
 
 
-import com.cookerytech.domain.Cart;
 import com.cookerytech.domain.Favorite;
 import com.cookerytech.domain.Model;
 import com.cookerytech.domain.User;
@@ -29,16 +28,16 @@ public class FavoriteService {
     private final UserService userService;
     private final ProductMapper productMapper;
     private final CartService cartService;
-    private final CartItemService cartItemService;
+    private final CartItemsService cartItemsService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartService cartService, CartItemService cartItemService) {
+    public FavoriteService(FavoriteRepository favoriteRepository,CartItemsService cartItemsService, ModelService modelService, ModelMapper modelMapper, UserService userService, ProductMapper productMapper, CartService cartService) {
         this.favoriteRepository = favoriteRepository;
         this.modelService = modelService;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.productMapper = productMapper;
         this.cartService = cartService;
-        this.cartItemService = cartItemService;
+        this.cartItemsService = cartItemsService;
     }
 
 
@@ -69,9 +68,10 @@ public class FavoriteService {
     @Transactional
     public List<FavoriteDTO> getFavoritesByCurrentlyUser() {
 
-         User currentlyUser = userService.getCurrentUser();
+        User currentlyUser = userService.getCurrentUser();
+        Long userId = currentlyUser.getId();
 
-        List<Favorite>  favorites =  favoriteRepository.findAllByUser(currentlyUser);
+        List<Favorite>  favorites =  favoriteRepository.findAllByUserId(userId);
 
         List<FavoriteDTO> favoriteDTOS = favorites.stream().
                 map(
@@ -91,7 +91,7 @@ public class FavoriteService {
 
     }
 
-
+    @Transactional
     public void moveUsersFavoritesToCart() {  //K04
         //currently users favorites
       List<FavoriteDTO> usersFavorites = getFavoritesByCurrentlyUser();
@@ -99,7 +99,7 @@ public class FavoriteService {
         for (FavoriteDTO userFavorite : usersFavorites) {
 
 
-        //  cartItemService.manageCartItem(userFavorite.getModelDTO().getId(),1)
+          cartItemsService.manageCartItems(userFavorite.getModelDTO().getId(),1);
 
 
 
@@ -127,4 +127,7 @@ public class FavoriteService {
     }
 
 
+    public List<Long> getFavoriteIdsByModel(Model model) {
+     return favoriteRepository.findAllByModel(model).stream().map(f->f.getId()).collect(Collectors.toList());
+    }
 }

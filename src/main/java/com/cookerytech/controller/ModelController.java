@@ -25,16 +25,17 @@ public class ModelController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ModelDTO> updateModelById(@PathVariable("id") Long id, @RequestBody ModelUpdateRequest modelUpdateRequest){
+    public ResponseEntity<ModelDTO> updateModelById(@PathVariable("id") Long id,
+                                                    @Valid  @ModelAttribute ModelUpdateRequest modelUpdateRequest){
         ModelDTO modelDTO = modelService.updateModelById(id, modelUpdateRequest);
         return ResponseEntity.ok(modelDTO);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ModelResponse> deleteModelById(@PathVariable("id") Long id){
-        ModelResponse modelResponse = modelService.deleteModelById(id);
-        return ResponseEntity.ok(modelResponse);
+    public ResponseEntity<ModelDTO> deleteModelById(@PathVariable("id") Long id){
+        ModelDTO modelDTO = modelService.deleteModelById(id);
+        return ResponseEntity.ok(modelDTO);
     }
 
     @PostMapping

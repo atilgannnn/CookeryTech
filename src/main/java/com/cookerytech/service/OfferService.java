@@ -1,9 +1,6 @@
 package com.cookerytech.service;
 
-import com.cookerytech.domain.Offer;
-import com.cookerytech.domain.OfferItem;
-import com.cookerytech.domain.Role;
-import com.cookerytech.domain.User;
+import com.cookerytech.domain.*;
 import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.OfferDTO;
@@ -13,12 +10,12 @@ import com.cookerytech.dto.response.OfferCreateResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
+import com.cookerytech.mapper.OfferItemMapper;
 import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
@@ -27,10 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 public class OfferService {
@@ -40,19 +36,24 @@ public class OfferService {
     private final UserService userService;
     private final OfferItemService offerItemService;
     private final JavaMailSender mailSender;
+   private final CartItemsService cartItemsService;
     private final CurrencyService currencyService;
+    private final OfferItemMapper offerItemMapper;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender, CurrencyService currencyService) {
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
+                        CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
         this.userService = userService;
         this.offerItemService = offerItemService;
         this.mailSender = mailSender;
+        this.cartItemsService = cartItemsService;
         this.currencyService = currencyService;
+        this.offerItemMapper = offerItemMapper;
     }
 
-    public Page<OfferDTO> findFilteredOffers(String query, Integer statusValue, LocalDate date1, LocalDate date2,
-                                             Pageable pageable) {
+     public Page<OfferDTO> findFilteredOffers(String query, Integer statusValue, LocalDate date1, LocalDate date2,
+                                           Pageable pageable) {
 
         OfferStatus status = null;
         if (statusValue != null) {
@@ -100,7 +101,7 @@ public class OfferService {
                 LocalDateTime.now();
 
         System.out.println(startDateTime + "<- ilk tarih | ikinci tarih ->" + endDateTime);
-        System.out.println(new Offer().getSubTotal() + " <- bu sub total");
+       // System.out.println(new Offer().getSubTotal() + " <- bu sub total");
         System.out.println(new OfferDTO().getSubTotal() + " <- bu OfferDTO sub total");
         System.out.println(new Offer().getDiscount() + " <- bu discount");
         System.out.println(new OfferDTO().getDiscount() + " <- bu OfferDTO discount");
@@ -116,7 +117,7 @@ public class OfferService {
     public OfferDTO findByIdAndUser(Long id, User user) {
 
         Offer offer = offerRepository.findByIdAndUser(id, user).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+                ()-> new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
         );
 
         return offerMapper.offerToOfferDTO(offer);
@@ -129,12 +130,12 @@ public class OfferService {
         Page<Offer> offers = null;
 
         if (!qLower.isEmpty() || !date1.isEmpty() || !date2.isEmpty() || !statusLower.isEmpty()) {
-            offers = offerRepository.getAllOffers(qLower, date1, date2, statusLower, pageable);
+            offers = offerRepository.getAllOffers(qLower,date1,date2,statusLower, pageable);
         } else {
             offers = offerRepository.findAllOffersWithPage(pageable);
         }
 
-        if (offers.isEmpty()) {
+        if(offers.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ErrorMessage.NO_DATA_IN_DB_TABLE_MESSAGE, "Offers"));
         }
         return offers.map(offerMapper::offerToOfferDTO);
@@ -162,16 +163,15 @@ public class OfferService {
         return offers.map(offerMapper::offerToOfferDTO);
     }
 
-    public List<OfferResponse> getOffersByUserId(Long id) {
-        return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
+      public List<OfferResponse> getOffersByUserId(Long id) {
+       return offerMapper.offersToOfferResponses(offerRepository.findAllByUserId(id));
     }
 
-    public Offer getById(Long id) {
-        Offer offer = offerRepository.findByOfferId(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+    public Offer getById(Long id){
+        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
         return offer;
     }
-
     public OfferDTO getOfferDTO(Long id) {
         Offer offer = getById(id);
         return offerMapper.offerToOfferDTO(offer);
@@ -180,6 +180,7 @@ public class OfferService {
 
     //****************** offer create ********************************//
     //TODO : mail atılacak customer ve SS ye
+    @Transactional
     public OfferCreateResponse makeOffer(OfferCreate offerCreate) {
 
         LocalDate now = LocalDate.now();
@@ -190,57 +191,68 @@ public class OfferService {
         User user = userService.getCurrentUser();
         OfferCreateResponse offerCreateResponse = new OfferCreateResponse();    //return edilecek
         Offer newOffer = new Offer();                                           //DB'ye setlenecek
-        //OfferId'ye ihtiyaç duyulduğu için offer create edildi
-        newOffer.setDeliveryAt(offerCreate.getDeliveryDate());
-        offerRepository.save(newOffer);
 
-        Long offerId = newOffer.getId();
 
         //code oluşturuldu ve DB'de varmı kontrolü yapıldı
         Boolean isThereCode;
         String code;
-        do {
+        do{
             code = codeGenerate();
             isThereCode = codeTest(code);
-        } while (!isThereCode);
+        }while (isThereCode);
 
+        //OfferId'ye ihtiyaç duyulduğu için offer create edildi
         newOffer.setCode(code);
-        //grand total setlendi
-        newOffer.setGrandTotal(grandTotalCalculate(offerId));
-        //stock amount azalt
-        stockAmountDecrease(offerId);
-        newOffer.setStatus(OfferStatus.CREATED);       //Burası AuthUser'a göre değişecek ise koda if eklenecek
+        newOffer.setStatus(OfferStatus.CREATED);
         newOffer.setUser(user);
+        newOffer.setCurrency(currencyService.getCurrency("USD"));
+        newOffer.setDeliveryAt(offerCreate.getDeliveryDate());
         newOffer.setCreateAt(LocalDateTime.now());
         newOffer.setUpdateAt(LocalDateTime.now());
-        offerRepository.save(newOffer);
+        Offer saveNewOffer = offerRepository.save(newOffer);
+
+        Long offerId = saveNewOffer.getId();
+
+        //cartService => CartRepo(cartid alındı) => CartItemService => CartItemRepo' dan productid, modelid, amount getirildi
+
+//         List<Cart_Items> cartItemList = cartItemsService.getCartItemsForOfferItem(user.getId());
+//         List<OfferItem> offferItemList = cartItemList.stream().map(cartItems -> offerItemService.offerItemsCreate(cartItems,saveNewOffer)).collect(Collectors.toList());
+
+
+
+        //grand total setlendi
+        Double grandTotal = grandTotalCalculate(offerId);
+        saveNewOffer.setGrandTotal(grandTotal);
+        offerRepository.save(saveNewOffer);
+        //stock amount azalt
+        stockAmountDecrease(offerId);
 
         //response için gerekli işlemler
         offerCreateResponse.setId(offerId);
-        offerCreateResponse.setCode(code);
-        offerCreateResponse.setStatus(newOffer.getStatus().name());
-        offerCreateResponse.setItems(getOfferItems(offerId));
+        offerCreateResponse.setCode(saveNewOffer.getCode());
+        offerCreateResponse.setStatus(saveNewOffer.getStatus().name());
+//        offerCreateResponse.setItems(offerItemMapper.map(offferItemList));
 
         //mail gönderme
-        SimpleMailMessage message = new SimpleMailMessage();
+//        SimpleMailMessage message = new SimpleMailMessage();
 //        message.setFrom(EmailConfig.constantEmail);
-        message.setTo(user.getEmail());
-        message.setSubject("New Offer");
-        message.setText(offerCreateResponse.toString());
-        mailSender.send(message);
+//        message.setTo(user.getEmail());
+//        message.setSubject("New Offer");
+//        message.setText(offerCreateResponse.toString());
+//        mailSender.send(message);
 
         return offerCreateResponse;
     }
 
     //***** unique code generate  ********
-    public String codeGenerate() {
+    public String codeGenerate(){
 
         Random random = new Random();
 
-        List<String> codeNumeric = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "W", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+        List<String> codeNumeric = Arrays.asList("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","V","W","Y","Z","0","1","2","3","4","5","6","7","8","9");
         StringBuilder uniqueCode = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int randomNumber = random.nextInt(33 - 0 + 1) + 0;
+        for (int i=0; i<8; i++){
+            int randomNumber = random.nextInt(33-0+1)+0;
             uniqueCode.append(codeNumeric.get(randomNumber));
         }
         String newCode = uniqueCode.toString();
@@ -248,41 +260,41 @@ public class OfferService {
     }
 
     //***** Create adilen code Database'de var mı? Kontrolü yapar     ********
-    public Boolean codeTest(String code) {
+    public Boolean codeTest(String code){
         return offerRepository.existsByCode(code);
     }
 
     //***** get offer items   ****************
-    public List<OfferItem> getOfferItems(Long offerId) {
+    public List<OfferItem> getOfferItems(Long offerId){
         return offerItemService.getOfferItems(offerId);
     }
 
     //*****     grand_total calculate   *****
-    public Double grandTotalCalculate(Long offerId) {
+    public Double grandTotalCalculate(Long offerId){
         List<OfferItem> offerItems = getOfferItems(offerId);
-        Double grandTotal = 0.0;
-        for (int i = 0; i < offerItems.size(); i++) {
-            grandTotal += offerItems.get(i).getSubTotal() * (1 - (offerItems.get(i).getDiscount() / 100));
+        Double grandTotal =0.0;
+        for (int i=0; i<offerItems.size(); i++){
+            grandTotal+=offerItems.get(i).getSubTotal()*(1- (offerItems.get(i).getDiscount()/100));
         }
         return grandTotal;
     }
 
     //  *****   stock amount decrease   ****
 
-    public List<Integer> stockAmountDecrease(Long offerId) {
+    public List<Integer> stockAmountDecrease(Long offerId){
         return offerItemService.stockAmountDecrease(offerId);
     }
 
     public long numberOfOffersPerDay() {
         LocalDateTime now = LocalDateTime.now();
 
-        // Son 24 saatlik zaman dilimi
+         // Son 24 saatlik zaman dilimi
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
 
-        return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
+       return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
     }
 
-    //@Transactional
+
     public OfferDTO updateOffers(Long id, OfferUpdate offerUpdate) {
 
         Offer offer = getOffer(id);
@@ -298,21 +310,20 @@ public class OfferService {
                 isAdmin = true;
             } else if (RoleType.ROLE_SALES_MANAGER.equals(role.getType())) {
                 isSalesManager = true;
-            } else if (RoleType.ROLE_SALES_SPECIALIST.equals(role.getType())) {
+            } else if(RoleType.ROLE_SALES_SPECIALIST.equals(role.getType())){
                 isSalesSpecialist = true;
             }
         }
 
-        if ((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
+        if((isSalesSpecialist && (offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))) ||
                 (isSalesManager && (offer.getStatus().name().equals("WAITING_FOR_APPROVAL"))) ||
-                isAdmin) {
+                isAdmin){
 
             offer.setDiscount(offerUpdate.getDiscount());
             offer.setStatus(offerUpdate.getStatus());
             offer.setCurrency(currencyService.getCurrencyById(offerUpdate.getCurrencyId()));
-            offer.setUpdateAt(LocalDateTime.now());
 
-        } else {
+        }else {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
@@ -336,9 +347,11 @@ public class OfferService {
 
 
     public Offer getOffer(Long id) {
-        Offer offer = offerRepository.findById(id).orElseThrow(() ->
+        Offer offer = offerRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
         );
         return offer;
     }
+
+
 }

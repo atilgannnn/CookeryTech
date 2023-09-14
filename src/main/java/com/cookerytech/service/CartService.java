@@ -34,7 +34,7 @@ public class CartService {
 
     public Optional<Cart> getCartByUser(User user) {
 
-       return cartRepository.findByUser(user);
+        return cartRepository.findByUser(user);
     }
 
 }

@@ -8,14 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
 import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
 
-
-    @Query("SELECT p FROM Product p  WHERE p.category.id = :categoryId AND p.isActive = true")
+    @Query("SELECT p FROM Product p JOIN p.category c WHERE c.id = :categoryId AND p.isActive = true")
     List<Product> getProductsByCategory(@Param("categoryId") Long categoryId);
 
     @Query("SELECT p FROM Product p JOIN p.brands b WHERE b.id = :brandId")
@@ -38,15 +36,12 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> getProductsNoOffer();
 
 
-    // @Query(
-    //            value = "SELECT  * FROM t_product p left join t_offeritem o on p.id=o.product_id Group By p.id order by count(o) desc LIMIT :amount ",
-    //            nativeQuery = true)
     @Query("SELECT p FROM Product p  JOIN OfferItem o ON p.id=o.product.id GROUP BY p.id ORDER BY COUNT(o) DESC ")
-    List<Product> getMostPopularProducts(@Param("amount") int amount);
+    List<Product> getMostPopularProducts();
 
     @Query("SELECT p FROM Product p WHERE p.isFeatured = true")
     List<Product> getAllFeaturedProductsForAdmin();
 
-    @Query("select count(p) from  Product p where p.isActive=true ")
+    @Query("SELECT p FROM Product p WHERE p.isActive = true")
     long numberOfPublishedProduct();
 }

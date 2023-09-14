@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_cartItem")
-public class CartItems {
+public class Cart_Items {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class CartItems {
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    //(cascade = CascadeType.REMOVE)
+
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;

@@ -1,10 +1,8 @@
 package com.cookerytech.controller;
 
-import com.cookerytech.domain.User;
 import com.cookerytech.dto.request.CartItemRequest;
-import com.cookerytech.dto.response.CartItemsResponse;
-import com.cookerytech.service.CartItemService;
-import com.cookerytech.service.UserService;
+import com.cookerytech.dto.response.CartResponse;
+import com.cookerytech.service.CartItemsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,24 +13,24 @@ import java.util.List;
 @RequestMapping("/cart")
 public class CartController {
 
-    private final CartItemService cartItemService;
+    private final CartItemsService cartItemsService;
 
-    public CartController(CartItemService cartItemService) {
-        this.cartItemService = cartItemService;
+    public CartController(CartItemsService cartItemService) {
+        this.cartItemsService = cartItemService;
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<List<CartItemsResponse>> getUsersCart(){
+    public ResponseEntity<List<CartResponse>> getUsersCart(){
 
-        List<CartItemsResponse> cart = cartItemService.getCart();
+        List<CartResponse> cart = cartItemsService.getCart();
 
         return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<CartItemsResponse> manageCartItem(@RequestBody CartItemRequest cartItemRequest) {
+    public ResponseEntity<CartResponse> manageCartItem(@RequestBody CartItemRequest cartItemRequest) {
 
-        CartItemsResponse cartResponse = cartItemService.manageCartItems(
+        CartResponse cartResponse = cartItemsService.manageCartItems(
                 cartItemRequest.getModelId(),
                 cartItemRequest.getAmount()
         );
