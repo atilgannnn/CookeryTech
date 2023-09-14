@@ -71,9 +71,9 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
             "o.user.id=?2")
     Page<Offer> findAllOffersWithPageByUser(Pageable pageable,User user);
 
-    @EntityGraph(attributePaths = "offer")
-    @Query("SELECT oi FROM OfferItem oi LEFT JOIN FETCH oi.offer WHERE oi.offer=: offerId ")
-    Optional<Offer> findByOfferId(@Param("offerId") Long id);
+//    @EntityGraph(attributePaths = "offer")
+//    @Query("SELECT oi FROM OfferItem oi LEFT JOIN FETCH oi.offer WHERE oi.offer=: offerId ")
+//    Optional<Offer> findByOfferId(@Param("offerId") Long id);
 
     Boolean existsByCode(String code);
 

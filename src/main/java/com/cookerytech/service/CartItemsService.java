@@ -136,4 +136,8 @@ public class CartItemsService {
     public List<Long> getCartItemIdsByModel(Model model) {
      return  cartItemRepository.findAllByModel(model).stream().map(cI->cI.getId()).collect(Collectors.toList());
     }
+
+    public List<Cart_Items> getCartItemsForOfferItem(Long userId) {
+        return cartItemRepository.getCartItemsByUserId(userId);
+    }
 }

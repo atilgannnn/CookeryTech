@@ -4,6 +4,7 @@ import com.cookerytech.domain.Cart;
 import com.cookerytech.domain.Cart_Items;
 import com.cookerytech.domain.Model;
 import com.cookerytech.domain.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,7 @@ public interface CartItemRepository extends JpaRepository<Cart_Items,Long> {
     Optional<Cart_Items> getCartItemsByModelIdandByUser(@Param("modelId") Long modelId, @Param("user") User user);
 
     List<Cart_Items> findAllByModel(Model model);
+    @EntityGraph(attributePaths = {"model", "product"})
+    @Query("SELECT ci FROM Cart_Items ci WHERE ci.cart.user.id = :userId")
+    List<Cart_Items> getCartItemsByUserId(@Param("userId")Long userId);
 }
