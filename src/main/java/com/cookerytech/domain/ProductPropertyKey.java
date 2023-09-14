@@ -27,8 +27,8 @@ public class ProductPropertyKey {
 
     private Boolean builtIn=false;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private List<Product> products;
+    private Product product;
 
 }

@@ -2,6 +2,7 @@ package com.cookerytech.dto.response;
 
 import com.cookerytech.domain.OfferItem;
 import com.cookerytech.dto.OfferItemDTO;
+import com.cookerytech.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +23,5 @@ public class OfferCreateResponse {
     private String code;
     private String status;
     List<OfferItemDTO> items = new ArrayList<>();
+    private UserDTO userDTO;
 }

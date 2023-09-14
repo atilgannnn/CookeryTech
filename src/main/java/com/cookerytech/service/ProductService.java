@@ -159,7 +159,7 @@ public class ProductService {
 
         Product product = new Product();
 
-        Set<Brand> brandSet =  productSaveRequest.getBrandsIds().stream().map(brandId->brandService.getBrand(brandId)).collect(Collectors.toSet());
+        Brand brand =  brandService.getBrand(productSaveRequest.getBrandId());
 
         Category category = categoryService.getCategory(productSaveRequest.getCategoryId());
 
@@ -171,7 +171,7 @@ public class ProductService {
         product.setIsNew(productSaveRequest.getIsNew());
         product.setIsFeatured(productSaveRequest.getIsFeatured());
         product.setIsActive(productSaveRequest.getIsActive());
-        product.setBrands(brandSet);
+        product.setBrand(brand);
         product.setCategory(category);
         product.setCreateAt(LocalDateTime.now());
         product.setSlug(titleCumle);
@@ -200,7 +200,7 @@ public class ProductService {
         product.setIsFeatured(productSaveRequest.getIsFeatured());
         product.setIsActive(productSaveRequest.getIsActive());
         product.setSlug(product.getSlug());
-        product.setBrands(product.getBrands());
+        product.setBrand(product.getBrand());
         product.setCategory(product.getCategory());
         product.setUpdateAt(now);
 

@@ -52,9 +52,9 @@ public class Product {
     @Column(nullable = false)
     private Boolean builtIn=false;
 
-    @ManyToMany
+    @ManyToOne
     @JoinTable(name = "t_product_brand", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "brand_id"))
-    private Set<Brand> brands= new HashSet<>();
+    private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")

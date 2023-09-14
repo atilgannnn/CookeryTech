@@ -48,6 +48,6 @@ public class ProductSaveRequest {
 
     private Long categoryId;
 
-    private Set<Long> brandsIds= new HashSet<>();
+    private Long brandId;
 
 }

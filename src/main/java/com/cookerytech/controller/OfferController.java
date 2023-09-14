@@ -2,6 +2,7 @@ package com.cookerytech.controller;
 
 import com.cookerytech.domain.User;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.OfferDTOinItemsAndUser;
 import com.cookerytech.dto.OfferItemDTO;
 import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.dto.request.OfferItemsUpdate;
@@ -115,9 +116,9 @@ public class OfferController {
 
     @GetMapping("/{id}/admin")          //Page-58->E02
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
-    public ResponseEntity<OfferDTO> getOfferById(@PathVariable Long id){
-        OfferDTO offerDTO = offerService.getOfferDTO(id);
-        return ResponseEntity.ok(offerDTO);
+    public ResponseEntity<OfferDTOinItemsAndUser> getOfferById(@PathVariable Long id){
+        OfferDTOinItemsAndUser offerDTOinItemsAndUser = offerService.getOfferDTOWithItemsAndUser(id);
+        return ResponseEntity.ok(offerDTOinItemsAndUser);
     }
 
     @PostMapping("/auth")               //Page 62->E06

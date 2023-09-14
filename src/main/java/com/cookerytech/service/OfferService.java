@@ -1,9 +1,12 @@
 package com.cookerytech.service;
 
+import com.cookerytech.config.EmailConfig;
 import com.cookerytech.domain.*;
 import com.cookerytech.domain.enums.OfferStatus;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.OfferDTO;
+import com.cookerytech.dto.OfferDTOinItemsAndUser;
+import com.cookerytech.dto.UserDTO;
 import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.dto.request.OfferUpdate;
 import com.cookerytech.dto.response.OfferCreateResponse;
@@ -12,10 +15,12 @@ import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferItemMapper;
 import com.cookerytech.mapper.OfferMapper;
+import com.cookerytech.mapper.UserMapper;
 import com.cookerytech.repository.OfferRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.response.OfferResponse;
@@ -39,9 +44,10 @@ public class OfferService {
    private final CartItemsService cartItemsService;
     private final CurrencyService currencyService;
     private final OfferItemMapper offerItemMapper;
+    private final UserMapper userMapper;
 
     public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
-                        CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper) {
+                        CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper, UserMapper userMapper) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
         this.userService = userService;
@@ -50,6 +56,7 @@ public class OfferService {
         this.cartItemsService = cartItemsService;
         this.currencyService = currencyService;
         this.offerItemMapper = offerItemMapper;
+        this.userMapper = userMapper;
     }
 
      public Page<OfferDTO> findFilteredOffers(String query, Integer statusValue, LocalDate date1, LocalDate date2,
@@ -168,13 +175,25 @@ public class OfferService {
     }
 
     public Offer getById(Long id){
-        Offer offer = offerRepository.findByOfferId(id).orElseThrow(()->
+        Offer offer = offerRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
         return offer;
     }
-    public OfferDTO getOfferDTO(Long id) {
-        Offer offer = getById(id);
-        return offerMapper.offerToOfferDTO(offer);
+    public OfferDTOinItemsAndUser getOfferDTOWithItemsAndUser(Long offerId) {
+        Offer offer = getById(offerId);
+        OfferDTOinItemsAndUser offerDTOinItemsAndUser = new OfferDTOinItemsAndUser();
+        User user = userService.getCurrentUser();
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+        List<OfferItem> offerItemList = offerItemService.getOfferItems(offerId);
+
+
+        offerDTOinItemsAndUser.setId(offer.getId());
+        offerDTOinItemsAndUser.setCode(offer.getCode());
+        offerDTOinItemsAndUser.setStatus(offer.getStatus());
+        offerDTOinItemsAndUser.setUserDTO(userDTO);
+        offerDTOinItemsAndUser.setOfferItemsDTO(offerItemMapper.map(offerItemList));
+
+        return offerDTOinItemsAndUser;
     }
 
 
@@ -213,10 +232,9 @@ public class OfferService {
 
         Long offerId = saveNewOffer.getId();
 
-        //cartService => CartRepo(cartid alındı) => CartItemService => CartItemRepo' dan productid, modelid, amount getirildi
 
-//         List<Cart_Items> cartItemList = cartItemsService.getCartItemsForOfferItem(user.getId());
-//         List<OfferItem> offferItemList = cartItemList.stream().map(cartItems -> offerItemService.offerItemsCreate(cartItems,saveNewOffer)).collect(Collectors.toList());
+         List<Cart_Items> cartItemList = cartItemsService.getCartItemsForOfferItem(user.getId());
+         List<OfferItem> offferItemList = cartItemList.stream().map(cartItems -> offerItemService.offerItemsCreate(cartItems,saveNewOffer)).collect(Collectors.toList());
 
 
 
@@ -231,14 +249,16 @@ public class OfferService {
         offerCreateResponse.setId(offerId);
         offerCreateResponse.setCode(saveNewOffer.getCode());
         offerCreateResponse.setStatus(saveNewOffer.getStatus().name());
-//        offerCreateResponse.setItems(offerItemMapper.map(offferItemList));
+        offerCreateResponse.setItems(offerItemMapper.map(offferItemList));
+        offerCreateResponse.setUserDTO(userMapper.userToUserDTO(user));
 
         //mail gönderme
 //        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom(EmailConfig.constantEmail);
+//        EmailConfig emailConfig = new EmailConfig();
+//        message.setFrom(emailConfig.getConstantEmail());
 //        message.setTo(user.getEmail());
 //        message.setSubject("New Offer");
-//        message.setText(offerCreateResponse.toString());
+//        message.setText("offerCreateResponse.toString()");
 //        mailSender.send(message);
 
         return offerCreateResponse;

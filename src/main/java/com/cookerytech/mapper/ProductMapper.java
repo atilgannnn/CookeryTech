@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public interface ProductMapper {
 
-    @Mapping(source="brands", target="brandIds", qualifiedByName = "getBrandIds")
+    @Mapping(source="brand", target="brandId", qualifiedByName = "getBrandIds")
     @Mapping(source="category", target="categoryId", qualifiedByName = "getCategoryId")
     ProductDTO productToProductDTO(Product product);
 
@@ -31,12 +31,8 @@ public interface ProductMapper {
     }
 
     @Named("getBrandIds")
-    public static Set<Long> getBrandIds(Set<Brand> brands) {
-        Set<Long> brandIds = new HashSet<>();
-
-       brandIds  = brands.stream().map(brand->brand.getId()).collect(Collectors.toSet());
-
-        return brandIds;
+    public static Long getBrandIds(Brand brand) {
+       return brand.getId();
     }
     List<ProductResponse> productToProductResponse(List<Product> productList);
 
