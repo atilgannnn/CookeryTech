@@ -1,21 +1,18 @@
 package com.cookerytech.service;
 
 import com.cookerytech.domain.*;
-import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.OfferItemDTO;
 import com.cookerytech.dto.request.OfferItemsUpdate;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.OfferItemMapper;
-import com.cookerytech.mapper.OfferMapper;
 import com.cookerytech.repository.OfferItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class OfferItemService {
@@ -62,11 +59,10 @@ public class OfferItemService {
 
     }
 
-    public List<OfferItemDTO> updateOfferItems(Long id, OfferItemsUpdate offerItemsUpdate) {
+    public OfferItemDTO updateOfferItems(Long id, OfferItemsUpdate offerItemsUpdate) {
 
-        OfferItem offerItem = new OfferItem();
+        OfferItem offerItem = getOfferItem(id);
         Offer offer = new Offer();
-        List<OfferItem> offerItemList = getOfferItems(id);
 
         if((offer.getStatus().name().equals("CREATED") || offer.getStatus().name().equals("REJECTED"))){
 
@@ -81,9 +77,11 @@ public class OfferItemService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-        List<OfferItemDTO> offerItemDTOs = offerItemMapper.map(offerItemList);
+        OfferItem updateOfferItem = offerItemRepository.save(offerItem);
 
-        return offerItemDTOs;
+        OfferItemDTO offerItemDTO = offerItemMapper.OfferItemToOfferItemDTO(updateOfferItem);
+
+        return offerItemDTO;
 
     }
 
@@ -107,7 +105,7 @@ public class OfferItemService {
 
     public OfferItem getOfferItem(Long id) {
         OfferItem offerItem = offerItemRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION))
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
         );
         return offerItem;
     }
