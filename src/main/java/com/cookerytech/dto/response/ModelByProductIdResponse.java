@@ -2,10 +2,14 @@ package com.cookerytech.dto.response;
 
 import com.cookerytech.domain.Model;
 import com.cookerytech.domain.ModelPropertyValue;
+import com.cookerytech.dto.ModelDTO;
+import com.cookerytech.dto.ModelPropertyValueDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,9 +17,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ModelByProductIdResponse {
 
-    private Model model;
+    private ModelDTO modelDTO;
 
-    private ModelPropertyValue modelPropertyValue;
+    private List<ModelPropertyValueDTO> modelPropertyValueDTOSList;
 
     private Boolean isFavorite=false;
 }

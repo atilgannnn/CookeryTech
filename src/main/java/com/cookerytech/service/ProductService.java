@@ -1,21 +1,22 @@
 package com.cookerytech.service;
 
-import com.cookerytech.domain.Brand;
-import com.cookerytech.domain.Category;
-import com.cookerytech.domain.Product;
-import com.cookerytech.domain.Role;
-import com.cookerytech.domain.User;
+import com.cookerytech.domain.*;
 import com.cookerytech.domain.enums.RoleType;
 import com.cookerytech.dto.ModelDTO;
+import com.cookerytech.dto.ModelPropertyValueDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
+import com.cookerytech.dto.response.ModelByProductIdResponse;
 import com.cookerytech.dto.response.ProductResponse;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
+import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.repository.ProductRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
@@ -27,6 +28,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,9 +51,11 @@ public class ProductService {
     private final CartItemsService cartItemsService;
     private final FavoriteService favoriteService;
     private final RoleService roleService;
+    private final ModelPropertyValueService modelPropertyValueService;
+    private final ModelMapper modelMapper;
 
 
-    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService,@Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService,@Lazy  CategoryService categoryService, OfferItemService offerItemService,@Lazy CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService) {
+    public ProductService(ProductMapper productMapper, ProductRepository productRepository, ProductPropertyKeyService productPropertyKeyService, @Lazy ModelService modelService, UserService userService, @Lazy BrandService brandService, @Lazy CategoryService categoryService, OfferItemService offerItemService, @Lazy CartItemsService cartItemsService, @Lazy FavoriteService favoriteService, RoleService roleService, ModelPropertyValueService modelPropertyValueService, ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.productPropertyKeyService = productPropertyKeyService;
         this.productMapper = productMapper;
@@ -63,12 +67,14 @@ public class ProductService {
         this.cartItemsService = cartItemsService;
         this.favoriteService = favoriteService;
         this.roleService = roleService;
+        this.modelPropertyValueService = modelPropertyValueService;
+        this.modelMapper = modelMapper;
     }
 
-    public Product getById(Long id){
-       Product product = productRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id)));
-       return product;
+    public Product getById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+        return product;
     }
 
     public ProductPropertyKeyDTO makeProductProperty(ProductPropertyRequest createProductPropertyRequest) {
@@ -91,46 +97,47 @@ public class ProductService {
 //
 //    }
 
-    private Product getProduct(Long id){
-       Product product=  productRepository.findById(id).orElseThrow(()->
-           new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION,id))
+    private Product getProduct(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id))
         );
         return product;
     }
+
     @Transactional
     public ProductDTO deleteProductById(Long id) {
         Product product = getProduct(id);
-        if (product.getBuiltIn()){
+        if (product.getBuiltIn()) {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
         //offer-item iliskisi varsa silinemez
-       Boolean  existsOfferItemsByProductId =  offerItemService.existsOfferItemsByProductId(id);
-        if(existsOfferItemsByProductId){
+        Boolean existsOfferItemsByProductId = offerItemService.existsOfferItemsByProductId(id);
+        if (existsOfferItemsByProductId) {
             throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
         }
         List<Long> favoriteIds = favoriteService.getFavoritesByModelsOfProduct(id);
-        for (Long favoriteId:favoriteIds){
+        for (Long favoriteId : favoriteIds) {
             favoriteService.deleteFavorite(favoriteId);
         }
-        List<Long> modelIds =  modelService.getModelIdsByProductId(id);
+        List<Long> modelIds = modelService.getModelIdsByProductId(id);
 
-        for (Long modelId : modelIds){
+        for (Long modelId : modelIds) {
             modelService.deleteModelById(modelId);
         }
 
-        List<Long> pPKeyIds =    productPropertyKeyService.getPropertyKeyIdByProductId(id);
-        for (Long pPKey:pPKeyIds){
+        List<Long> pPKeyIds = productPropertyKeyService.getPropertyKeyIdByProductId(id);
+        for (Long pPKey : pPKeyIds) {
             productPropertyKeyService.deleteProductPropertyKey(pPKey);
         }
 
         // cart_items ve fqvorites içindeki ilgili kayıtlar silinmelidir.
         List<Long> cartItemsIds = cartItemsService.getCartItemsByProductId(id);
-        for (Long cartItemId:cartItemsIds){
+        for (Long cartItemId : cartItemsIds) {
             cartItemsService.deleteCartItem(cartItemId);
         }
 
 
-      //test yapilacak
+        //test yapilacak
         //domainlere koydugum (cascade = CascadeType.REMOVE) ise yariyor mu bakilacak
 
 
@@ -138,14 +145,14 @@ public class ProductService {
 
         System.out.println(product.getId());
 
-        return  productMapper.productToProductDTO(product);
+        return productMapper.productToProductDTO(product);
     }
 
     public List<ProductDTO> getProductsByCategory(Long categoryId) {
 
         List<Product> products = productRepository.getProductsByCategory(categoryId);
 
-      return   productMapper.map(products);
+        return productMapper.map(products);
     }
 
     public ProductDTO saveProduct(ProductSaveRequest productSaveRequest) {
@@ -159,7 +166,7 @@ public class ProductService {
 
         Product product = new Product();
 
-        Brand brand =  brandService.getBrand(productSaveRequest.getBrandId());
+        Brand brand = brandService.getBrand(productSaveRequest.getBrandId());
 
         Category category = categoryService.getCategory(productSaveRequest.getCategoryId());
 
@@ -186,7 +193,7 @@ public class ProductService {
 
         Product product = getProduct(id);
 
-        if(product.getBuiltIn()){
+        if (product.getBuiltIn()) {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
@@ -209,9 +216,6 @@ public class ProductService {
         return productMapper.productToProductDTO(updateProduct);
 
     }
-
-
-
 
 
     public List<Product> getProductByBrandId(Long brandId) {
@@ -249,22 +253,62 @@ public class ProductService {
 //    }
 
     @Transactional
-    public List<ModelDTO> getModelsByProductId(Long productId,String token) {
+    public List<ModelByProductIdResponse>       getModelsByProductId(Long productId) {
 
-        Set<Role> userRole = userService.getCurrentUser().getRoles();
 
-        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
-            List<ModelDTO> modelDTOS=modelService.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
-            return modelDTOS;
+        List<ModelByProductIdResponse> modelByProductIdResponseList = new ArrayList<>();
+
+        if ( SecurityContextHolder.getContext().getAuthentication().getPrincipal()=="anonymousUser") {
+            List<Model> models = modelService.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
+            for (Model model : models) {
+                ModelByProductIdResponse modelByProductIdResponse = new ModelByProductIdResponse();
+                List<ModelPropertyValue> modelPropertyValueList = modelPropertyValueService.getModelPropertyValueByModel(model);
+                modelByProductIdResponse.setModelDTO(modelMapper.modelToModelDTO(model));
+                modelByProductIdResponse.setModelPropertyValueDTOSList(
+                        modelPropertyValueList.stream().map(modelPropertyValue ->
+                                new ModelPropertyValueDTO(modelPropertyValue)).collect(Collectors.toList())
+                );
+                modelByProductIdResponseList.add(modelByProductIdResponse);
+            }
+        } else {
+            User user = userService.getCurrentUser();
+            Set<Role> userRole = user.getRoles();
+
+            if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {
+                List<Model> models = modelService.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
+                for (Model model : models) {
+                    ModelByProductIdResponse modelByProductIdResponse = new ModelByProductIdResponse();
+                    List<ModelPropertyValue> modelPropertyValueList = modelPropertyValueService.getModelPropertyValueByModel(model);
+                    modelByProductIdResponse.setModelDTO(modelMapper.modelToModelDTO(model));
+                    modelByProductIdResponse.setModelPropertyValueDTOSList(
+                            modelPropertyValueList.stream().map(modelPropertyValue ->
+                                    new ModelPropertyValueDTO(modelPropertyValue)).collect(Collectors.toList())
+                    );
+                    modelByProductIdResponse.setIsFavorite(favoriteService.isFavoriteByModelAndCurrentlyUser(model, user));
+                    modelByProductIdResponseList.add(modelByProductIdResponse);
+                }
+            } else {
+                List<Model> models = modelService.getModelsByProductId(productId);
+                for (Model model : models) {
+                    ModelByProductIdResponse modelByProductIdResponse = new ModelByProductIdResponse();
+                    List<ModelPropertyValue> modelPropertyValueList = modelPropertyValueService.getModelPropertyValueByModel(model);
+                    modelByProductIdResponse.setModelDTO(modelMapper.modelToModelDTO(model));
+                    modelByProductIdResponse.setModelPropertyValueDTOSList(
+                            modelPropertyValueList.stream().map(modelPropertyValue ->
+                                    new ModelPropertyValueDTO(modelPropertyValue)).collect(Collectors.toList())
+
+                    );
+                    modelByProductIdResponse.setIsFavorite(favoriteService.isFavoriteByModelAndCurrentlyUser(model, user));
+                    modelByProductIdResponseList.add(modelByProductIdResponse);
+                }
+            }
         }
-        List<ModelDTO> adminModelDTOS= modelService.getModelsByProductId(productId);
-        return adminModelDTOS;
-
+        return modelByProductIdResponseList;
     }
 
     public List<ProductPropertyKeyDTO> getPropertyKeyByProductId(Long id) {
 
-        List<ProductPropertyKeyDTO> productPropertyKeyDTOS= productPropertyKeyService.getPropertyKeyByProductId(id);
+        List<ProductPropertyKeyDTO> productPropertyKeyDTOS = productPropertyKeyService.getPropertyKeyByProductId(id);
         return productPropertyKeyDTOS;
 
     }
@@ -322,21 +366,21 @@ public class ProductService {
 
     public List<ProductDTO> getProductsNoOffer() { //G04
 
-        List<Product> productsNoOffer =  productRepository.getProductsNoOffer();
+        List<Product> productsNoOffer = productRepository.getProductsNoOffer();
 
-        return  productMapper.map(productsNoOffer);
+        return productMapper.map(productsNoOffer);
 
     }
 
     public List<ProductDTO> getMostPopularProducts(int amount) {
 
-        List<Product> mostPopularProducts =  productRepository.getMostPopularProducts();
+        List<Product> mostPopularProducts = productRepository.getMostPopularProducts();
         List<Product> amountProducts = mostPopularProducts.stream().limit(amount).collect(Collectors.toList());
 
         return productMapper.map(amountProducts);
     }
 
-    public Boolean isThereProduct(Long id){
+    public Boolean isThereProduct(Long id) {
         return productRepository.existsById(id);
     }
 

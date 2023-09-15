@@ -3,6 +3,7 @@ package com.cookerytech.controller;
 import com.cookerytech.dto.ModelDTO;
 import com.cookerytech.dto.ProductPropertyKeyDTO;
 import com.cookerytech.dto.request.ProductPropertyRequest;
+import com.cookerytech.dto.response.ModelByProductIdResponse;
 import com.cookerytech.dto.response.ProductResponse;
 import com.cookerytech.service.ProductService;
 
@@ -91,12 +92,10 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}/models") //A11
-    public ResponseEntity<List<ModelDTO>> getModelsByProductId(@PathVariable Long productId,
-                                                               @RequestHeader(value = "Authorization", required = false)
-                                                               String token){
+    public ResponseEntity<List<ModelByProductIdResponse>> getModelsByProductId(@PathVariable Long productId){
 
-        List<ModelDTO> modelDTOS= productService.getModelsByProductId(productId,token);
-        return ResponseEntity.ok(modelDTOS);
+        List<ModelByProductIdResponse> modelByProductIdResponseList= productService.getModelsByProductId(productId);
+        return ResponseEntity.ok(modelByProductIdResponseList);
 
     }
 

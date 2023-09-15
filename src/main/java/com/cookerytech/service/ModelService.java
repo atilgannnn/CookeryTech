@@ -167,9 +167,8 @@ public class ModelService {
 
     }
 
-    public List<ModelDTO> getModelsByProductId(Long productId) {
-        List<Model> modelList= modelRepository.findAllByProductId(productId);
-        return  modelMapper.map(modelList);
+    public List<Model> getModelsByProductId(Long productId) {
+        return modelRepository.findAllByProductId(productId);
 
     }
 
@@ -179,13 +178,11 @@ public class ModelService {
         return modelList.stream().map(model -> model.getId()).collect(Collectors.toList());
     }
 
-    public List<ModelDTO> getModelsByProductIdActiveModelBrandCategoryProduct(Long productId) {
-      List<Model> modelList=  modelRepository.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
-
-                return       modelMapper.map(modelList);
-
-
+    public List<Model> getModelsByProductIdActiveModelBrandCategoryProduct(Long productId) {
+        return      modelRepository.getModelsByProductIdActiveModelBrandCategoryProduct(productId);
     }
+
+
 }
 
 
