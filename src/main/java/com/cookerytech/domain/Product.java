@@ -53,7 +53,7 @@ public class Product {
     private Boolean builtIn=false;
 
     @ManyToOne
-    @JoinTable(name = "t_product_brand", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "brand_id"))
+    @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
 
     @ManyToOne

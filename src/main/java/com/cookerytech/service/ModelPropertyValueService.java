@@ -38,4 +38,8 @@ public class ModelPropertyValueService {
       List<ModelPropertyValue> modelPropertyValues =  modelPropertyValueRepository.findAllByModel(model);
       return  modelPropertyValues.stream().map(mPValue->mPValue.getId()).collect(Collectors.toList());
     }
+    public List<ModelPropertyValue> getModelPropertyValueByModel(Model model) {
+
+      return  modelPropertyValueRepository.findAllByModel(model);
+    }
 }

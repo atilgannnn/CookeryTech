@@ -130,4 +130,7 @@ public class FavoriteService {
     public List<Long> getFavoriteIdsByModel(Model model) {
      return favoriteRepository.findAllByModel(model).stream().map(f->f.getId()).collect(Collectors.toList());
     }
+    public boolean isFavoriteByModelAndCurrentlyUser(Model model,User user){
+      return   favoriteRepository.existsByModelAndUser(model,user);
+    }
 }

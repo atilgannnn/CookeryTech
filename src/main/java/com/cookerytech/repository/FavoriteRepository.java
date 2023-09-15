@@ -27,4 +27,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findAllByUser(User currentlyUser);
 
     List<Favorite> findAllByModel(Model model);
+
+    boolean existsByModelAndUser(Model model, User user);
 }
