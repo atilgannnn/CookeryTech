@@ -40,14 +40,12 @@ public class CategoryController {
     }
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<CTResponse> createCategory(
+    public ResponseEntity<CategoryDTO> createCategory(
             @Valid @RequestBody CategoryRequest categoryRequest){
 
-        categoryService.saveCategory(categoryRequest);
+        CategoryDTO create =  categoryService.saveCategory(categoryRequest);
 
-        CTResponse response = new CTResponse(ResponseMessage.CATEGORY_SAVED_RESPONSE_MESSAGE, true);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.ok(create);
     }
 
     //B04
