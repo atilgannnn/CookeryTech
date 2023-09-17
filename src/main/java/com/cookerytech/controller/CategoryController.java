@@ -50,6 +50,7 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    //B04
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<CategoryDTO>  updateCategory(@PathVariable Long id, @RequestBody CategoryUpdateRequest categoryUpdateRequest){
@@ -66,7 +67,7 @@ public class CategoryController {
 
     }
 
-    //B01
+    //B02
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<CategoryDTO>  getCategoryByID(@PathVariable Long id){
@@ -76,7 +77,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTO);
     }
 
-    //B02
+    //B01
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<List<CategoryDTO>>  getAllCategories(){

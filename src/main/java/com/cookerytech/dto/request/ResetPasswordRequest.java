@@ -15,8 +15,8 @@ import javax.validation.constraints.NotBlank;
 public class ResetPasswordRequest {
 
     @Email(message = "Please provide a valid email")
-    private String email;
+    private String code;
 
     @NotBlank(message="Please Provide New Password")
-    private String password;
+    private String newPassword;
 }

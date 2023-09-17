@@ -152,9 +152,12 @@ public class UserService {
 //
 //        passwordResetTokenRepository.save(token);
 
+        user.setResetPasswordCode(tokenValue);
+        userRepository.save(user);
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailConfig.getConstantEmail());
-        message.setTo("erultimate1@gmail.com");
+        message.setTo(email);
         message.setSubject("Attention!!!");
 
         message.setText(tokenValue);
@@ -162,14 +165,15 @@ public class UserService {
         return tokenValue;
     }
 
-    public void resetPassword(String email, String password) {
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
 
-        User user =  getUserByEmail(email);
+        String code =  resetPasswordRequest.getCode();
+        String password = passwordEncoder.encode(resetPasswordRequest.getNewPassword());
+        User user = userRepository.findUserByResetPasswordCode(code).orElseThrow(()-> new ResourceNotFoundException(ErrorMessage.USER_NOT_FOUND_EXCEPTION));
         user.setPassword(password);
+        user.setResetPasswordCode("");
         userRepository.save(user);
 
-        // Ayrıca, sıfırlama tokenını veritabanından silmelisiniz?
-        userRepository.deleteByEmail(user);
     }
 
     private String generateToken() {

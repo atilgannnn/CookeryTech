@@ -16,6 +16,8 @@ public class ErrorMessage {
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your password are not matched";
     public static final String NO_DATA_IN_DB_TABLE_MESSAGE ="Resource with id %s not found" ;
 
+    public static final String TOKEN_NOT_MATCHED_MESSAGE = "Your token are not matched";
+
     public final  static  String MODEL_NOT_FOUND_EXCEPTION="Model: with id %s not found";
     public static final String NO_ACTIVE_BRANDS_MESSAGE = "There are no active brands";
     public static final String NO_ACTIVE_CATEGORY_MESSAGE = "There are no active category";

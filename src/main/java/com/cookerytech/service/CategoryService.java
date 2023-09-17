@@ -132,8 +132,10 @@ public class CategoryService {
         Set<Role> userRoles = userService.getCurrentUser().getRoles();
         List<CategoryDTO> categoryDTOList = categoryMapper.categoryListToCategoryDTOList(categoryRepository.findAll());
         List<CategoryDTO> newCategoryDTOList = new ArrayList<>();
+
         boolean isAdmin = false;
         boolean isProductManager = false;
+
         for (Role role : userRoles) {
             if (RoleType.ROLE_ADMIN.equals(role.getType())) {
                 isAdmin = true;
@@ -144,8 +146,7 @@ public class CategoryService {
             }
         }
         if (isAdmin) {
-//            return categoryDTOList;
-            return newCategoryDTOList;
+            return categoryDTOList;
         }
         if (isProductManager) {
             for (CategoryDTO categoryDTO : categoryDTOList) {
@@ -158,6 +159,7 @@ public class CategoryService {
         throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
     }
 
+    //B02
     public CategoryDTO getCategoryByID(Long id) {
 
         Set<Role> userRole = userService.getCurrentUser().getRoles();
@@ -168,14 +170,15 @@ public class CategoryService {
         for (Role role : userRole) {
             if (RoleType.ROLE_ADMIN.equals(role.getType())) {
                 isAdmin = true;
-            } else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
+            }
+            else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
                 isProductManager = true;
             }
         }
 
         if (isAdmin) {
-//            return categoryMapper.categoryToCategoryDTO(category);
-            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
+            return categoryMapper.categoryToCategoryDTO(category);
+//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
         }
         if (isProductManager) {
             if (!category.getIsActive()) {

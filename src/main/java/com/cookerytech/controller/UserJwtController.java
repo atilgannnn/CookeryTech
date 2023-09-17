@@ -81,7 +81,7 @@ public class UserJwtController {
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         // Şifre sıfırlama işlemleri
-        userService.resetPassword(resetPasswordRequest.getEmail(), resetPasswordRequest.getPassword());
+        userService.resetPassword(resetPasswordRequest);
         return ResponseEntity.ok("Password reset successfully.");
     }
 }

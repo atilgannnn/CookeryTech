@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,6 +22,7 @@ public class Category {
     private  Long id;
 
     @Column(length = 80, nullable = false)  //DTO da @Size min 2 max 80
+    @NotBlank
     private String title;
 
     private String description;
