@@ -91,12 +91,10 @@ public class CategoryService {
         String titleCumle = categoryUpdateRequest.getTitle();
         titleCumle.replaceAll("[^a-zA-ZğüşıöçĞÜŞİÖÇ\\s]", "-").toLowerCase();
 
-        LocalDateTime now = LocalDateTime.now();
-
         category.setTitle(categoryUpdateRequest.getTitle());
         category.setIsActive(categoryUpdateRequest.getIsActive());
         category.setSlug(titleCumle);
-        category.setUpdateAt(now);
+        category.setUpdateAt(LocalDateTime.now());
 
         Category updateCategory = categoryRepository.save(category);
         return categoryMapper.categoryToCategoryDTO(updateCategory);
