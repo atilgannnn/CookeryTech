@@ -135,12 +135,6 @@ public class ProductService {
         for (Long cartItemId : cartItemsIds) {
             cartItemsService.deleteCartItem(cartItemId);
         }
-
-
-        //test yapilacak
-        //domainlere koydugum (cascade = CascadeType.REMOVE) ise yariyor mu bakilacak
-
-
         productRepository.delete(product);
 
         System.out.println(product.getId());
