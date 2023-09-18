@@ -64,7 +64,8 @@ public class ModelService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
         Boolean existsBySku= modelRepository.existsBySku(modelUpdateRequest.getSku());
-        if(existsBySku) {
+
+        if(existsBySku && !(model.getSku().equals(modelUpdateRequest.getSku()))) {
             throw new ConflictException(ErrorMessage.SKU_ALREADY_EXİST);
         }
        String imgId = imageService.saveImage2(modelUpdateRequest.getImage());
