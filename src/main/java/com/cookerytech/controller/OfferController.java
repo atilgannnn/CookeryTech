@@ -9,6 +9,7 @@ import com.cookerytech.dto.request.OfferItemsUpdate;
 import com.cookerytech.dto.request.OfferUpdate;
 import com.cookerytech.dto.response.OfferCreateResponse;
 import com.cookerytech.dto.response.UpdateOfferResponse;
+import com.cookerytech.dto.response.UsersOfferAndItemsResponse;
 import com.cookerytech.service.OfferItemService;
 import com.cookerytech.service.OfferService;
 import com.cookerytech.service.UserService;
@@ -101,13 +102,13 @@ public class OfferController {
    @GetMapping("/admin/user/{id}")//E03
    @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_MANAGER') or hasRole('SALES_SPECIALIST')")
     public ResponseEntity<Page<OfferDTO>> getOffersByUserId(@PathVariable("id") Long id,
-        @RequestParam(required = false, value = "date1", defaultValue = "") String date1,
-        @RequestParam(required = false, value = "date2", defaultValue = "") String date2,
-        @RequestParam(required = false, value = "status", defaultValue = "") int status,
-         @RequestParam(required = false, value = "page", defaultValue = "0") int page,
-         @RequestParam(required = false,value = "size", defaultValue = "20") int size,
-        @RequestParam(required = false,value = "sort", defaultValue = " createAt") String prop,
-        @RequestParam(required = false,value = "type", defaultValue = "DESC") Sort.Direction direction){
+                                                                              @RequestParam(required = false, value = "date1", defaultValue = "") String date1,
+                                                                              @RequestParam(required = false, value = "date2", defaultValue = "") String date2,
+                                                                              @RequestParam(required = false, value = "status", defaultValue = "") int status,
+                                                                              @RequestParam(required = false, value = "page", defaultValue = "0") int page,
+                                                                              @RequestParam(required = false,value = "size", defaultValue = "20") int size,
+                                                                              @RequestParam(required = false,value = "sort", defaultValue = " createAt") String prop,
+                                                                              @RequestParam(required = false,value = "type", defaultValue = "DESC") Sort.Direction direction){
 
        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
        Page<OfferDTO> offerDTOPage = offerService.getAllOffersByUser(id,date1,date2,status, pageable);
