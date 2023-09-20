@@ -10,6 +10,7 @@ import com.cookerytech.dto.UserDTO;
 import com.cookerytech.dto.request.OfferCreate;
 import com.cookerytech.dto.request.OfferUpdate;
 import com.cookerytech.dto.response.OfferCreateResponse;
+import com.cookerytech.dto.response.UsersOfferAndItemsResponse;
 import com.cookerytech.exception.BadRequestException;
 import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
@@ -171,7 +172,14 @@ public class OfferService {
 //        } else {
 //            offers = offerRepository.findAllOffersWithPageByUser(pageable,user);
 //        }
-        return offers.map(offerMapper::offerToOfferDTO);
+
+//        Page<UsersOfferAndItemsResponse> usersOfferAndItemsResponses=
+//                offers.map(offer -> {
+//                    return new UsersOfferAndItemsResponse(offer,offerItemService.getOfferItems(offer.getId()).size());
+//                });
+
+     return    offers.map(offerMapper::offerToOfferDTO);
+
     }
 
       public List<OfferResponse> getOffersByUserId(Long id) {

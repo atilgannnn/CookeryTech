@@ -19,7 +19,11 @@ public class CookerytechApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CookerytechApplication.class, args);
+
 	}
+
+}
+
 
 	@Component
 	@AllArgsConstructor
@@ -65,5 +69,5 @@ public class CookerytechApplication {
 
 
 	}
-}
+
 

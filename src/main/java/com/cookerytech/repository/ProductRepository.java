@@ -42,6 +42,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("SELECT p FROM Product p WHERE p.isFeatured = true")
     List<Product> getAllFeaturedProductsForAdmin();
 
-    @Query("SELECT p FROM Product p WHERE p.isActive = true")
+    @Query("SELECT count(p) FROM Product p WHERE p.isActive = true")
     long numberOfPublishedProduct();
 }
