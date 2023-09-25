@@ -7,6 +7,7 @@ import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.ModelMapper;
 import com.cookerytech.mapper.ProductMapper;
 import com.cookerytech.repository.CartItemRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class CartItemsService {
 
     private final ModelMapper modelMapper;
 
-    public CartItemsService(CartItemRepository cartItemRepository, ModelService modelService, UserService userService, CartService cartService, ProductMapper productMapper, ModelMapper modelMapper) {
+    public CartItemsService(CartItemRepository cartItemRepository, ModelService modelService, @Lazy UserService userService, CartService cartService, ProductMapper productMapper, ModelMapper modelMapper) {
         this.cartItemRepository = cartItemRepository;
         this.modelService = modelService;
         this.userService = userService;
