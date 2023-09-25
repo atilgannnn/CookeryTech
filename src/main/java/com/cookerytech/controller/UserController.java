@@ -40,7 +40,7 @@ public class UserController {
 
         return ResponseEntity.ok(userDTO);
     }
-    @DeleteMapping("/{id}/auth")    //Page 76
+    @DeleteMapping("/{id}/admin")    //Page 76
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<UserDTO> deleteByUserWithId(@PathVariable Long id){
         UserDTO userDTO = userService.removeUserById(id);

@@ -1,6 +1,7 @@
 package com.cookerytech.service;
 
 import com.cookerytech.config.EmailConfig;
+import com.cookerytech.domain.Offer;
 import com.cookerytech.domain.Role;
 import com.cookerytech.domain.User;
 import com.cookerytech.domain.enums.RoleType;
@@ -20,33 +21,41 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final OfferService offerService;
 
     @Autowired
     private EmailConfig emailConfig;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    @Lazy private AuthenticationManager authenticationManager;
 
     private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, RoleService roleService, @Lazy PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, RoleService roleService, @Lazy PasswordEncoder passwordEncoder, OfferService offerService, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.offerService = offerService;
         this.userMapper = userMapper;
     }
 
@@ -106,24 +115,35 @@ public class UserService {
     //TODO => Offer'ı (teklifi) varsa silinemez eklenecek
     public UserDTO removeUserById(Long id) {
         User user = getById(id);
+        Boolean exists = offerService.existsByUser(user);
         UserDTO userDTO = userMapper.userToUserDTO(user);
         User currentUser = getCurrentUser();
+
+        if(exists){
+            throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
+        }
 
         if (user.getBuiltIn()){
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-        if(currentUser.getRoles().equals(RoleType.ROLE_SALES_SPECIALIST) && user.getRoles().equals(RoleType.ROLE_CUSTOMER)){
+        if(currentUser.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_SALES_SPECIALIST.getName())){
+                if(user.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_CUSTOMER.getName())){
             userRepository.deleteById(id);
-        }
+        } else {
+            throw  new BadRequestException(ErrorMessage.UNAUTH_TRANSACTİON);
+        }}
 
-        if(currentUser.getRoles().equals(RoleType.ROLE_SALES_MANAGER) &&
-                (user.getRoles().equals(RoleType.ROLE_CUSTOMER) || user.getRoles().equals(RoleType.ROLE_SALES_SPECIALIST)))
+        if(currentUser.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_SALES_MANAGER.getName())){
+               if( (user.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_CUSTOMER.getName()) ||
+                        user.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_SALES_SPECIALIST.getName())))
         {
             userRepository.deleteById(id);
-        }
+        } else {
+            throw  new BadRequestException(ErrorMessage.UNAUTH_TRANSACTİON);
+        }}
 
-        if(currentUser.getRoles().equals(RoleType.ROLE_ADMIN) )
+        if(currentUser.getRoles().stream().map(role ->role.getType().getName()).collect(Collectors.toList()).contains(RoleType.ROLE_ADMIN.getName()) )
         {
             userRepository.deleteById(id);
         }
@@ -221,7 +241,17 @@ public class UserService {
 
     public void removeUserByAuth(UserDeleteRequest userDeleteRequest) {
         User user = getCurrentUser();
-        if(user.getPassword().equals(userDeleteRequest.getPassword())){
+        Boolean exists = offerService.existsByUser(user);
+
+        if(exists){
+            throw new BadRequestException(ErrorMessage.CAN_NOT_BE_DELETED_MESSAGE);
+        }
+
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getEmail(),userDeleteRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        if(userDetails !=null){
             userRepository.deleteById(user.getId());
         }
     }

@@ -37,4 +37,5 @@ public class ErrorMessage {
     public static final String CATEGORY_CANNOT_BE_DELETED_MESSAGE = "This category cannot be deleted.It has related records in other table";
     public static final String DELİVERY_DATE_INCORRECT_MESSAGE = "Delivery Date not correct";
     public static final String PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE = "Cannot be create this name";
+    public static final String UNAUTH_TRANSACTİON = "unauthorized transaction";
 }

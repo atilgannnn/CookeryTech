@@ -34,15 +34,18 @@ public class ProductPropertyKeyService {
     }
 
     public ProductPropertyKeyDTO makeProductPropertyKey(ProductPropertyRequest createProductPropertyRequest) {
-
-
+       ProductPropertyKey productPropertyKey2 = isThereNameAndProductId(createProductPropertyRequest.getName(),createProductPropertyRequest.getProductId());
         ProductPropertyKey productPropertyKey = new ProductPropertyKey();
+        if (!(productPropertyKey2 instanceof ProductPropertyKey)){
 
-        productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
-        productPropertyKey.setName(createProductPropertyRequest.getName());
-        productPropertyKey.setProduct(productService.getById(createProductPropertyRequest.getProductId()));
-        productPropertyKey.setBuiltIn(false);
+            productPropertyKey.setSeq(createProductPropertyRequest.getSeq());
+            productPropertyKey.setName(createProductPropertyRequest.getName());
+            productPropertyKey.setProduct(productService.getById(createProductPropertyRequest.getProductId()));
+            productPropertyKey.setBuiltIn(false);
 
+        } else if(productPropertyKeyRepository.existsById(productPropertyKey2.getId())){
+            throw new BadRequestException(ErrorMessage.PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE);
+        }
         ProductPropertyKey productPropertyKey1 = productPropertyKeyRepository.save(productPropertyKey);
         return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey1);
     }
@@ -61,7 +64,14 @@ public class ProductPropertyKeyService {
         if(productPropertyKey.getBuiltIn()){
             throw  new BadRequestException(ErrorMessage.CAN_NOT_UPDATE);
         }
-        productPropertyKey = productPropertyKeyMapper.productPropertyKeyRequestToProductPropertyKey(productPropertyRequest);
+        ProductPropertyKey productPropertyKey1 = isThereNameAndProductId(productPropertyRequest.getName(),productPropertyRequest.getProductId());
+        if (productPropertyKey1 instanceof ProductPropertyKey){
+            throw new BadRequestException(ErrorMessage.PRODUCT_PROPERTY_KEY_NAME_EXIST_MESSAGE);
+        }
+        productPropertyKey.setName(productPropertyRequest.getName());
+        productPropertyKey.setProduct(productService.getById(productPropertyRequest.getProductId()));
+        productPropertyKey.setSeq(productPropertyRequest.getSeq());
+
         productPropertyKeyRepository.save(productPropertyKey);
         return productPropertyKeyMapper.productPropertyKeyToProductPropertyKeyDTO(productPropertyKey);
     }
@@ -102,5 +112,8 @@ public class ProductPropertyKeyService {
 
     }
 
+    public ProductPropertyKey isThereNameAndProductId(String name, Long productıd){
+        return  productPropertyKeyRepository.findByProductPropertyKey(name, productıd);
+    }
 
 }
