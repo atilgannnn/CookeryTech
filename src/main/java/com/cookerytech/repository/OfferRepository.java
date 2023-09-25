@@ -84,5 +84,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Query("UPDATE Offer o SET o.grandTotal = :grandTotal WHERE o.id = :offerId")
     void updateGrandTotal(@Param("offerId") Long offerId,@Param("grandTotal") Double grandTotal);
 
+    @Query("SELECT o FROM Offer o WHERE o.createAt BETWEEN ?1 AND ?2")
+    List<Offer> getAllOffersBetweenDate(LocalDateTime dateTime1, LocalDateTime dateTime2);
+
     Boolean existsByUser(User user);
 }
