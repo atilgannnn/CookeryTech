@@ -21,7 +21,7 @@ public interface OfferItemRepository extends JpaRepository<OfferItem, Long> {
     @Query("SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END FROM OfferItem o WHERE o.product.id = :productId")
     Boolean existsByProductId(@Param("productId") Long productId);
 
-    @EntityGraph(attributePaths = {"id"})
+//    @EntityGraph(attributePaths = {"id"})
     @Query("SELECT oi FROM OfferItem oi WHERE oi.offer.id = :offerId")
     List<OfferItem> getByOfferItemByOfferId(@Param("offerId") Long offerId);
 

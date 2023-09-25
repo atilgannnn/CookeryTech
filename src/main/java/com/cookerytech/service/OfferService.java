@@ -21,7 +21,9 @@ import com.cookerytech.repository.OfferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -385,6 +387,11 @@ public class OfferService {
     }
 
 
+    public List<Offer> getAllOffersBetweenDate(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+//        Pageable pageable = PageRequest.of(0, 20, Sort.by("createAt").descending());
+        List<Offer> offers = offerRepository.getAllOffersBetweenDate( dateTime1, dateTime2);
+        return offers;
+    }
     public Boolean existsByUser(User user) {
         Boolean exists = offerRepository.existsByUser(user);
         return exists;
