@@ -51,7 +51,7 @@ public class OfferService {
     @Autowired
     private EmailConfig emailConfig;
 
-    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper, UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
+    public OfferService(OfferRepository offerRepository, OfferMapper offerMapper,@Lazy UserService userService, @Lazy OfferItemService offerItemService, JavaMailSender mailSender,
                         CartItemsService cartItemsService, CurrencyService currencyService, OfferItemMapper offerItemMapper, UserMapper userMapper) {
         this.offerRepository = offerRepository;
         this.offerMapper = offerMapper;
@@ -385,4 +385,8 @@ public class OfferService {
     }
 
 
+    public Boolean existsByUser(User user) {
+        Boolean exists = offerRepository.existsByUser(user);
+        return exists;
+    }
 }

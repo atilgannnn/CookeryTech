@@ -61,7 +61,7 @@ public class ProductController {
 
     @PutMapping("/properties/{id}")    //Sayfa 34 -> A09
     @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
-    public ResponseEntity<ProductPropertyKeyDTO> updateProductProperty(@RequestParam("id") Long id, @Valid @RequestBody ProductPropertyRequest productPropertyRequest){
+    public ResponseEntity<ProductPropertyKeyDTO> updateProductProperty(@PathVariable("id") Long id, @Valid @RequestBody ProductPropertyRequest productPropertyRequest){
         ProductPropertyKeyDTO productPropertyKeyDTO = productService.updateProductProperty(id, productPropertyRequest);
         return ResponseEntity.ok(productPropertyKeyDTO);
     }

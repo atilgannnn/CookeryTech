@@ -83,4 +83,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Modifying
     @Query("UPDATE Offer o SET o.grandTotal = :grandTotal WHERE o.id = :offerId")
     void updateGrandTotal(@Param("offerId") Long offerId,@Param("grandTotal") Double grandTotal);
+
+    Boolean existsByUser(User user);
 }

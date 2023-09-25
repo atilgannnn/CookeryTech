@@ -17,7 +17,7 @@ import java.util.List;
 public interface ProductPropertyKeyMapper {
 
 
-   @Mapping(source="product", target="productId", ignore = true)
+   @Mapping(source="product", target="productId", qualifiedByName="getProductId")
    ProductPropertyKeyDTO productPropertyKeyToProductPropertyKeyDTO(ProductPropertyKey productPropertyKey);
 
    @Mapping(source = "productId",target = "product", ignore = true)
