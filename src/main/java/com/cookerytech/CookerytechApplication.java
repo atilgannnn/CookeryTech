@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 import com.cookerytech.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 
 @SpringBootApplication
@@ -88,6 +90,7 @@ public class CookerytechApplication {
 				LocalDate birthday = LocalDate.of(2000,10,10);
 				admin.setBirthDate(birthday);
 				admin.setTaxNo("12345");
+				admin.setCreateAt(LocalDateTime.now());
 				admin.setBuiltIn(true);
 				userRepository.save(admin);
 			}
