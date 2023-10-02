@@ -69,9 +69,6 @@ public class BrandController {
         return ResponseEntity.ok(brandDTOPage);
     }
 
-    // miraç test 20.08.2023
-
-
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<BrandDTO> getBrandDTOByIdForPM(@PathVariable("id") Long id){
