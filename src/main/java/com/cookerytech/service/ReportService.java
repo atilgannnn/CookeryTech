@@ -35,11 +35,7 @@ public class ReportService {
     long getNumberOfBrands= brandService.getNumberOfBrands();
     long getNumberOfProducts= productService.getNumberOfProducts();
     long getNumberOfCustomers= userService.getNumberOfCustomers();
-    long numberOfOffersPerDay= offerService.numberOfOffersPerDay();
-
-
-
-
+    Double numberOfOffersPerDay= offerService.numberOfOffersPerDay();
 
     DashboardResponse dashboardResponse =
             new DashboardResponse(

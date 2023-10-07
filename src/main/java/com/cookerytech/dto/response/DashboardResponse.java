@@ -14,6 +14,6 @@ public class DashboardResponse {
     private long numberOfCategories;
     private long numberOfBrands;
     private long numberOfProducts;
-    private long numberOfOffersPerDay;
+    private Double numberOfOffersPerDay;
     private long numberOfCustomers;
 }
