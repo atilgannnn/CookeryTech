@@ -77,8 +77,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     Boolean existsByCode(String code);
 
-    @Query("SELECT COUNT(o) FROM Offer o WHERE o.createAt >= :startTime")
-    long numberOfOffersPerDay(@Param("startTime") LocalDateTime startTime);
+    @Query("SELECT o FROM Offer o WHERE o.createAt >= :startTime")
+    List<Offer> offersPerDay(@Param("startTime") LocalDateTime startTime);
 
     @Modifying
     @Query("UPDATE Offer o SET o.grandTotal = :grandTotal WHERE o.id = :offerId")

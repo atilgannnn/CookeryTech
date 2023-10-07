@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "t_imagefile")
+@Table(name = "t_image")
 public class Image {
 
     @Id
@@ -28,7 +28,7 @@ public class Image {
     @Column(nullable = true)
     private String type;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long model_id;
 
     @OneToOne(cascade = CascadeType.ALL) //ImageFile sildigimizde ImageData'yi da siliyoruz.

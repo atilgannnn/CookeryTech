@@ -318,13 +318,20 @@ public class OfferService {
         return offerItemService.stockAmountDecrease(offerId);
     }
 
-    public long numberOfOffersPerDay() {
+    public Double numberOfOffersPerDay() {
         LocalDateTime now = LocalDateTime.now();
 
          // Son 24 saatlik zaman dilimi
         LocalDateTime twentyFourHoursAgo = now.minusHours(24);
 
-       return offerRepository.numberOfOffersPerDay(twentyFourHoursAgo);
+          List<Offer> offerList = offerRepository.offersPerDay(twentyFourHoursAgo);
+
+          Double totolAmountOfOffers = 0.0;
+          for (Offer offer:offerList){
+              totolAmountOfOffers+=offer.getGrandTotal();
+          }
+
+          return totolAmountOfOffers;
     }
 
 
