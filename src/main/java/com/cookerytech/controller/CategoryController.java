@@ -67,7 +67,7 @@ public class CategoryController {
 
     //B02
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+
     public ResponseEntity<CategoryDTO>  getCategoryByID(@PathVariable Long id){
 
         CategoryDTO categoryDTO = categoryService.getCategoryByID(id);
@@ -77,7 +77,7 @@ public class CategoryController {
 
     //B01
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+
     public ResponseEntity<List<CategoryDTO>>  getAllCategories(){
 
         List<CategoryDTO>  categoryDTOList = categoryService.getAllCategories();

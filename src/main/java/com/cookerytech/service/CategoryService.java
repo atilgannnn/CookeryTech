@@ -131,30 +131,32 @@ public class CategoryService {
         List<CategoryDTO> categoryDTOList = categoryMapper.categoryListToCategoryDTOList(categoryRepository.findAll());
         List<CategoryDTO> newCategoryDTOList = new ArrayList<>();
 
-        boolean isAdmin = false;
-        boolean isProductManager = false;
+        return categoryDTOList;
 
-        for (Role role : userRoles) {
-            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
-                isAdmin = true;
+//        boolean isAdmin = false;
+//        boolean isProductManager = false;
 
-            } else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
-                isProductManager = true;
-
-            }
-        }
-        if (isAdmin) {
-            return categoryDTOList;
-        }
-        if (isProductManager) {
-            for (CategoryDTO categoryDTO : categoryDTOList) {
-                if (categoryDTO.getIsActive()) {
-                    newCategoryDTOList.add(categoryDTO);
-                }
-            }
-            return newCategoryDTOList;
-        }
-        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
+//        for (Role role : userRoles) {
+//            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
+//                isAdmin = true;
+//
+//            } else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
+//                isProductManager = true;
+//
+//            }
+//        }
+//        if (isAdmin) {
+//            return categoryDTOList;
+//        }
+//        if (isProductManager) {
+//            for (CategoryDTO categoryDTO : categoryDTOList) {
+//                if (categoryDTO.getIsActive()) {
+//                    newCategoryDTOList.add(categoryDTO);
+//                }
+//            }
+//            return newCategoryDTOList;
+//        }
+//        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
     }
 
     //B02
@@ -162,29 +164,32 @@ public class CategoryService {
 
         Set<Role> userRole = userService.getCurrentUser().getRoles();
         Category category = getCategory(id);
-        boolean isAdmin = false;
-        boolean isProductManager = false;
 
-        for (Role role : userRole) {
-            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
-                isAdmin = true;
-            }
-            else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
-                isProductManager = true;
-            }
-        }
+        return categoryMapper.categoryToCategoryDTO(category);
 
-        if (isAdmin) {
-            return categoryMapper.categoryToCategoryDTO(category);
-//            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
-        }
-        if (isProductManager) {
-            if (!category.getIsActive()) {
-                throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
-            }
-            return categoryMapper.categoryToCategoryDTO(category);
-        }
-        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
+//        boolean isAdmin = false;
+//        boolean isProductManager = false;
+//
+//        for (Role role : userRole) {
+//            if (RoleType.ROLE_ADMIN.equals(role.getType())) {
+//                isAdmin = true;
+//            }
+//            else if (RoleType.ROLE_PRODUCT_MANAGER.equals(role.getType())) {
+//                isProductManager = true;
+//            }
+//        }
+
+//        if (isAdmin) {
+//            return categoryMapper.categoryToCategoryDTO(category);
+////            throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
+//        }
+//        if (isProductManager) {
+//            if (!category.getIsActive()) {
+//                throw new ResourceNotFoundException(String.format(ErrorMessage.NO_ACTIVE_CATEGORY_MESSAGE));
+//            }
+//            return categoryMapper.categoryToCategoryDTO(category);
+//        }
+//        throw new ResourceNotFoundException(String.format(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE));
 
     }
 }
