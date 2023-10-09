@@ -35,6 +35,8 @@ public class SecurityConfig {
                 authorizeRequests().antMatchers(HttpMethod.OPTIONS,"/**").permitAll().and().
                 authorizeRequests().
                 antMatchers("/login",
+                        "/categories",
+                        "/categories/{categoryId}",
                         "/register",
                         "/",
                         "/index.html",

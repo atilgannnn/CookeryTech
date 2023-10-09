@@ -127,7 +127,7 @@ public class CategoryService {
 
     public List<CategoryDTO> getAllCategories() {
 
-        Set<Role> userRoles = userService.getCurrentUser().getRoles();
+//        Set<Role> userRoles = userService.getCurrentUser().getRoles();
         List<CategoryDTO> categoryDTOList = categoryMapper.categoryListToCategoryDTOList(categoryRepository.findAll());
         List<CategoryDTO> newCategoryDTOList = new ArrayList<>();
 
@@ -162,7 +162,7 @@ public class CategoryService {
     //B02
     public CategoryDTO getCategoryByID(Long id) {
 
-        Set<Role> userRole = userService.getCurrentUser().getRoles();
+//        Set<Role> userRole = userService.getCurrentUser().getRoles();
         Category category = getCategory(id);
 
         return categoryMapper.categoryToCategoryDTO(category);
