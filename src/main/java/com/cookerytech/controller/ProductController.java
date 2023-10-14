@@ -99,8 +99,8 @@ public class ProductController {
 
     }
 
-    @GetMapping()
-    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    @GetMapping("/auth") // A01
+    //@PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<Page<ProductDTO>> getProductsAsPages(@RequestParam(value = "q", defaultValue = "") String q,
                                                                @RequestParam(value = "page", defaultValue = "0") int page,
                                                                @RequestParam(value = "size", defaultValue = "20") int size,
@@ -114,8 +114,8 @@ public class ProductController {
         return ResponseEntity.ok(productDTOPage);
     }
 
-    @GetMapping("/featured")
-    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    @GetMapping("/featured") //A02
+    //@PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<List<ProductResponse>> getFeaturedProducts(){
 
         List<ProductResponse> productResponse = productService.getAllFeaturedProducts();
@@ -123,8 +123,8 @@ public class ProductController {
         return ResponseEntity.ok(productResponse);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
+    @GetMapping("/{id}") //A03
+    //@PreAuthorize("hasRole('PRODUCT_MANAGER') or hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('SALES_SPECIALIST') or hasRole('SALES_MANAGER')")
     public ResponseEntity<ProductDTO> getProductsById (@PathVariable("id") Long id){
 
         ProductDTO productDTO = productService.getProductById(id);

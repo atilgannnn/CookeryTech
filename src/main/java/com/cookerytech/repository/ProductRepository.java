@@ -19,18 +19,23 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("SELECT p FROM Product p JOIN p.brand b WHERE b.id = :brandId")
     List<Product> findProductByBrandId(@Param("brandId") Long brandId);
 
+    /*
     @Query("SELECT p FROM Product p\n" +
             "JOIN p.brand b\n" +
             "JOIN p.category c\n" +
-            "WHERE b.isActive = true AND c.isActive = true AND p.isActive = true AND p.title = ?1")
+            "WHERE b.isActive = true AND c.isActive = true AND p.isActive = true OR p.title = ?1")
     Page<Product> getActiveProducts(String q, Pageable pageable);
 
+     */
+/*
     @Query("SELECT p FROM Product p JOIN p.brand b JOIN p.category c " +
             "WHERE b.isActive = true " +
             " AND c.isActive = true " +
             " AND p.isActive = true" +
             " AND p.isFeatured = true")
     List<Product> getAllFeaturedProducts();
+
+ */
 
     @Query("SELECT p FROM Product p LEFT JOIN OfferItem o ON p.id=o.product.id WHERE o.product.id IS NULL")
     List<Product> getProductsNoOffer();

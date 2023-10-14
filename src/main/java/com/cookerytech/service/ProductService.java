@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.cookerytech.dto.ProductDTO;
 import com.cookerytech.dto.request.ProductSaveRequest;
@@ -25,6 +26,7 @@ import com.cookerytech.mapper.ProductMapper;
 
 
 import javax.transaction.Transactional;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -314,21 +316,37 @@ public class ProductService {
 
     public Page<ProductDTO> getProductDTOPage(String q, Pageable pageable) {
 
-        Set<Role> userRole = userService.getCurrentUser().getRoles();
 
-
-        if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {  //roleService.findByType(RoleType.ROLE_ADMIN)
-            Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
-
-            return productPage.map(brand -> productMapper.productToProductDTO(brand));
-        }
         Page<Product> adminProductPage = productRepository.findAll(pageable);
 
         return adminProductPage.map(brand -> productMapper.productToProductDTO(brand));
 
+/*
+            Set<Role> userRole = userService.getCurrentUser().getRoles();
+
+            if (!userRole.contains(roleService.findByType(RoleType.ROLE_ADMIN))) {  //roleService.findByType(RoleType.ROLE_ADMIN)
+
+                Page<Product> productPage = productRepository.getActiveProducts(q, pageable);
+
+                return productPage.map(brand -> productMapper.productToProductDTO(brand));
+            }
+            Page<Product> adminProductPage = productRepository.findAll(pageable);
+
+            return adminProductPage.map(brand -> productMapper.productToProductDTO(brand));
+
+ */
+
+
     }
 
     public List<ProductResponse> getAllFeaturedProducts() {
+
+        List<Product> adminProductList = productRepository.getAllFeaturedProductsForAdmin();
+
+        return productMapper.productToProductResponse(adminProductList);
+
+
+        /*
 
         List<Product> productList = productRepository.getAllFeaturedProducts();
 
@@ -342,6 +360,8 @@ public class ProductService {
         }
 
         return productMapper.productToProductResponse(productList);
+
+         */
 
     }
 
