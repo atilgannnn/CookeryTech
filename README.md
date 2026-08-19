@@ -70,10 +70,9 @@ CookeryTech is a robust, secure, and scalable RESTful Backend Service built with
    ./mvnw clean install
    ./mvnw spring-boot:run
 
-```markdown
-## 📑 API Documentation
+5. 📑 **API Documentation:**
 
 Once the application is running, you can access the interactive Swagger UI at:
-
-* **Swagger Documentation:** `http://localhost:8080/swagger-ui/index.html`
-* **OpenAPI Specs:** `http://localhost:8080/v3/api-docs`
+   ```bash
+   **Swagger Documentation:** `http://localhost:8080/swagger-ui/index.html`
+   **OpenAPI Specs:** `http://localhost:8080/v3/api-docs`
