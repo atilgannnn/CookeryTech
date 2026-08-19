@@ -76,3 +76,26 @@ Once the application is running, you can access the interactive Swagger UI at:
    ```bash
    Swagger Documentation: `http://localhost:8080/swagger-ui/index.html`
    OpenAPI Specs: `http://localhost:8080/v3/api-docs`
+```
+---
+
+## 📸 API Interface Screenshots (Swagger UI)
+
+<p align="center">
+  <img src="assets/swagger-screenshots/1.png" width="45%" alt="Swagger Main Page" />
+  <img src="assets/swagger-screenshots/2.png" width="45%" alt="User Controllers" />
+</p>
+<p align="center">
+  <img src="assets/swagger-screenshots/3.png" width="45%" alt="Product Controllers" />
+  <img src="assets/swagger-screenshots/4.png" width="45%" alt="Offer Controllers" />
+</p>
+<p align="center">
+  <img src="assets/swagger-screenshots/5.png" width="45%" alt="Brand & Cart Controllers" />
+  <img src="assets/swagger-screenshots/6.png" width="45%" alt="Schema DTOs - 1" />
+</p>
+<p align="center">
+  <img src="assets/swagger-screenshots/7.png" width="45%" alt="Schema DTOs - 2" />
+  <img src="assets/swagger-screenshots/8.png" width="45%" alt="TCMB Currency Controllers" />
+</p>
+
+> **Note:** All endpoints are secured with JWT. The locked icons indicate authorization is required.
