@@ -74,5 +74,5 @@ CookeryTech is a robust, secure, and scalable RESTful Backend Service built with
 
 Once the application is running, you can access the interactive Swagger UI at:
    ```bash
-   **Swagger Documentation:** `http://localhost:8080/swagger-ui/index.html`
-   **OpenAPI Specs:** `http://localhost:8080/v3/api-docs`
+   Swagger Documentation: `http://localhost:8080/swagger-ui/index.html`
+   OpenAPI Specs: `http://localhost:8080/v3/api-docs`
