@@ -82,20 +82,20 @@ Once the application is running, you can access the interactive Swagger UI at:
 ## 📸 API Interface Screenshots (Swagger UI)
 
 <p align="center">
-  <img src="assets/swagger-screenshots/1.png" width="45%" alt="Swagger Main Page" />
-  <img src="assets/swagger-screenshots/2.png" width="45%" alt="User Controllers" />
+  <img src="assets/swagger-screenshots/01.png" width="45%" alt="Swagger Main Page" />
+  <img src="assets/swagger-screenshots/02.png" width="45%" alt="User Controllers" />
 </p>
 <p align="center">
-  <img src="assets/swagger-screenshots/3.png" width="45%" alt="Product Controllers" />
-  <img src="assets/swagger-screenshots/4.png" width="45%" alt="Offer Controllers" />
+  <img src="assets/swagger-screenshots/03.png" width="45%" alt="Product Controllers" />
+  <img src="assets/swagger-screenshots/04.png" width="45%" alt="Offer Controllers" />
 </p>
 <p align="center">
-  <img src="assets/swagger-screenshots/5.png" width="45%" alt="Brand & Cart Controllers" />
-  <img src="assets/swagger-screenshots/6.png" width="45%" alt="Schema DTOs - 1" />
+  <img src="assets/swagger-screenshots/05.png" width="45%" alt="Brand & Cart Controllers" />
+  <img src="assets/swagger-screenshots/06.png" width="45%" alt="Schema DTOs - 1" />
 </p>
 <p align="center">
-  <img src="assets/swagger-screenshots/7.png" width="45%" alt="Schema DTOs - 2" />
-  <img src="assets/swagger-screenshots/8.png" width="45%" alt="TCMB Currency Controllers" />
+  <img src="assets/swagger-screenshots/07.png" width="45%" alt="Schema DTOs - 2" />
+  <img src="assets/swagger-screenshots/08.png" width="45%" alt="TCMB Currency Controllers" />
 </p>
 
 > **Note:** All endpoints are secured with JWT. The locked icons indicate authorization is required.
