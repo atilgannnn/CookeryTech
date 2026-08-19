@@ -41,3 +41,29 @@ CookeryTech is a robust, secure, and scalable RESTful Backend Service built with
                                     │
                                     ▼
                           [ PostgreSQL Database ]
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* JDK 11 or higher
+* PostgreSQL installed and running
+* Maven
+
+### Installation & Run
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/atilgannnn/CookeryTech.git](https://github.com/atilgannnn/CookeryTech.git)
+   cd CookeryTech
+
+2. **Properties:**
+spring.datasource.url=jdbc:postgresql://localhost:5432/cookerytech_db
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+
+3. **Build & Run:***
+./mvnw clean install
+./mvnw spring-boot:run
