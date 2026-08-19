@@ -1,4 +1,3 @@
-
 package com.cookerytech.service;
 
 import com.cookerytech.domain.Currency;
@@ -7,119 +6,119 @@ import com.cookerytech.exception.ResourceNotFoundException;
 import com.cookerytech.exception.message.ErrorMessage;
 import com.cookerytech.mapper.CurrencyMapper;
 import com.cookerytech.repository.CurrencyRepository;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class CurrencyService {
 
+    private static final Logger log = LoggerFactory.getLogger(CurrencyService.class);
+
     private final CurrencyRepository currencyRepository;
     private final CurrencyMapper currencyMapper;
-    private final CurrencyService currencyService;
 
-    public CurrencyService(CurrencyRepository currencyRepository, CurrencyMapper currencyMapper, @Lazy CurrencyService currencyService) {
+    public CurrencyService(CurrencyRepository currencyRepository, CurrencyMapper currencyMapper) {
         this.currencyRepository = currencyRepository;
         this.currencyMapper = currencyMapper;
-        this.currencyService = currencyService;
     }
 
-
-    @Scheduled(fixedRate = 60000) // Her 1 dakikada bir çalıştırılacak(60000 milisaniye)
-    //@Scheduled(cron = "0 0 8 * * ?") // Her sabah saat 8'de çalıştırır (0)saniye (0)dakika (8)saat (*)hergun (*)heray (?)herhangi bir gun
+    @Scheduled(fixedRate = 60000)
     public void updateCurrencies() {
-        currencyService.getCurrenciesPage(null);
+        try {
+            fetchAndUpdateExchangeRates();
+        } catch (Exception e) {
+            String errorMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+            log.warn("Döviz kurları güncellenemedi: {}", errorMessage);
+        }
     }
 
-    public Page<CurrencyDTO> getCurrenciesPage(Pageable pageable) {
+    private void fetchAndUpdateExchangeRates() throws Exception {
+        Document doc = Jsoup.connect("https://www.tcmb.gov.tr/kurlar/today.xml")
+                .timeout(5000)
+                .get();
 
-        Page<CurrencyDTO> currencyDTOPage = null;
+        Elements currencies = doc.select("Currency");
 
-        try {
-            Document doc = Jsoup.connect("https://www.tcmb.gov.tr/kurlar/today.xml").get();
-            Elements currencies = doc.select("Currency");
+        Currency currencyUSD = getCurrency("USD");
+        Currency currencyTRY = getCurrency("TRY");
+        Currency currencyEUR = getCurrency("EUR");
 
-            Double price = 0.0;
-            Double value = 0.0;
+        Double usdPrice = null;
 
-            Currency currencyUSD = getCurrency("USD");
-            Currency currencyTRY = getCurrency("TRY");
-            Currency currencyEUR = getCurrency("EUR");
+        for (Element element : currencies) {
+            String kod = element.attr("Kod");
 
-            for (Element element : currencies) {
-                String kod = element.attr("Kod");
-                if (kod.equals("USD")) {
-                    price = Double.valueOf(element.select("ForexBuying").text());//
+            if ("USD".equals(kod)) {
+                String forexBuying = element.select("ForexBuying").text();
+                if (!forexBuying.isEmpty()) {
+                    usdPrice = Double.valueOf(forexBuying);
                     currencyUSD.setCode("USD");
                     currencyUSD.setSymbol("$");
                     currencyUSD.setUpdateAt(LocalDateTime.now());
-                    value=price;
-                    currencyUSD.setValue(value/price);
+                    currencyUSD.setValue(1.0);
+
                     currencyTRY.setCode("TRY");
                     currencyTRY.setSymbol("₺");
                     currencyTRY.setUpdateAt(LocalDateTime.now());
-                    currencyTRY.setValue(value);
+                    currencyTRY.setValue(usdPrice);
 
                     currencyRepository.save(currencyUSD);
                     currencyRepository.save(currencyTRY);
-
-                }else if (kod.equals("EUR")){
-                    price = Double.valueOf(element.select("ForexSelling").text());
+                }
+            } else if ("EUR".equals(kod)) {
+                String forexSelling = element.select("ForexSelling").text();
+                if (!forexSelling.isEmpty()) {
+                    Double eurPrice = Double.valueOf(forexSelling);
                     currencyEUR.setCode("EUR");
                     currencyEUR.setSymbol("€");
                     currencyEUR.setUpdateAt(LocalDateTime.now());
-                    currencyEUR.setValue(value/price);
+
+                    if (usdPrice != null && usdPrice > 0) {
+                        currencyEUR.setValue(usdPrice / eurPrice);
+                    } else {
+                        currencyEUR.setValue(1.0);
+                    }
                     currencyRepository.save(currencyEUR);
                 }
-
             }
-           Page<Currency> currencyPage = currencyRepository.findAll(pageable);
-
-           currencyDTOPage = currencyMapper.currencyPageToCurrencyDTOPage(currencyPage);
-
-            return currencyDTOPage;
-
-        } catch (Exception e) {
-            System.out.println("Siteye ulaşılamadı, lütfen internet bağlantınızı kontrol edin (Döviz): " + e.getMessage());
         }
-        return currencyDTOPage;
+    }
+
+    public Page<CurrencyDTO> getCurrenciesPage(Pageable pageable) {
+        Pageable safePageable = (pageable != null) ? pageable : PageRequest.of(0, 10);
+
+        try {
+            Page<Currency> currencyPage = currencyRepository.findAll(safePageable);
+            return currencyMapper.currencyPageToCurrencyDTOPage(currencyPage);
+        } catch (Exception e) {
+            String errorMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+            log.error("Döviz verileri getirilirken hata oluştu: {}", errorMessage);
+            return Page.empty();
+        }
     }
 
     public Page<CurrencyDTO> getCurrenciesPages(Pageable pageable) {
-        Page<CurrencyDTO> currencyDTOPage = null;
-
-        try {
-
-            Page<Currency> currencyPage = currencyRepository.findAll(pageable);
-
-            currencyDTOPage = currencyMapper.currencyPageToCurrencyDTOPage(currencyPage);
-
-            return currencyDTOPage;
-
-        } catch (Exception e) {
-            System.out.println("Siteye ulaşılamadı, lütfen internet bağlantınızı kontrol edin (Döviz)");
-        }
-        return currencyDTOPage;
+        return getCurrenciesPage(pageable);
     }
 
     public Currency getCurrency(String code) {
-        return currencyRepository.findByCode(code).orElseGet(() -> {
-            Currency newCurrency = new Currency();
-            return newCurrency;
-        });
+        return currencyRepository.findByCode(code).orElseGet(Currency::new);
     }
 
     public Currency getCurrencyById(Long id) {
         return currencyRepository.findById(id).orElseThrow(() ->
-            new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id))
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id))
         );
     }
 }
