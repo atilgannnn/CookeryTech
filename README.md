@@ -61,14 +61,14 @@ CookeryTech is a robust, secure, and scalable RESTful Backend Service built with
 
 2. **Properties:**
    ```bash
-spring.datasource.url=jdbc:postgresql://localhost:5432/cookerytech_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+   spring.datasource.url=jdbc:postgresql://localhost:5432/cookerytech_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
 
 4. **Build & Run:***
    ```bash
-./mvnw clean install
-./mvnw spring-boot:run
+   ./mvnw clean install
+   ./mvnw spring-boot:run
 
 ```markdown
 ## 📑 API Documentation
